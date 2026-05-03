@@ -1,0 +1,47 @@
+[
+    {
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "publisher": "Scribner",
+        "isbn": "978-0743273565",
+        "price": "15.99",
+        "pages": "180",
+        "summary": "The Great Gatsby is a 1925 novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on Long Island, near New York City, the novel depicts first-person narrator Nick Carraway's interactions with mysterious millionaire Jay Gatsby and Gatsby's obsession to reunite with his former lover, Daisy Buchanan."
+    },
+    {
+        "title": "1984",
+        "author": "George Orwell",
+        "publisher": "Secker & Warburg",
+        "isbn": "978-0451524935",
+        "price": "12.50",
+        "pages": "328",
+        "summary": "Nineteen Eighty-Four is a dystopian social science fiction novel and cautionary tale written by the English writer George Orwell. It was published on 8 June 1949 by Secker & Warburg as Orwell's ninth and final book completed in his lifetime."
+    },
+    {
+        "title": "To Kill a Mockingbird",
+        "author": "Harper Lee",
+        "publisher": "J. B. Lippincott & Co.",
+        "isbn": "978-0061120084",
+        "price": "14.95",
+        "pages": "281",
+        "summary": "To Kill a Mockingbird is a novel by the American author Harper Lee. It was published in 1960 and was instantly successful. In the United States, it is widely read in high schools and middle schools. To Kill a Mockingbird has become a classic of modern American literature."
+    },
+    {
+        "title": "The Hobbit",
+        "author": "J.R.R. Tolkien",
+        "publisher": "George Allen & Unwin",
+        "isbn": "978-0547928227",
+        "price": "18.00",
+        "pages": "310",
+        "summary": "The Hobbit, or There and Back Again is a children's fantasy novel by the English author J. R. R. Tolkien. It was published in 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction."
+    },
+    {
+        "title": "Pride and Prejudice",
+        "author": "Jane Austen",
+        "publisher": "T. Egerton",
+        "isbn": "978-1503290563",
+        "price": "9.99",
+        "pages": "279",
+        "summary": "Pride and Prejudice is an 1813 novel of manners by Jane Austen. The novel follows the character development of Elizabeth Bennet, the dynamic protagonist of the book who learns about the repercussions of hasty judgments and comes to appreciate the difference between superficial goodness and actual goodness."
+    }
+]

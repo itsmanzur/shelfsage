@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "shelfsage/books",
+    "version": "1.0.0",
+    "title": "ShelfSage Books",
+    "category": "widgets",
+    "icon": "book",
+    "description": "Display a book grid or shelf using a saved ShelfSage shortcode design.",
+    "keywords": [
+        "shelfsage",
+        "books",
+        "book grid",
+        "woocommerce"
+    ],
+    "supports": {
+        "html": false,
+        "align": true
+    },
+    "attributes": {
+        "shortcodeId": {
+            "type": "number",
+            "default": 0
+        },
+        "align": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "textdomain": "shelfsage",
+    "editorScript": "file:./index.js",
+    "editorStyle": [
+        "file:./index.css",
+        "trsss-app-css"
+    ],
+    "style": [
+        "file:./style.css",
+        "trsss-app-css"
+    ]
+}

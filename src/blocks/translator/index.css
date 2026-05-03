@@ -1,0 +1,7 @@
+.shelfsage-translator-block-wrapper {
+    position: relative;
+}
+
+.shelfsage-translator-block-wrapper .components-placeholder {
+    min-height: 120px;
+}

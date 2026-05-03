@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "shelfsage/series",
+    "version": "1.0.0",
+    "title": "ShelfSage series",
+    "category": "widgets",
+    "icon": "book-alt",
+    "description": "Display a beautiful series profile card.",
+    "supports": {
+        "html": false,
+        "align": true
+    },
+    "attributes": {
+        "seriesId": {
+            "type": "number",
+            "default": 0
+        },
+        "align": {
+            "type": "string",
+            "default": "center"
+        }
+    },
+    "textdomain": "shelfsage",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

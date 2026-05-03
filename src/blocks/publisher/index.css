@@ -1,0 +1,7 @@
+.shelfsage-publisher-block-wrapper {
+    position: relative;
+}
+
+.shelfsage-publisher-block-wrapper .components-placeholder {
+    min-height: 120px;
+}

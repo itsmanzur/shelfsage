@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "shelfsage/author",
+    "version": "1.0.0",
+    "title": "ShelfSage Author",
+    "category": "widgets",
+    "icon": "businessman",
+    "description": "Display a beautiful author profile card.",
+    "supports": {
+        "html": false,
+        "align": true
+    },
+    "attributes": {
+        "authorId": {
+            "type": "number",
+            "default": 0
+        },
+        "align": {
+            "type": "string",
+            "default": "center"
+        }
+    },
+    "textdomain": "shelfsage",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

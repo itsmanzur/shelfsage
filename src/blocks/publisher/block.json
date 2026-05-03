@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "shelfsage/publisher",
+    "version": "1.0.0",
+    "title": "ShelfSage publisher",
+    "category": "widgets",
+    "icon": "building",
+    "description": "Display a beautiful publisher profile card.",
+    "supports": {
+        "html": false,
+        "align": true
+    },
+    "attributes": {
+        "publisherId": {
+            "type": "number",
+            "default": 0
+        },
+        "align": {
+            "type": "string",
+            "default": "center"
+        }
+    },
+    "textdomain": "shelfsage",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

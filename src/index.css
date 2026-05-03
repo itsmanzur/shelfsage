@@ -1,0 +1,493 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────
+   Custom Scrollbar — Thin, dark purple (matches architect theme)
+   ────────────────────────────────────────────────────────────── */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(109, 40, 217, 0.4) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(109, 40, 217, 0.35);
+    border-radius: 99px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.65);
+}
+
+/* Right preview panel scrollbar — slightly more visible */
+.custom-scrollbar-light {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(167, 139, 250, 0.3) rgba(249, 250, 251, 0.5);
+}
+
+.custom-scrollbar-light::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar-light::-webkit-scrollbar-track {
+    background: rgba(243, 244, 246, 0.8);
+}
+
+.custom-scrollbar-light::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 99px;
+}
+
+.custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
+    background: rgba(124, 58, 237, 0.5);
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-spin-slow {
+    animation: spin 12s linear infinite;
+}
+
+/* Ensure spin keyframes exist if not provided by Tailwind base */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rmss-animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.rmss-animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+}
+
+.rmss-animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* Staggered delays for grid items */
+.rmss-stagger-1 {
+    animation-delay: 0.1s;
+}
+
+.rmss-stagger-2 {
+    animation-delay: 0.2s;
+}
+
+.rmss-stagger-3 {
+    animation-delay: 0.3s;
+}
+
+.rmss-stagger-4 {
+    animation-delay: 0.4s;
+}
+
+.rmss-stagger-5 {
+    animation-delay: 0.5s;
+}
+
+/* General UI Enhancements */
+.rmss-container {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Fix for button sparks (focus outlines) and jerks (abrupt transforms) */
+button,
+.button,
+.btn,
+a.button,
+.rmss-btn,
+[type="submit"],
+[type="button"],
+.ss-cart-button,
+.rmss-card-hover {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Specific transform smoothing for active/hover states to prevent bouncing */
+button:active:not(:disabled),
+.button:active:not(:disabled),
+a.button:active:not(:disabled),
+.ss-cart-button:active:not(:disabled),
+.rmss-card-hover:active:not(:disabled) {
+    transform: scale(0.97) !important;
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.rmss-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.rmss-btn-primary {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+
+.rmss-btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+/* Pagination */
+.rmss-pagination ul {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.rmss-pagination .page-numbers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: white;
+}
+
+.rmss-pagination .page-numbers:hover,
+.rmss-pagination .page-numbers.current {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+/* Fallback Grid System (if Tailwind fails) */
+.rmss-grid-fallback {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Price Styles Override */
+.rmss-price del,
+.price del,
+.woocommerce-Price-amount del {
+    font-size: 0.75em !important;
+    color: #9ca3af !important;
+    /* gray-400 */
+    text-decoration: line-through !important;
+    margin-right: 0.5rem !important;
+    font-weight: normal !important;
+    opacity: 0.8;
+}
+
+/* Ensure inner elements of del don't override the size/color */
+.rmss-price del *,
+.price del *,
+.woocommerce-Price-amount del * {
+    font-size: inherit !important;
+    color: inherit !important;
+    font-weight: normal !important;
+    text-decoration: line-through !important;
+}
+
+.rmss-price ins,
+.price ins,
+.woocommerce-Price-amount {
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    color: inherit;
+}
+
+/* Fix WordPress Admin Conflicts */
+#rmss-docs-root .prose,
+#rmss-dashboard-root .prose,
+#rmss-welcome-root .prose {
+    max-width: none;
+    /* Override prose max-width constraint if needed */
+}
+
+/* Ensure our React apps take full width available in WP admin area and reset some WP styles */
+#rmss-docs-root,
+#rmss-dashboard-root,
+#rmss-welcome-root,
+#rmss-admin-root {
+    box-sizing: border-box;
+}
+
+#rmss-docs-root *,
+#rmss-dashboard-root *,
+#rmss-welcome-root *,
+#rmss-admin-root * {
+    box-sizing: border-box;
+}
+
+/* Fix search bar width */
+#rmss-docs-root input[type="text"] {
+    max-width: 100%;
+}
+
+/* Adjust sticky sidebar in WP admin context */
+/* WP Admin bar is 32px high usually */
+#rmss-docs-root .sticky {
+    top: 32px;
+}
+
+/* Dark Mode Price adjustments */
+.dark .rmss-price del {
+    color: #6b7280 !important;
+    /* gray-500 */
+}
+
+/* =============================================
+   3D FLIP BOOK — ShelfSage Design Template
+   ============================================= */
+
+/* Scene: provides the perspective depth */
+.flip3d-scene {
+    perspective: var(--flip-perspective, 1200px);
+    width: 100%;
+    height: 100%;
+}
+
+/* The book object itself — holds front + back faces */
+.flip3d-book {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1.4);
+    cursor: pointer;
+}
+
+/* Book tilts slightly on hover (idle tilt effect) */
+.flip3d-book:hover:not(.flipped) {
+    transform: rotateY(-8deg) rotateX(2deg);
+}
+
+/* Full 180° flip on click */
+.flip3d-book.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Front face (book cover) */
+.flip3d-front {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    border-radius: 2px 8px 8px 2px;
+}
+
+/* Spine shadow on the left edge of the cover */
+.flip3d-front::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--flip-depth, 30px);
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.08));
+    z-index: 2;
+    border-radius: 2px 0 0 2px;
+}
+
+/* Glossy sheen over cover */
+.flip3d-front.finish-glossy::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.28) 0%,
+            rgba(255, 255, 255, 0.04) 40%,
+            transparent 70%);
+    z-index: 3;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+/* Matte finish — subtle texture overlay */
+.flip3d-front.finish-matte::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+    z-index: 3;
+    opacity: 0.5;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+/* Back face (inner page) */
+.flip3d-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateY(180deg);
+    overflow: hidden;
+    border-radius: 8px 2px 2px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.25rem;
+    background-color: var(--flip-page-color, #fffef7);
+}
+
+/* Paper texture on the inner page */
+.flip3d-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.055'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Page edge line shadow inside back page */
+.flip3d-back::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.06), transparent);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* All back-page content sits above the texture */
+.flip3d-back>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* Drop shadow for the whole book card */
+.flip3d-wrapper {
+    filter: drop-shadow(8px 12px 24px rgba(0, 0, 0, 0.25));
+    transition: filter 0.4s ease;
+}
+
+.flip3d-wrapper:hover {
+    filter: drop-shadow(16px 20px 36px rgba(0, 0, 0, 0.32));
+}
+
+/* PRO Watermark for free user demo */
+.flip3d-pro-watermark {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 5, 30, 0.55);
+    backdrop-filter: blur(3px);
+    border-radius: 8px;
+}
+
+/* Dynamic Badge (ribbon + discount %) — preview & frontend */
+.ss-badge {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.7rem;
+    line-height: 1.1;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+.ss-badge-circle {
+    border-radius: 50%;
+}
+.ss-badge-scalloped {
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    border-style: double;
+    border-width: 3px;
+}
+.ss-badge-pill {
+    border-radius: 9999px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.65rem;
+}
+.ss-badge-ribbon {
+    border-radius: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0.6rem);
+    padding: 0.35rem 0.5rem 0.2rem;
+}
+.ss-badge-square {
+    border-radius: 4px;
+}
