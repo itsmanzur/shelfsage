@@ -92,7 +92,7 @@ const DashboardApp = ({ initialTab = 'home' }) => {
     const [vaultStockFilter, setVaultStockFilter] = useState('');
     const [quickViewAsset, setQuickViewAsset] = useState(null);
     const [toast, setToast] = useState(null); // { message: '', type: 'success' | 'error' }
-    const [showChangelogModal, setShowChangelogModal] = useState(false);
+    // showChangelogModal removed — What's New lives at Settings → What's New tab
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [vaultLookInside, setVaultLookInside] = useState({ open: false, url: '', title: '', thumbnail: '', authors: '' });
     const [readerStyle, setReaderStyle] = useState(window.rmssAdminSettings?.pdf_reader_style || 'style-1');
@@ -662,14 +662,14 @@ const DashboardApp = ({ initialTab = 'home' }) => {
                         <div>
                             <div className="flex items-center gap-2">
                                 <span className="text-[9px] font-black text-purple-600 uppercase tracking-widest">Latest</span>
-                                <button
-                                    onClick={() => setShowChangelogModal(true)}
+                                <a
+                                    href={`${getAdminUrl('shelfsage-settings')}&tab=whats_new`}
                                     className="text-[9px] font-medium text-gray-500 hover:text-purple-600 underline decoration-dotted decoration-purple-400/50 transition-colors"
                                 >
                                     What&apos;s New
-                                </button>
+                                </a>
                             </div>
-                            <p className="text-[11px] text-gray-600 font-medium">Opens version 1.2 update notes</p>
+                            <p className="text-[11px] text-gray-600 font-medium">Features, fixes &amp; usage guides</p>
                         </div>
                     </div>
 
@@ -1090,13 +1090,13 @@ const DashboardApp = ({ initialTab = 'home' }) => {
                                 <span className="font-black text-white">{statsEnriched.api_requests_today != null ? `${statsEnriched.api_requests_today}/1k` : '—'}</span>
                             </div>
                         </div>
-                        <button
-                            onClick={() => setShowChangelogModal(true)}
+                        <a
+                            href={`${getAdminUrl('shelfsage-settings')}&tab=whats_new`}
                             className="w-full text-left text-[10px] font-bold text-purple-400 hover:text-white transition-colors flex items-center gap-1.5"
                         >
                             <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             What&apos;s New
-                        </button>
+                        </a>
                     </div>
 
                     <div className="p-4 pt-0">
@@ -1264,66 +1264,7 @@ const DashboardApp = ({ initialTab = 'home' }) => {
             />
 
             {/* ── Changelog Modal ── */}
-            {showChangelogModal && (
-                <div
-                    className="fixed inset-0 z-[300] flex items-center justify-center p-4"
-                    style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}
-                    onClick={() => setShowChangelogModal(false)}
-                >
-                    <div
-                        className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 relative animate-in zoom-in-95 duration-200"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {/* Close */}
-                        <button
-                            onClick={() => setShowChangelogModal(false)}
-                            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                        >
-                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-
-                        {/* Header */}
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-200">
-                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-black text-gray-900 tracking-tight">What&apos;s New</h3>
-                                <p className="text-[10px] font-black text-purple-600 uppercase tracking-widest">Version 1.2 — Latest Updates</p>
-                            </div>
-                        </div>
-
-                        {/* Changelog entries */}
-                        <div className="space-y-4">
-                            {[
-                                { tag: 'New', color: 'bg-green-50 text-green-700 border-green-200', title: '3-Tab Shortcode Architect', desc: 'Redesigned left sidebar with Fetch Data, Layout, and Designer tabs for a cleaner workflow.' },
-                                { tag: 'New', color: 'bg-green-50 text-green-700 border-green-200', title: 'Sort & Order Controls', desc: 'Sort books by Date, Title, Price, Rating, or Random — in Ascending or Descending order.' },
-                                { tag: 'Pro', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', title: 'PRO Sort Lock', desc: 'Sort & Order is now a Pro-only feature with a clean blur overlay and upgrade CTA for free users.' },
-                                { tag: 'New', color: 'bg-green-50 text-green-700 border-green-200', title: 'Home Dashboard', desc: 'Brand new home page with Quick Launch cards, Pro Power section, stats row, and ecosystem tools.' },
-                                { tag: 'Fix', color: 'bg-blue-50 text-blue-700 border-blue-200', title: 'Shortcode Block Pinned to Top', desc: 'The generated shortcode code block is now pinned directly below the shortcode name input for quick access.' },
-                                { tag: 'Fix', color: 'bg-blue-50 text-blue-700 border-blue-200', title: 'Smart Greeting Logic', desc: 'Greeting now shows Good Night, Morning, Afternoon, or Evening based on local browser time.' },
-                            ].map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100">
-                                    <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border flex-shrink-0 mt-0.5 ${item.color}`}>{item.tag}</span>
-                                    <div>
-                                        <p className="text-xs font-black text-gray-900">{item.title}</p>
-                                        <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">{item.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <a
-                            href="https://shelfsage.com/changelog"
-                            target="_blank"
-                            className="mt-6 w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black tracking-wide transition-colors"
-                        >
-                            View Full Changelog
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                        </a>
-                    </div>
-                </div>
-            )}
+            {/* Changelog modal removed — What's New now lives at Settings → What's New tab */}
 
             {/* Toast Notification */}
             {

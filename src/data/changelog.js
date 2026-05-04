@@ -74,6 +74,52 @@ export const changelog = [
     ],
   },
   {
+    version: '1.2.0',
+    date: '2025-12-01',
+    features: [
+      {
+        badge: 'NEW',
+        category: 'UX',
+        icon: '🏗️',
+        title: '3-Tab Shortcode Architect',
+        summary: 'Redesigned left sidebar with Fetch Data, Layout, and Designer tabs for a cleaner workflow.',
+        usage: 'ShelfSage → Shortcode Architect → use the three tabs on the left panel.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
+        icon: '🔃',
+        title: 'Sort & Order Controls',
+        summary: 'Sort books by Date, Title, Price, Rating, or Random — in Ascending or Descending order.',
+        usage: 'Shortcode Architect → Fetch Data → Sort & Order section at the bottom.',
+      },
+      {
+        badge: 'IMPROVED',
+        category: 'UX',
+        icon: '🏠',
+        title: 'Home Dashboard Redesign',
+        summary: 'New home page with Quick Launch cards, Pro Power section, stats row, and ecosystem tools.',
+        usage: 'ShelfSage → Dashboard → Home tab.',
+      },
+      {
+        badge: 'FIX',
+        category: 'UX',
+        icon: '📌',
+        title: 'Shortcode Block Pinned to Top',
+        summary: 'The generated shortcode code block is now pinned directly below the shortcode name input.',
+        usage: 'Shortcode Architect → top of the left panel.',
+      },
+      {
+        badge: 'FIX',
+        category: 'UX',
+        icon: '🌅',
+        title: 'Smart Greeting Logic',
+        summary: 'Greeting now shows Good Night, Morning, Afternoon, or Evening based on local browser time.',
+        usage: 'Automatic — shown on the Dashboard home.',
+      },
+    ],
+  },
+  {
     version: '1.5.0',
     date: '2026-04-01',
     features: [
