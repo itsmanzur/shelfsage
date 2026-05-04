@@ -180,6 +180,35 @@ class TRSSS_Settings
             $sanitized = sanitize_text_field($params['look_inside_btn_position']);
             $settings['look_inside_btn_position'] = in_array($sanitized, $valid_positions, true) ? $sanitized : 'bottom-left';
         }
+
+        // Book page typography (must match SettingsApp.jsx preset values).
+        if (isset($params['book_font_family']) && is_string($params['book_font_family'])) {
+            $allowed_book_fonts = array(
+                'inherit',
+                'custom',
+                "'Hind Siliguri', sans-serif",
+                "'Noto Serif Bengali', serif",
+                "'Noto Sans Bengali', sans-serif",
+                "'Kalpurush', sans-serif",
+                "'SolaimanLipi', sans-serif",
+                'Georgia, serif',
+                "'Times New Roman', Times, serif",
+                'system-ui, sans-serif',
+            );
+            $bf = trim(wp_check_invalid_utf8($params['book_font_family'], true));
+            $settings['book_font_family'] = in_array($bf, $allowed_book_fonts, true) ? $bf : 'inherit';
+        }
+        if (isset($params['book_font_family_custom']) && is_string($params['book_font_family_custom'])) {
+            $custom_bf = wp_strip_all_tags($params['book_font_family_custom']);
+            $custom_bf = preg_replace('/[\r\n\t\0\x0B]/', '', $custom_bf);
+            if (function_exists('mb_substr')) {
+                $custom_bf = mb_substr($custom_bf, 0, 400, 'UTF-8');
+            } else {
+                $custom_bf = substr($custom_bf, 0, 400);
+            }
+            $settings['book_font_family_custom'] = $custom_bf;
+        }
+
         if (isset($params['enable_affiliate']))
             $settings['enable_affiliate'] = (bool)$params['enable_affiliate'];
         if (isset($params['enable_schema']))

@@ -17,6 +17,14 @@ export const changelog = [
     features: [
       {
         badge: 'NEW',
+        category: 'UX',
+        icon: '🔤',
+        title: 'Book Page Font Family',
+        summary: 'Choose typography for ShelfSage single product pages: inherit from your theme, curated Bengali/English stacks, or a custom CSS font-family value. Google Fonts load only when a web font preset is selected.',
+        usage: 'Settings → Appearance → Book Page Font Family. Pick a preset or Custom, then Save Settings. Theme Default keeps zero extra font requests.',
+      },
+      {
+        badge: 'NEW',
         category: 'Feature',
         icon: '📖',
         title: 'Reading Lists (My Library)',

@@ -53,6 +53,7 @@ function trsss_ajax_save_settings_handler() {
     // Reuse settings class update logic
     $settings_obj = new TRSSS_Settings();
     $request = new WP_REST_Request( 'POST' );
+    $request->set_header( 'Content-Type', 'application/json; charset=' . get_option( 'blog_charset' ) );
     $request->set_body( wp_json_encode( $params ) );
     $response = $settings_obj->update_settings( $request );
     if ( is_wp_error( $response ) ) {
