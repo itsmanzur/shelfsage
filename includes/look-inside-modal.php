@@ -147,10 +147,13 @@ $label_li      = isset( $labels ) ? esc_html( rmss_get_label( 'look_inside', 'Lo
      * Route all non-image URLs through our PDF.js viewer.
      */
     var _pdfViewerBase = <?php echo wp_json_encode( TRSSS_URL . 'includes/pdf-viewer.php' ); ?>;
+    var _pdfNonce = <?php echo wp_json_encode( wp_create_nonce( 'trsss_pdf_view' ) ); ?>;
 
     function getViewerUrl(rawUrl) {
         if (!isImage(rawUrl) && isMobileDevice()) {
-            return _pdfViewerBase + '?file=' + encodeURIComponent(rawUrl);
+            return _pdfViewerBase
+                + '?file='  + encodeURIComponent(rawUrl)
+                + '&nonce=' + encodeURIComponent(_pdfNonce);
         }
         return rawUrl;
     }
