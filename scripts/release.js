@@ -14,6 +14,7 @@ const excludedDirs = new Set([
   '.github',
   '.idea',
   '.vscode',
+  '.cursor',
   'dist',
   'node_modules',
   'scripts',
@@ -23,6 +24,7 @@ const excludedDirs = new Set([
 
 const excludedFiles = new Set([
   '.DS_Store',
+  '.gitignore',
   'package-lock.json',
   'package.json',
   'postcss.config.js',
@@ -34,6 +36,14 @@ const excludedExtensions = new Set([
   '.map',
 ]);
 
+/** Dev-only or backup filenames — never ship in the WordPress plugin zip. */
+const excludedNamePatterns = [
+  /^api-legacy-monolith\.pre-section2\.php$/i,
+  /^_build-.*\.js$/i,
+  /^_rebuild-.*\.js$/i,
+  /^shelfsage-audit-report\.md$/i,
+];
+
 function shouldExclude(path) {
   const rel = relative(root, path).replace(/\\/g, '/');
   const name = basename(path);
@@ -44,6 +54,12 @@ function shouldExclude(path) {
 
   if (excludedFiles.has(name)) {
     return true;
+  }
+
+  for (const re of excludedNamePatterns) {
+    if (re.test(name)) {
+      return true;
+    }
   }
 
   const dotIndex = name.lastIndexOf('.');
@@ -78,6 +94,13 @@ mkdirSync(stageDir, { recursive: true });
 
 for (const entry of readdirSync(root)) {
   copyTree(join(root, entry), join(stageDir, entry));
+}
+
+// Packaging bug fix: nested templates/templates/ must not ship twice.
+const dupTemplates = join(stageDir, 'templates', 'templates');
+if (existsSync(dupTemplates)) {
+  rmSync(dupTemplates, { recursive: true, force: true });
+  console.log('Removed duplicate templates/templates/ from release.');
 }
 
 if (!existsSync(join(stageDir, 'shelfsage.php'))) {
