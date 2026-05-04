@@ -6,6 +6,8 @@ import ShelfTalker from './components/ShelfTalker';
 import FilterApp from './components/FilterApp';
 import SettingsApp from './components/SettingsApp';
 import BooksShortcode from './components/BooksShortcode';
+import ReadingListPage from './components/ReadingListPage';
+import ReadingListButton from './components/ReadingListButton';
 import './index.css';
 
 
@@ -100,6 +102,16 @@ if (filterRoot) {
     );
 }
 
+// 3b. Reading List / Wishlist page
+const readingListRoot = document.getElementById('rmss-reading-list-app');
+if (readingListRoot) {
+    ReactDOM.createRoot(readingListRoot).render(
+        <React.StrictMode>
+            <ReadingListPage />
+        </React.StrictMode>
+    );
+}
+
 // 4. Related Books (single product page)
 const relatedRoot = document.getElementById('rmss-related-books');
 if (relatedRoot) {
@@ -111,6 +123,27 @@ if (relatedRoot) {
         </React.StrictMode>
     );
 }
+
+// 4b. Single product reading-list buttons rendered by PHP hooks/templates
+document.querySelectorAll('.ss-reading-list-single').forEach((container) => {
+    if (container.dataset.ssMounted) return;
+    container.dataset.ssMounted = 'true';
+    const productId = Number(container.dataset.productId || 0);
+    const book = {
+        id: productId,
+        title: container.dataset.title || '',
+        thumbnail: container.dataset.thumbnail || '',
+        image: container.dataset.image || container.dataset.thumbnail || '',
+        authors: container.dataset.authors || '',
+        price: container.dataset.price || '',
+        permalink: container.dataset.permalink || '',
+    };
+    ReactDOM.createRoot(container).render(
+        <React.StrictMode>
+            <ReadingListButton book={book} />
+        </React.StrictMode>
+    );
+});
 
 // 5. Settings App (Admin)
 const settingsRoot = document.getElementById('rmss-settings-root');

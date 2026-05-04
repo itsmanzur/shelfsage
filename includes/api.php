@@ -22,4 +22,6 @@ require_once __DIR__ . '/api/ajax-search-invalidate.php';
 require_once __DIR__ . '/api/ajax-admin-fallbacks.php';
 require_once __DIR__ . '/api/ajax-architect-proxy.php';
 require_once __DIR__ . '/api/pdf-proxy.php';
+require_once __DIR__ . '/api/import-books.php';
+require_once __DIR__ . '/api/reading-lists.php';
 require_once __DIR__ . '/api/register-rest-routes.php';

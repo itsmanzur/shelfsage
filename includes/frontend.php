@@ -29,6 +29,7 @@ function trsss_register_app_shortcode()
     add_shortcode('shelfsage_series', 'trsss_render_taxonomy_list_shortcode');
     add_shortcode('shelfsage_genres', 'trsss_render_taxonomy_list_shortcode');
     add_shortcode('shelfsage_filter', 'trsss_render_filter_shortcode');
+    add_shortcode('shelfsage_reading_list', 'trsss_render_reading_list_shortcode');
 }
 add_action('init', 'trsss_register_app_shortcode');
 
@@ -97,6 +98,8 @@ function trsss_get_rmss_localize_data() {
         'look_inside_btn_align' => isset($settings['look_inside_btn_align']) ? $settings['look_inside_btn_align'] : 'center',
         'default_book_image' => isset($settings['default_book_image']) ? esc_url_raw($settings['default_book_image']) : '',
         'woocommerceAvailable' => trsss_is_woocommerce_available(),
+        'isLoggedIn' => is_user_logged_in(),
+        'loginUrl' => esc_url_raw(wp_login_url(get_permalink())),
     );
 }
 
@@ -144,6 +147,12 @@ add_action('enqueue_block_assets', 'trsss_enqueue_block_editor_assets');
 function trsss_render_filter_shortcode($atts)
 {
     return '<div id="rmss-filter-app"></div>';
+}
+
+function trsss_render_reading_list_shortcode($atts)
+{
+    trsss_enqueue_scripts();
+    return '<div id="rmss-reading-list-app" class="rmss-reading-list-root"></div>';
 }
 
 function trsss_render_taxonomy_list_shortcode($atts, $content, $tag)
@@ -242,7 +251,7 @@ function trsss_enqueue_scripts()
             || has_shortcode($content, 'shelfsage_books')
             || has_shortcode($content, 'shelfsage_authors') || has_shortcode($content, 'shelfsage_publishers')
             || has_shortcode($content, 'shelfsage_series') || has_shortcode($content, 'shelfsage_genres')
-            || has_shortcode($content, 'shelfsage_filter');
+            || has_shortcode($content, 'shelfsage_filter') || has_shortcode($content, 'shelfsage_reading_list');
         if ($has_shortcode) {
             $should_enqueue = true;
         }
@@ -358,6 +367,35 @@ function trsss_enqueue_scripts()
     }
 }
 add_action('wp_enqueue_scripts', 'trsss_enqueue_scripts', 20); // Increased priority to 20 to run after theme scripts
+
+function trsss_render_single_product_reading_list_button() {
+    if ( ! trsss_is_woocommerce_available() || ! is_product() ) {
+        return;
+    }
+
+    $product_id = get_the_ID();
+    if ( ! $product_id ) {
+        return;
+    }
+
+    $author_terms = get_the_terms( $product_id, 'rmss_author' );
+    $author_names = $author_terms && ! is_wp_error( $author_terms ) ? implode( ', ', wp_list_pluck( $author_terms, 'name' ) ) : '';
+    $product      = wc_get_product( $product_id );
+    $price        = $product ? wp_strip_all_tags( $product->get_price_html() ) : '';
+    $thumbnail    = get_the_post_thumbnail_url( $product_id, 'woocommerce_thumbnail' ) ?: '';
+    $image        = get_the_post_thumbnail_url( $product_id, 'woocommerce_single' ) ?: $thumbnail;
+
+    echo '<div class="ss-reading-list-single my-3"'
+        . ' data-product-id="' . esc_attr( $product_id ) . '"'
+        . ' data-title="' . esc_attr( get_the_title( $product_id ) ) . '"'
+        . ' data-thumbnail="' . esc_url( $thumbnail ) . '"'
+        . ' data-image="' . esc_url( $image ) . '"'
+        . ' data-authors="' . esc_attr( $author_names ) . '"'
+        . ' data-price="' . esc_attr( $price ) . '"'
+        . ' data-permalink="' . esc_url( get_permalink( $product_id ) ) . '"'
+        . '></div>';
+}
+add_action( 'woocommerce_after_add_to_cart_button', 'trsss_render_single_product_reading_list_button', 18 );
 
 // Apply custom "Add to Cart" label to default WooCommerce single product button
 function trsss_woocommerce_add_to_cart_button_text($text) {

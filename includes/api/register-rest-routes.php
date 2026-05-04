@@ -96,6 +96,32 @@ function trsss_register_search_route() {
         'callback' => 'trsss_clear_api_cache',
         'permission_callback' => function() { return current_user_can( 'manage_options' ); },
     ) );
+
+    register_rest_route( 'shelfsage/v1', '/import-books', array(
+        'methods'             => 'POST',
+        'callback'            => 'trsss_import_books_rest',
+        'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+    ) );
+
+    register_rest_route( 'shelfsage/v1', '/reading-list', array(
+        array(
+            'methods'             => 'GET',
+            'callback'            => 'trsss_get_reading_list_rest',
+            'permission_callback' => function() { return is_user_logged_in(); },
+        ),
+        array(
+            'methods'             => 'POST',
+            'callback'            => 'trsss_update_reading_list_rest',
+            'permission_callback' => function() { return is_user_logged_in(); },
+        ),
+    ) );
+
+    register_rest_route( 'shelfsage/v1', '/reading-list/(?P<product_id>\d+)', array(
+        'methods'             => 'DELETE',
+        'callback'            => 'trsss_delete_reading_list_item_rest',
+        'permission_callback' => function() { return is_user_logged_in(); },
+    ) );
+
     // Shortcode CRUD
     register_rest_route( 'shelfsage/v1', '/shortcodes', array(
         array(

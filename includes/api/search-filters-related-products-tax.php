@@ -99,7 +99,9 @@ function trsss_handle_search( $request ) {
         return trsss_woocommerce_required_error();
     }
 
-    $skip_cache = ! empty( $params['no_cache'] ) && current_user_can( 'edit_posts' );
+    $can_admin_preview = current_user_can( 'edit_products' ) || current_user_can( 'manage_woocommerce' ) || current_user_can( 'manage_options' );
+    $is_admin_preview  = ! empty( $params['preview'] ) && $can_admin_preview;
+    $skip_cache        = ( ! empty( $params['no_cache'] ) || $is_admin_preview ) && current_user_can( 'edit_posts' );
 
     // Caching Key (v8 — deterministic wp_json_encode); skip cache when no_cache=1 (e.g. admin preview)
     if ( ! $skip_cache ) {
@@ -111,6 +113,9 @@ function trsss_handle_search( $request ) {
     }
 
     $term = isset( $params['term'] ) ? sanitize_text_field( $params['term'] ) : '';
+    if ( '' === $term && isset( $params['search'] ) ) {
+        $term = sanitize_text_field( $params['search'] );
+    }
     $type = isset( $params['type'] ) ? sanitize_text_field( $params['type'] ) : 'latest'; // latest, featured, onsale, bestsellers
     $authors = isset( $params['author'] ) ? array_map( 'sanitize_title', array_map( 'trim', explode( ',', $params['author'] ) ) ) : array();
     $publishers = isset( $params['publisher'] ) ? array_map( 'sanitize_title', array_map( 'trim', explode( ',', $params['publisher'] ) ) ) : array();
@@ -244,6 +249,18 @@ function trsss_handle_search( $request ) {
 
     $product_posts = get_posts( $args );
     $ids = array_map( 'intval', wp_list_pluck( $product_posts, 'ID' ) );
+
+    if ( empty( $ids ) && $is_admin_preview && empty( $term ) && empty( $include ) && empty( $tax_query ) && 'latest' === $type ) {
+        $fallback_args = array(
+            'post_type'      => 'product',
+            'posts_per_page' => $limit,
+            'post_status'    => array( 'publish', 'private', 'draft', 'pending' ),
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        );
+        $fallback_posts = get_posts( $fallback_args );
+        $ids            = array_map( 'intval', wp_list_pluck( $fallback_posts, 'ID' ) );
+    }
 
     // When search term looks like ISBN, also find by meta _rmss_isbn and merge
     if ( ! empty( $term ) && preg_match( '/^[\d\-]{9,17}$/', preg_replace( '/\s/', '', $term ) ) ) {
@@ -569,12 +586,15 @@ function trsss_get_products_rest( $request ) {
 
     $params = $request->get_params();
     $search = isset( $params['search'] ) ? sanitize_text_field( $params['search'] ) : '';
+    $limit  = isset( $params['limit'] ) ? absint( $params['limit'] ) : 50;
+    $limit  = min( 100, max( 1, $limit ) );
+    $can_admin_preview = current_user_can( 'edit_products' ) || current_user_can( 'manage_woocommerce' ) || current_user_can( 'manage_options' );
     
     // Query Args - Reuse logic from AJAX endpoint
     $args = array(
         'post_type'      => 'product',
-        'posts_per_page' => 50, // Increased limit for admin
-        'post_status'    => 'publish',
+        'posts_per_page' => $limit, // Increased limit for admin
+        'post_status'    => $can_admin_preview ? array( 'publish', 'private', 'draft', 'pending' ) : 'publish',
         'orderby'        => 'date',
         'order'          => 'DESC'
     );

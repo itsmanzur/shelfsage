@@ -94,6 +94,16 @@ function trsss_ajax_get_products_or_terms_handler() {
 
 	if ( strpos( $endpoint, '/products' ) !== false ) {
 		$req      = new WP_REST_Request( 'GET' );
+		$parts    = wp_parse_url( $endpoint );
+		$query    = array();
+		if ( ! empty( $parts['query'] ) ) {
+			parse_str( $parts['query'], $query );
+			foreach ( $query as $key => $val ) {
+				if ( is_string( $key ) && preg_match( '/^[a-zA-Z0-9_]+$/', $key ) ) {
+					$req->set_param( $key, $val );
+				}
+			}
+		}
 		$response = trsss_get_products_rest( $req );
 		$data     = is_a( $response, 'WP_REST_Response' ) ? $response->get_data() : $response;
 		wp_send_json_success( $data );

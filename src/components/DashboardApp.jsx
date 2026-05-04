@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import VaultAssetCreator from './VaultAssetCreator';
 import PremiumLockedOverlay from './PremiumLockedOverlay';
 import LookInsideModal from './LookInsideModal';
+import CsvImportModal from './CsvImportModal';
 
 const getStockStatus = (asset) => asset.meta?._ss_vault_stock || asset.meta?._ss_vault_stock_status || 'instock';
 const getStockLabel = (s) => ({ instock: 'In Stock', outofstock: 'Out of Stock', onbackorder: 'Low Stock' }[s] || 'In Stock');
@@ -92,6 +93,7 @@ const DashboardApp = ({ initialTab = 'home' }) => {
     const [quickViewAsset, setQuickViewAsset] = useState(null);
     const [toast, setToast] = useState(null); // { message: '', type: 'success' | 'error' }
     const [showChangelogModal, setShowChangelogModal] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
     const [vaultLookInside, setVaultLookInside] = useState({ open: false, url: '', title: '', thumbnail: '', authors: '' });
     const [readerStyle, setReaderStyle] = useState(window.rmssAdminSettings?.pdf_reader_style || 'style-1');
 
@@ -1111,8 +1113,28 @@ const DashboardApp = ({ initialTab = 'home' }) => {
                             <PremiumLockedOverlay isPro={isPro} featureName="ShelfSage Vault" mode="replacement">
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="mb-6">
-                                        <h2 className="text-xl font-bold text-gray-900 mb-1">ShelfSage Vault</h2>
-                                        <p className="text-sm text-gray-500">Manage premium book assets and custom collections.</p>
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                            <div>
+                                                <h2 className="text-xl font-bold text-gray-900 mb-1">ShelfSage Vault</h2>
+                                                <p className="text-sm text-gray-500">Manage premium book assets and custom collections.</p>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <button
+                                                    onClick={() => setIsImportOpen(true)}
+                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-xl text-sm font-bold hover:bg-purple-50 transition-all shadow-sm"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 4v12m0-12l-4 4m4-4l4 4" /></svg>
+                                                    Import CSV/Excel
+                                                </button>
+                                                <button
+                                                    onClick={() => { setEditAsset(null); setIsCreatorOpen(true); }}
+                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-200"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                                    Add Asset
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {/* ── Filter Bar: Prominent Search + Category + View Toggle ── */}
@@ -1227,6 +1249,17 @@ const DashboardApp = ({ initialTab = 'home' }) => {
                     fetchVaultAssets();
                     setEditAsset(null);
                     showToast(message || 'Asset saved successfully');
+                }}
+            />
+
+            <CsvImportModal
+                isOpen={isImportOpen}
+                onClose={() => setIsImportOpen(false)}
+                apiUrl={ssApiUrl}
+                nonce={wpRestNonce}
+                onImportComplete={(count, target) => {
+                    fetchVaultAssets();
+                    showToast(`${count} books imported to ${target === 'woocommerce' ? 'WooCommerce' : 'Vault'} successfully`);
                 }}
             />
 

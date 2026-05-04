@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LookInsideModal from './LookInsideModal';
+import ReadingListButton from './ReadingListButton';
 
 /** Get dominant color from image URL (for Negative Space color flood). */
 function getDominantColorFromUrl(url) {
@@ -329,7 +330,7 @@ const BookCard = ({ book, settings = {} }) => {
     return (
         <>
             <div
-                className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden h-full"
+                className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-visible h-full"
                 style={{ borderRadius: `${s.border_radius}px` }}
             >
                 {/* Look Inside — Top Left Outer: above image, outside box */}
@@ -512,6 +513,7 @@ const BookCard = ({ book, settings = {} }) => {
                             )}
 
                             <div className={`ss-card-actions flex gap-2 ${justifyClass}`}>
+                                <ReadingListButton book={book} />
                                 {/* Custom Button */}
                                 {(settings.enable_custom_button ?? window.rmssSettings?.enable_custom_button) && (
                                     <a href={book.permalink || '#'} className="inline-flex items-center justify-center bg-gray-800 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all whitespace-nowrap">

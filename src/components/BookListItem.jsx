@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import LookInsideModal from './LookInsideModal';
+import ReadingListButton from './ReadingListButton';
 
 function getBadgeText(book) {
     if (!book) return null;
@@ -141,6 +142,7 @@ const BookListItem = ({ book, settings = {} }) => {
                     )}
 
                     <div className="flex flex-wrap items-center justify-end gap-2 mt-auto pt-1">
+                        <ReadingListButton book={book} />
                         {showLookInside && (
                             <button
                                 onClick={() => setModalOpen(true)}

@@ -3,6 +3,40 @@ import PremiumLockedOverlay from './PremiumLockedOverlay';
 import ProBadge from './ProBadge';
 import LookInsideModal from './LookInsideModal';
 
+const buildShelfSageRestUrl = (endpoint = '', query = null) => {
+    const base = window.rmssAdminSettings?.restUrl || '/wp-json/shelfsage/v1';
+    const path = endpoint ? `/${String(endpoint).replace(/^\/+/, '')}` : '';
+    const appendQuery = (url, params) => {
+        if (!params) return url;
+        const qs = params instanceof URLSearchParams
+            ? params.toString()
+            : typeof params === 'string'
+                ? params.replace(/^\?/, '')
+                : new URLSearchParams(params).toString();
+        if (!qs) return url;
+        return `${url}${url.includes('?') ? '&' : '?'}${qs}`;
+    };
+
+    if (base.includes('rest_route=')) {
+        try {
+            const url = new URL(base, window.location.origin);
+            const route = (url.searchParams.get('rest_route') || '/shelfsage/v1').replace(/\/+$/, '');
+            url.searchParams.set('rest_route', `${route}${path}`);
+            if (query) {
+                const params = query instanceof URLSearchParams
+                    ? query
+                    : new URLSearchParams(typeof query === 'string' ? query.replace(/^\?/, '') : query);
+                params.forEach((value, key) => url.searchParams.set(key, value));
+            }
+            return url.toString();
+        } catch (_) {
+            return appendQuery(`${base}${path}`, query);
+        }
+    }
+
+    return appendQuery(`${base.replace(/\/+$/, '')}${path}`, query);
+};
+
 /**
  * ── Font Picker Dropdown Component ─────────────────────────────────────────────
  * A proper React component (not an IIFE) so hooks are called at the top level.
@@ -1401,7 +1435,7 @@ function getDominantColorFromUrl(url) {
     const fetchTerms = async (taxonomy) => {
         setTermsLoading(true);
         try {
-            const response = await fetch(`${window.rmssAdminSettings?.restUrl}/taxonomies/${taxonomy}`, {
+            const response = await fetch(buildShelfSageRestUrl(`/taxonomies/${taxonomy}`), {
                 headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce }
             });
             const data = await response.json();
@@ -1424,7 +1458,7 @@ function getDominantColorFromUrl(url) {
     const loadShortcode = async (id) => {
         setLoading(true);
         try {
-            const response = await fetch(`${window.rmssAdminSettings?.restUrl}/shortcodes/${id}`, {
+            const response = await fetch(buildShelfSageRestUrl(`/shortcodes/${id}`), {
                 headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce }
             });
             const data = await response.json();
@@ -1512,7 +1546,7 @@ function getDominantColorFromUrl(url) {
 
         setIsRefreshing(true);
         try {
-            const res = await fetch(`${window.rmssAdminSettings?.restUrl}/amazon-search`, {
+            const res = await fetch(buildShelfSageRestUrl('/amazon-search'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1623,7 +1657,8 @@ function getDominantColorFromUrl(url) {
         setLoading(true);
         try {
             const params = new URLSearchParams();
-            params.append('limit', settings.show_all ? 100 : (settings.limit || 12));
+            const previewLimit = settings.show_all ? 100 : (parseInt(settings.limit, 10) || 12);
+            params.append('limit', previewLimit);
 
             const simpleTypes = ['latest', 'featured', 'onsale', 'bestsellers', 'specific'];
             if (simpleTypes.includes(settings.query_type) && settings.query_type !== 'specific') {
@@ -1642,11 +1677,36 @@ function getDominantColorFromUrl(url) {
             if (settings.sort_by && settings.sort_by !== 'date') params.append('sort_by', settings.sort_by);
             if (settings.sort_order && settings.sort_order !== 'desc') params.append('sort_order', settings.sort_order);
             params.append('no_cache', '1'); // Admin preview: always fresh results
+            params.append('preview', '1'); // Admin preview can read draft/private products if needed
 
-            const response = await fetch(`${window.rmssAdminSettings?.restUrl}/search?${params.toString()}`, {
+            const response = await fetch(buildShelfSageRestUrl('/search', params), {
                 headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce }
             });
-            const data = await response.json();
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.message || errorData?.data?.message || `WooCommerce preview request failed (${response.status})`);
+            }
+            let data = await response.json();
+
+            const hasFilters = !!(
+                settings.term_slug ||
+                (settings.products && settings.products.length > 0) ||
+                (settings.selectedProducts && settings.selectedProducts.length > 0)
+            );
+            if ((!Array.isArray(data) || data.length === 0) && settings.query_type === 'latest' && !hasFilters) {
+                const fallbackParams = new URLSearchParams();
+                fallbackParams.append('limit', previewLimit);
+                fallbackParams.append('preview', '1');
+                const fallbackResponse = await fetch(buildShelfSageRestUrl('/products', fallbackParams), {
+                    headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce }
+                });
+                if (fallbackResponse.ok) {
+                    const fallbackData = await fallbackResponse.json();
+                    if (Array.isArray(fallbackData) && fallbackData.length > 0) {
+                        data = fallbackData;
+                    }
+                }
+            }
 
             if (data && Array.isArray(data)) {
                 setPreviewProducts(data.map(item => getNormalizedData(item, 'woocommerce', settings)));
@@ -1676,8 +1736,7 @@ function getDominantColorFromUrl(url) {
         setIsbnError('');
 
         try {
-            const baseUrl = (window.rmssAdminSettings?.restUrl || '').replace(/\/?$/, '');
-            const fetchUrl = baseUrl ? `${baseUrl}/fetch-books` : '/wp-json/shelfsage/v1/fetch-books';
+            const fetchUrl = buildShelfSageRestUrl('/fetch-books');
             const res = await fetch(fetchUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -1822,7 +1881,7 @@ function getDominantColorFromUrl(url) {
 
             let items = ajaxData.data?.data?.items || ajaxData.data?.items || ajaxData.items || [];
             if (!items.length) {
-                const restUrl = (window.rmssAdminSettings?.restUrl || '').replace(/\/?$/, '') + '/fetch-books';
+                const restUrl = buildShelfSageRestUrl('/fetch-books');
                 const restRes = await fetch(restUrl, {
                     method: 'POST',
                     credentials: 'same-origin',
@@ -1931,7 +1990,7 @@ function getDominantColorFromUrl(url) {
      */
     const autoCreateProduct = async (book) => {
         try {
-            const res = await fetch(`${window.rmssAdminSettings?.restUrl}/create-product`, {
+            const res = await fetch(buildShelfSageRestUrl('/create-product'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1962,8 +2021,12 @@ function getDominantColorFromUrl(url) {
         setSpecificSearching(true);
         try {
             const res = await fetch(
-                `${window.rmssAdminSettings?.restUrl}/search?search=${encodeURIComponent(query.trim())}&limit=20`,
-                { headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce } }
+                buildShelfSageRestUrl('/products', {
+                    search: query.trim(),
+                    limit: 20,
+                    preview: 1
+                }),
+                { headers: { 'X-WP-Nonce': window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce } }
             );
             const data = await res.json();
             setSpecificResults(Array.isArray(data) ? data : []);
@@ -2176,7 +2239,6 @@ function getDominantColorFromUrl(url) {
         const title = saveTitle.trim() || 'Untitled Shortcode';
         const shortcodeString = generateShortcode();
         const nonce = window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce;
-        const baseUrl = window.rmssAdminSettings?.restUrl;
 
         // Strip heavy data arrays from settings before saving
         // Only save pure configuration, not fetched data blobs
@@ -2192,8 +2254,8 @@ function getDominantColorFromUrl(url) {
 
         try {
             const url = currentShortcodeId
-                ? `${baseUrl}/shortcodes/${currentShortcodeId}`
-                : `${baseUrl}/shortcodes`;
+                ? buildShelfSageRestUrl(`/shortcodes/${currentShortcodeId}`)
+                : buildShelfSageRestUrl('/shortcodes');
 
             const res = await fetch(url, {
                 method: 'POST',
@@ -2239,9 +2301,8 @@ function getDominantColorFromUrl(url) {
         if (!currentShortcodeId) return;
         if (!window.confirm('Delete this shortcode? This cannot be undone.')) return;
         const nonce = window.rmssAdminSettings?.nonce || window.rmssAdminSettings?.restNonce;
-        const baseUrl = window.rmssAdminSettings?.restUrl;
         try {
-            await fetch(`${baseUrl}/shortcodes/${currentShortcodeId}`, {
+            await fetch(buildShelfSageRestUrl(`/shortcodes/${currentShortcodeId}`), {
                 method: 'DELETE',
                 headers: { 'X-WP-Nonce': nonce },
             });
