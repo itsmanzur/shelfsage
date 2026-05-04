@@ -4,13 +4,15 @@
   "description": "ShelfSage — Book management plugin for WooCommerce",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run lint:php",
     "strip-bom": "node -e \"const fs=require('fs'),path=require('path'),g=d=>{fs.readdirSync(d,{withFileTypes:true}).forEach(e=>{const fp=path.join(d,e.name);if(e.isDirectory()){if(e.name==='node_modules')return;g(fp);}else if(fp.endsWith('.php')){const b=fs.readFileSync(fp);if(b[0]===0xEF&&b[1]===0xBB&&b[2]===0xBF){fs.writeFileSync(fp,b.slice(3));console.log('BOM stripped:',fp.replace(process.cwd(),''));}}})};g('.');\"",
-    "build": "vite build && npm run strip-bom",
+    "lint:php": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$ErrorActionPreference='Stop'; $cmd=Get-Command php -ErrorAction SilentlyContinue; $php=if($cmd){$cmd.Source}else{'C:\\Users\\Manzur\\AppData\\Roaming\\Local\\lightning-services\\php-8.2.30+1\\bin\\win64\\php.exe'}; $files=Get-ChildItem -Recurse -Filter *.php -File | Where-Object { $_.FullName -notmatch '\\\\node_modules\\\\|\\\\vendor\\\\|\\\\dist\\\\' }; foreach ($file in $files) { & $php -l $file.FullName }\"",
+    "build": "vite build && node scripts/copy-pdfjs-assets.js && npm run strip-bom",
     "watch": "vite build --watch",
     "build:blocks": "wp-scripts build",
     "start:blocks": "wp-scripts start",
-    "release": "npm run build && node scripts/release.js"
+    "release": "npm run build && node scripts/release.js",
+    "release:zip": "node scripts/release.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,7 @@
   "dependencies": {
     "axios": "^1.6.0",
     "lodash.debounce": "^4.0.8",
+    "pdfjs-dist": "^3.11.174",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-masonry-css": "^1.0.16",

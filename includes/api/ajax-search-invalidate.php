@@ -17,6 +17,10 @@ function trsss_ajax_search_products() {
         wp_die();
     }
 
+    if ( ! trsss_is_woocommerce_available() ) {
+        wp_send_json_error( array( 'message' => trsss_woocommerce_required_error()->get_error_message() ), 400 );
+    }
+
     $term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
     
     // Query Args

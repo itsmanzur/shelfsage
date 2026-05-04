@@ -56,7 +56,12 @@ function trsss_public_rest_rate_limit_check( $bucket ) {
 	$window = (int) floor( time() / 60 );
 	$key    = 'trsss_public_rl_v1_' . md5( $ip . '|' . $bucket ) . '_' . $window;
 	$count  = (int) get_transient( $key );
-	$limit  = (int) apply_filters( 'trsss_public_rest_rate_limit_per_minute', 120, $bucket );
+	$defaults = array(
+		'search'  => 60,
+		'filters' => 120,
+		'related' => 120,
+	);
+	$limit = (int) apply_filters( 'trsss_public_rest_rate_limit_per_minute', $defaults[ $bucket ] ?? 120, $bucket );
 
 	if ( $count >= $limit ) {
 		return new WP_Error(

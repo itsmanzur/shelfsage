@@ -218,7 +218,7 @@ function trsss_enqueue_admin_scripts()
 
     // Simplified Low Stock Logic for Dashboard Control Center (capped; full count can be huge)
     $low_stock_cap = max( 1, min( 2000, (int) apply_filters( 'trsss_admin_dashboard_low_stock_cap', 500 ) ) );
-    $low_stock_wc = get_posts( array(
+    $low_stock_wc = trsss_is_woocommerce_available() ? get_posts( array(
         'post_type'      => 'product',
         'posts_per_page' => $low_stock_cap + 1,
         'meta_query'     => array(
@@ -236,7 +236,7 @@ function trsss_enqueue_admin_scripts()
             ),
         ),
         'fields'         => 'ids',
-    ) );
+    ) ) : array();
     if ( count( $low_stock_wc ) > $low_stock_cap ) {
         $low_stock_wc = array_slice( $low_stock_wc, 0, $low_stock_cap );
         $low_stock_wc_truncated = true;
@@ -266,7 +266,7 @@ function trsss_enqueue_admin_scripts()
 
     // Fetch Recent Activity (Last 3 modified items)
     $recent_activity_posts = get_posts(array(
-        'post_type' => array('product', 'ss_vault_assets', 'rmss_shortcode'),
+        'post_type' => trsss_is_woocommerce_available() ? array('product', 'ss_vault_assets', 'rmss_shortcode') : array('ss_vault_assets', 'rmss_shortcode'),
         'post_status' => 'publish',
         'orderby' => 'modified',
         'order' => 'DESC',
@@ -292,7 +292,7 @@ function trsss_enqueue_admin_scripts()
 
     $current_user = wp_get_current_user();
 
-    $counts_product = wp_count_posts('product');
+    $counts_product = trsss_is_woocommerce_available() ? wp_count_posts('product') : (object) array( 'publish' => 0 );
     $counts_vault = wp_count_posts('ss_vault_assets');
     $counts_shortcode = wp_count_posts('rmss_shortcode');
 
@@ -336,6 +336,7 @@ function trsss_enqueue_admin_scripts()
         'wpRestUrl' => esc_url_raw(rest_url('wp/v2')), // Standard WP REST API
         'nonce' => wp_create_nonce('wp_rest'),
         'restNonce' => wp_create_nonce('wp_rest'), // Alias for compatibility
+        'woocommerceAvailable' => trsss_is_woocommerce_available(),
         'fetchBooksNonce' => wp_create_nonce('rmss_fetch_google_books'), // Smart Book Ingester AJAX
         'amazonSearchNonce' => wp_create_nonce('rmss_amazon_search'), // Amazon PA-API AJAX
         // AJAX fallback nonces (for when REST API is blocked on live servers)
@@ -705,6 +706,10 @@ function trsss_ajax_fetch_books()
 
     if (!current_user_can('edit_posts')) {
         wp_send_json_error('Permission denied');
+    }
+
+    if ( ! trsss_is_woocommerce_available() ) {
+        wp_send_json_error( trsss_woocommerce_required_error()->get_error_message(), 400 );
     }
 
     $term = isset($_GET['term']) ? sanitize_text_field(wp_unslash($_GET['term'])) : '';

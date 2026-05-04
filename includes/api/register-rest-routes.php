@@ -32,6 +32,16 @@ function trsss_register_search_route() {
         ),
     ) );
 
+    register_rest_route( 'shelfsage/v1', '/pdf-proxy', array(
+        'methods'             => 'GET',
+        'callback'            => 'trsss_handle_pdf_proxy',
+        'permission_callback' => '__return_true',
+        'args'                => array(
+            'file'  => array( 'required' => true, 'type' => 'string', 'sanitize_callback' => 'esc_url_raw' ),
+            'nonce' => array( 'required' => true, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ),
+        ),
+    ) );
+
     // Onboarding Endpoints
     register_rest_route( 'shelfsage/v1', '/onboarding/settings', array(
         'methods'  => 'POST',

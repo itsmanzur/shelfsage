@@ -30,6 +30,9 @@ function trsss_get_product_quick_wins_primary_isbn( $product_id ) {
  * Social share + copy ISBN row (printed after the add-to-cart button via WC hook).
  */
 function trsss_print_quick_wins_after_cart_button() {
+	if ( ! trsss_is_woocommerce_available() ) {
+		return;
+	}
 	if ( ! apply_filters( 'trsss_enable_product_quick_wins', true ) ) {
 		return;
 	}
@@ -89,7 +92,7 @@ add_action( 'woocommerce_after_add_to_cart_button', 'trsss_print_quick_wins_afte
  * Clipboard handler for `.rmss-copy-isbn-btn` (delegated click).
  */
 function trsss_enqueue_product_quick_wins_script() {
-	if ( ! is_product() || ! apply_filters( 'trsss_enable_product_quick_wins', true ) ) {
+	if ( ! trsss_is_woocommerce_available() || ! function_exists( 'is_product' ) || ! is_product() || ! apply_filters( 'trsss_enable_product_quick_wins', true ) ) {
 		return;
 	}
 

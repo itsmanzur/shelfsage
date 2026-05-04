@@ -1,4 +1,5 @@
 node_modules/
+dist/
 *.map
 
 # Dev-only files — never ship to production

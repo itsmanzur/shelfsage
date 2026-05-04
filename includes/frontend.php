@@ -72,7 +72,7 @@ function trsss_get_rmss_localize_data() {
     );
     $saved_labels = (isset($settings['labels']) && is_array($settings['labels'])) ? $settings['labels'] : array();
     $labels = array_merge($label_defaults, array_filter($saved_labels, function ($v) { return $v !== null && $v !== ''; }));
-    $product_id = is_singular('product') ? get_the_ID() : 0;
+    $product_id = trsss_is_woocommerce_available() && is_singular('product') ? get_the_ID() : 0;
     $author_terms = $product_id ? get_the_terms($product_id, 'rmss_author') : array();
     $author_slugs = $author_terms && !is_wp_error($author_terms) ? wp_list_pluck($author_terms, 'slug') : array();
     $publisher_terms = $product_id ? get_the_terms($product_id, 'rmss_publisher') : array();
@@ -96,6 +96,7 @@ function trsss_get_rmss_localize_data() {
         'look_inside_btn_width' => isset($settings['look_inside_btn_width']) ? $settings['look_inside_btn_width'] : 'full',
         'look_inside_btn_align' => isset($settings['look_inside_btn_align']) ? $settings['look_inside_btn_align'] : 'center',
         'default_book_image' => isset($settings['default_book_image']) ? esc_url_raw($settings['default_book_image']) : '',
+        'woocommerceAvailable' => trsss_is_woocommerce_available(),
     );
 }
 
@@ -222,7 +223,7 @@ function trsss_enqueue_scripts()
 
     // Determine if we should enqueue assets
     $should_enqueue = false;
-    $is_product = is_singular('product');
+    $is_product = trsss_is_woocommerce_available() && is_singular('product');
 
     // Elementor preview iframe: enqueue so the same design renders in editor as on frontend
     if (!is_admin() && !empty($_GET['elementor-preview'])) {
@@ -287,10 +288,12 @@ function trsss_enqueue_scripts()
         wp_enqueue_style('trsss-app-css');
         wp_localize_script('trsss-app-js', 'rmssSettings', trsss_get_rmss_localize_data());
 
-        // Enqueue standard Woo styles
-        wp_enqueue_style('woocommerce-general');
-        wp_enqueue_style('woocommerce-layout');
-        wp_enqueue_style('woocommerce-smallscreen');
+        // Enqueue standard Woo styles only when the optional integration is active.
+        if ( trsss_is_woocommerce_available() ) {
+            wp_enqueue_style('woocommerce-general');
+            wp_enqueue_style('woocommerce-layout');
+            wp_enqueue_style('woocommerce-smallscreen');
+        }
 
         wp_enqueue_style('trsss-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap', array(), null);
 
@@ -358,6 +361,9 @@ add_action('wp_enqueue_scripts', 'trsss_enqueue_scripts', 20); // Increased prio
 
 // Apply custom "Add to Cart" label to default WooCommerce single product button
 function trsss_woocommerce_add_to_cart_button_text($text) {
+    if ( ! trsss_is_woocommerce_available() ) {
+        return $text;
+    }
     $settings = trsss_get_shelfsage_settings_array();
     $labels = isset($settings['labels']) && is_array($settings['labels']) ? $settings['labels'] : array();
     return !empty($labels['add_to_cart']) ? $labels['add_to_cart'] : $text;
@@ -367,7 +373,7 @@ add_filter('woocommerce_product_single_add_to_cart_text', 'trsss_woocommerce_add
 // Remove default hooks when using custom template
 function trsss_remove_default_hooks()
 {
-    if (is_singular('product')) {
+    if (trsss_is_woocommerce_available() && is_singular('product')) {
         $obj_id = get_queried_object_id();
         if (!$obj_id)
             return;
@@ -1095,6 +1101,9 @@ add_filter('woocommerce_product_tabs', 'trsss_add_book_details_tab');
 
 function trsss_render_book_details_tab()
 {
+    if ( ! trsss_is_woocommerce_available() ) {
+        return;
+    }
     global $post;
     echo '<h2>' . __('Book Details', 'shelfsage') . '</h2>';
     echo '<table class="woocommerce-product-attributes shop_attributes">';
@@ -1126,7 +1135,7 @@ function trsss_render_book_details_tab()
 function trsss_render_related_books_container()
 {
     $product_id = 0;
-    if (is_singular('product')) {
+    if (trsss_is_woocommerce_available() && is_singular('product')) {
         global $product;
         $product_id = $product ? $product->get_id() : get_the_ID();
     }
@@ -1145,6 +1154,10 @@ add_action('woocommerce_product_meta_end', 'trsss_render_shelf_talker_container'
  */
 function trsss_output_schema()
 {
+    if ( ! trsss_is_woocommerce_available() ) {
+        return;
+    }
+
     $settings = trsss_get_shelfsage_settings_array();
     if (isset($settings['enable_schema']) && !$settings['enable_schema']) {
         return;

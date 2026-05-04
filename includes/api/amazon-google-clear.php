@@ -330,7 +330,7 @@ function trsss_fetch_google_books_by_isbn( string $isbn ): array {
     }
 
     $saved    = trsss_get_shelfsage_settings_array();
-    $api_key  = $saved['google_books_api_key'] ?? '';
+    $api_key  = trsss_get_decrypted_setting_secret( $saved, 'google_books_api_key' );
     $url      = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' . urlencode( $isbn ) . '&maxResults=1';
     if ( $api_key ) {
         $url .= '&key=' . urlencode( $api_key );
@@ -385,7 +385,7 @@ function trsss_fetch_google_books_by_title( string $title ): array {
     }
 
     $saved   = trsss_get_shelfsage_settings_array();
-    $api_key = $saved['google_books_api_key'] ?? '';
+    $api_key = trsss_get_decrypted_setting_secret( $saved, 'google_books_api_key' );
     $url     = 'https://www.googleapis.com/books/v1/volumes?q=' . urlencode( $title ) . '&maxResults=1';
     if ( $api_key ) {
         $url .= '&key=' . urlencode( $api_key );

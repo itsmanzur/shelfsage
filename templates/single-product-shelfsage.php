@@ -32,7 +32,7 @@ $product_id = $product->get_id();
 // BUT better to rely on the 'wp_enqueue_scripts' action we added in frontend.php with high priority.
 
 // FORCE CSS Loading if for some reason enqueue failed (fallback)
-echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . time() ) . '" media="all" />';
+echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . trsss_asset_version( 'assets/index.css' ) ) . '" media="all" />';
 ?>
 
 <!-- Reading Progress Bar -->
@@ -198,17 +198,17 @@ endif; ?>
                         
                         <!-- Genre/Category -->
                         <div class="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-2">
-                            <?php echo wc_get_product_category_list($product_id, ', '); ?>
+                            <?php echo wp_kses_post( wc_get_product_category_list($product_id, ', ') ); ?>
                         </div>
 
                         <!-- Title -->
                         <h1 class="text-[2.25rem] leading-tight font-serif font-bold text-gray-900 mb-2">
-                            <?php the_title(); ?>
+                            <?php echo esc_html( get_the_title() ); ?>
                         </h1>
 
                         <!-- Author Badge -->
                         <?php if ($primary_author): ?>
-                            <a href="<?php echo get_term_link($primary_author); ?>" class="inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full pr-6 pl-2 py-1 mb-6 transition-all w-max group">
+                            <a href="<?php echo esc_url( trsss_safe_term_link($primary_author) ); ?>" class="inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full pr-6 pl-2 py-1 mb-6 transition-all w-max group">
                                 <?php if ($author_image_url): ?>
                                     <img src="<?php echo esc_url($author_image_url); ?>" alt="<?php echo esc_attr($primary_author->name); ?>" class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
                                 <?php
@@ -233,7 +233,7 @@ endif; ?>
 // Parse price html to separate old/new if possible, or just style the wrapper
 ?>
                                 <div class="rmss-single-price text-gray-900 flex items-baseline gap-2">
-                                    <?php echo $product->get_price_html(); ?>
+                                    <?php echo wp_kses_post( $product->get_price_html() ); ?>
                                 </div>
                             </div>
                             <?php
@@ -264,7 +264,7 @@ endif; ?>
 
                         <!-- Short Description -->
                         <div class="prose text-gray-600 mb-8 leading-relaxed">
-                            <?php echo apply_filters('woocommerce_short_description', $post->post_excerpt); ?>
+                            <?php echo wp_kses_post( apply_filters('woocommerce_short_description', $post->post_excerpt) ); ?>
                         </div>
 
                         <!-- Conversion Zone -->
@@ -418,7 +418,7 @@ endforeach; ?>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 rmss-animate-slide-up" style="animation-delay: 300ms">
                     <h3 class="text-xl font-bold text-gray-900 mb-6"><?php esc_html_e( 'About the Book', 'shelfsage' ); ?></h3>
                     <div class="prose max-w-none text-gray-600">
-                        <?php echo apply_filters('the_content', $product->get_description()); ?>
+                        <?php echo wp_kses_post( apply_filters('the_content', $product->get_description()) ); ?>
                     </div>
                 </div>
             </div>
@@ -450,7 +450,7 @@ endforeach; ?>
                             </p>
                         <?php
     endif; ?>
-                        <a href="<?php echo get_term_link($primary_author); ?>" class="block w-full text-center py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-bold text-sm transition-colors">
+                        <a href="<?php echo esc_url( trsss_safe_term_link($primary_author) ); ?>" class="block w-full text-center py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-bold text-sm transition-colors">
                             View Author Profile
                         </a>
                     </div>
@@ -475,7 +475,7 @@ endif; ?>
                                 <span class="text-xs text-purple-600 font-bold uppercase tracking-wider"><?php echo esc_html(rmss_get_label('publisher', 'Publisher', $labels)); ?></span>
                             </div>
                         </div>
-                        <a href="<?php echo get_term_link($primary_publisher); ?>" class="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1 transition-colors">
+                        <a href="<?php echo esc_url( trsss_safe_term_link($primary_publisher) ); ?>" class="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1 transition-colors">
                             More books from this publisher &rarr;
                         </a>
                     </div>
@@ -550,7 +550,7 @@ add_action('wp_footer', function () use ($labels) {
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #eee; background-color: #f9fafb;">
                 <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1f2937; display: flex; align-items: center; gap: 8px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #2563eb;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                    <?php echo esc_html(rmss_get_label('look_inside', 'Look Inside', $labels)); ?>: <?php the_title(); ?>
+                    <?php echo esc_html(rmss_get_label('look_inside', 'Look Inside', $labels)); ?>: <?php echo esc_html( get_the_title() ); ?>
                 </h3>
                 <button id="rmss-modal-close" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6b7280; transition: color 0.2s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>

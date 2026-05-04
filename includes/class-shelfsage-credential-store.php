@@ -1,6 +1,6 @@
 <?php
 /**
- * Encrypt/decrypt ShelfSage-stored secrets (Amazon API keys, etc.).
+ * Encrypt/decrypt ShelfSage-stored secrets (Amazon/Google API keys, etc.).
  *
  * @package ShelfSage
  */
@@ -89,20 +89,31 @@ function trsss_decrypt_setting_secret( $stored ) {
 }
 
 /**
- * One-time migration: encrypt previously plain Amazon keys in the options array.
+ * Read and decrypt one secret value from a settings array.
+ *
+ * @param array  $settings Settings array.
+ * @param string $key      Setting key.
+ * @return string
  */
-function trsss_maybe_encrypt_stored_amazon_keys() {
-	if ( get_option( 'trsss_amazon_cred_migrated_v1', false ) ) {
+function trsss_get_decrypted_setting_secret( array $settings, $key ) {
+	return isset( $settings[ $key ] ) ? trim( trsss_decrypt_setting_secret( (string) $settings[ $key ] ) ) : '';
+}
+
+/**
+ * One-time migration: encrypt previously plain API keys in the options array.
+ */
+function trsss_maybe_encrypt_stored_api_keys() {
+	if ( get_option( 'trsss_api_cred_migrated_v2', false ) ) {
 		return;
 	}
 	$option_name = TRSSS_OPTION_SETTINGS;
 	$s           = get_option( $option_name, array() );
 	if ( ! is_array( $s ) ) {
-		update_option( 'trsss_amazon_cred_migrated_v1', true );
+		update_option( 'trsss_api_cred_migrated_v2', true );
 		return;
 	}
 	$changed = false;
-	foreach ( array( 'amazon_access_key', 'amazon_secret_key' ) as $k ) {
+	foreach ( array( 'amazon_access_key', 'amazon_secret_key', 'google_books_api_key' ) as $k ) {
 		if ( empty( $s[ $k ] ) || ! is_string( $s[ $k ] ) ) {
 			continue;
 		}
@@ -116,6 +127,6 @@ function trsss_maybe_encrypt_stored_amazon_keys() {
 	if ( $changed ) {
 		update_option( $option_name, $s );
 	}
-	update_option( 'trsss_amazon_cred_migrated_v1', true );
+	update_option( 'trsss_api_cred_migrated_v2', true );
 }
-add_action( 'admin_init', 'trsss_maybe_encrypt_stored_amazon_keys', 5 );
+add_action( 'admin_init', 'trsss_maybe_encrypt_stored_api_keys', 5 );

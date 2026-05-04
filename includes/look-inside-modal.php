@@ -59,6 +59,23 @@ $label_li      = isset( $labels ) ? esc_html( rmss_get_label( 'look_inside', 'Lo
     animation: rmss-li-spin .8s linear infinite;
     display: block;
 }
+@media (max-width: 768px) {
+    #rmss-li-backdrop {
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0;
+    }
+    #rmss-li-backdrop > div {
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+    }
+    #rmss-li-frame {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
 </style>
 
 <?php if ( $reader_style === 'style-2' ) : ?>
@@ -158,10 +175,6 @@ $label_li      = isset( $labels ) ? esc_html( rmss_get_label( 'look_inside', 'Lo
         return rawUrl;
     }
 
-    function openMobileFile(rawUrl) {
-        // On mobile, open in a new tab — browser handles PDF natively
-        window.open(rawUrl, '_blank', 'noopener,noreferrer');
-    }
 
     function openModal() {
         if (!url) return;
@@ -204,11 +217,7 @@ $label_li      = isset( $labels ) ? esc_html( rmss_get_label( 'look_inside', 'Lo
     trigger.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        if (!isImage(url) && isMobileDevice()) {
-            openMobileFile(url);
-        } else {
-            openModal();
-        }
+        openModal();
     });
 
     if (closeBtn) closeBtn.addEventListener('click', closeModal);

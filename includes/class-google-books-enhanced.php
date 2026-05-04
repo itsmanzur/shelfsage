@@ -118,7 +118,7 @@ class TRSSS_Google_Books_Enhanced {
 		$api_key = get_option( 'shelfsage_google_api_key', '' );
 		if ( empty( $api_key ) ) {
 			$main_settings = trsss_get_shelfsage_settings_array();
-			$api_key       = isset( $main_settings['google_books_api_key'] ) ? $main_settings['google_books_api_key'] : '';
+			$api_key       = trsss_get_decrypted_setting_secret( $main_settings, 'google_books_api_key' );
 		}
 
 		$max_results = isset( $params['max_results'] ) ? min( 20, max( 1, intval( $params['max_results'] ) ) ) : 1;

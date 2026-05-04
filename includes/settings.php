@@ -90,19 +90,42 @@ class TRSSS_Settings
     }
 
     /**
-     * Strip Amazon secrets before sending settings JSON to the browser.
+     * Strip API secrets before sending settings JSON to the browser.
      *
      * @param array $settings Settings array.
      * @return array
      */
-    private function mask_amazon_keys_for_response(array $settings)
+    private function mask_api_keys_for_response(array $settings)
     {
-        if (!empty($settings['amazon_secret_key'])) {
-            $settings['amazon_secret_key'] = '';
+        foreach (array('amazon_access_key', 'amazon_secret_key', 'google_books_api_key') as $key) {
+            if (!empty($settings[$key])) {
+                $settings[$key] = '';
+            }
         }
-        if (!empty($settings['amazon_access_key'])) {
-            $settings['amazon_access_key'] = '';
+        return $settings;
+    }
+
+    /**
+     * Update an encrypted secret. Blank masked values mean "keep existing"; a
+     * "__TRSSS_CLEAR_SECRET__" value clears the stored key for maintenance tools.
+     *
+     * @param array  $settings Settings array.
+     * @param array  $params   REST payload.
+     * @param string $key      Secret setting key.
+     * @return array
+     */
+    private function update_encrypted_secret(array $settings, array $params, $key)
+    {
+        if (!array_key_exists($key, $params)) {
+            return $settings;
         }
+
+        $value = isset($params[$key]) ? sanitize_text_field($params[$key]) : '';
+        if ($value === '') {
+            return $settings;
+        }
+
+        $settings[$key] = ($value === '__TRSSS_CLEAR_SECRET__') ? '' : trsss_encrypt_setting_secret($value);
         return $settings;
     }
 
@@ -113,7 +136,7 @@ class TRSSS_Settings
      */
     public function get_settings()
     {
-        return $this->mask_amazon_keys_for_response($this->get_merged_stored_settings());
+        return $this->mask_api_keys_for_response($this->get_merged_stored_settings());
     }
 
     /**
@@ -166,15 +189,9 @@ class TRSSS_Settings
         if (isset($params['hide_add_to_cart']))
             $settings['hide_add_to_cart'] = (bool)$params['hide_add_to_cart'];
 
-        // Amazon PA-API credentials (encrypt at rest; empty string clears)
-        if (array_key_exists('amazon_access_key', $params)) {
-            $v = isset($params['amazon_access_key']) ? sanitize_text_field($params['amazon_access_key']) : '';
-            $settings['amazon_access_key'] = ($v === '') ? '' : trsss_encrypt_setting_secret($v);
-        }
-        if (array_key_exists('amazon_secret_key', $params)) {
-            $v = isset($params['amazon_secret_key']) ? sanitize_text_field($params['amazon_secret_key']) : '';
-            $settings['amazon_secret_key'] = ($v === '') ? '' : trsss_encrypt_setting_secret($v);
-        }
+        // API credentials (encrypt at rest; blank masked values keep the existing secret)
+        $settings = $this->update_encrypted_secret($settings, $params, 'amazon_access_key');
+        $settings = $this->update_encrypted_secret($settings, $params, 'amazon_secret_key');
         if (isset($params['amazon_associate_tag']))
             $settings['amazon_associate_tag'] = sanitize_text_field($params['amazon_associate_tag']);
         if (isset($params['amazon_marketplace']))
@@ -183,8 +200,7 @@ class TRSSS_Settings
         // Google Books API
         if (isset($params['enable_google_books']))
             $settings['enable_google_books'] = (bool)$params['enable_google_books'];
-        if (isset($params['google_books_api_key']))
-            $settings['google_books_api_key'] = sanitize_text_field($params['google_books_api_key']);
+        $settings = $this->update_encrypted_secret($settings, $params, 'google_books_api_key');
 
         // WooCommerce Sync
         if (isset($params['wc_sync_enabled']))
@@ -215,7 +231,7 @@ class TRSSS_Settings
 
         return rest_ensure_response(array(
             'success' => true,
-            'settings' => $this->mask_amazon_keys_for_response($settings),
+            'settings' => $this->mask_api_keys_for_response($settings),
         ));
     }
 }

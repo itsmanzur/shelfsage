@@ -92,3 +92,61 @@ function trsss_get_shelfsage_settings_array() {
 
 	return (array) apply_filters( 'trsss_shelfsage_settings_array', $merged );
 }
+
+/**
+ * Whether the optional WooCommerce integration can safely run.
+ *
+ * ShelfSage supports multiple data sources. WooCommerce is required only when
+ * the selected workflow needs product, cart, price, or stock APIs.
+ *
+ * @return bool
+ */
+function trsss_is_woocommerce_available() {
+	return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
+}
+
+/**
+ * Standard REST error for WooCommerce-only data source requests.
+ *
+ * @return WP_Error
+ */
+function trsss_woocommerce_required_error() {
+	return new WP_Error(
+		'woocommerce_required',
+		__( 'WooCommerce is required for the WooCommerce data source. Please activate WooCommerce or choose another ShelfSage source.', 'shelfsage' ),
+		array( 'status' => 400 )
+	);
+}
+
+/**
+ * Stable asset version based on file modification time.
+ *
+ * @param string $relative_path Plugin-relative asset path.
+ * @return string
+ */
+function trsss_asset_version( $relative_path ) {
+	$relative_path = ltrim( (string) $relative_path, '/\\' );
+	$file          = defined( 'TRSSS_PATH' ) ? TRSSS_PATH . $relative_path : '';
+
+	if ( $file && file_exists( $file ) ) {
+		return (string) filemtime( $file );
+	}
+
+	return defined( 'TRSSS_VERSION' ) ? (string) TRSSS_VERSION : '1.5.0';
+}
+
+/**
+ * Safely resolve a term archive URL for templates.
+ *
+ * @param WP_Term|int|null $term Term object or ID.
+ * @return string
+ */
+function trsss_safe_term_link( $term ) {
+	if ( empty( $term ) ) {
+		return '#';
+	}
+
+	$link = get_term_link( $term );
+
+	return is_wp_error( $link ) ? '#' : $link;
+}

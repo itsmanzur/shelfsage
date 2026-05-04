@@ -99,8 +99,8 @@ add_action( 'rest_api_init', 'trsss_vault_register_rest_routes' );
  * Handle Sync to Vault Request
  */
 function trsss_vault_handle_sync_to_vault( WP_REST_Request $request ) {
-    if ( ! class_exists( 'WooCommerce' ) ) {
-        return new WP_Error( 'wc_missing', 'WooCommerce is not active.', array( 'status' => 400 ) );
+    if ( ! trsss_is_woocommerce_available() ) {
+        return trsss_woocommerce_required_error();
     }
 
     $params     = $request->get_json_params();

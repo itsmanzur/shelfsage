@@ -25,7 +25,7 @@ if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
 $product_id = $product->get_id();
 
 // Force CSS
-echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . time() ) . '" media="all" />';
+echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . trsss_asset_version( 'assets/index.css' ) ) . '" media="all" />';
 
 // ── Meta Fields ──────────────────────────────────────────────────────────────
 $isbn = get_post_meta($product_id, '_rmss_isbn', true);
@@ -43,7 +43,7 @@ $publishers = get_the_terms($product_id, 'rmss_publisher');
 $primary_author = ($authors && !is_wp_error($authors)) ? $authors[0] : null;
 $author_image_id = $primary_author ? get_term_meta($primary_author->term_id, 'rmss_image_id', true) : null;
 $author_image_url = $author_image_id ? wp_get_attachment_image_url($author_image_id, 'thumbnail') : null;
-$author_link = $primary_author ? get_term_link($primary_author) : '#';
+$author_link = trsss_safe_term_link( $primary_author );
 
 $primary_publisher = ($publishers && !is_wp_error($publishers)) ? $publishers[0] : null;
 
@@ -127,12 +127,12 @@ if (!empty($global_affiliates)) {
     <!-- ══ BREADCRUMB & TOP META ══ -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-4">
         <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <a href="<?php echo home_url(); ?>" class="hover:text-blue-600">Home</a>
+            <a href="<?php echo esc_url( home_url() ); ?>" class="hover:text-blue-600">Home</a>
             <span class="text-gray-300">/</span>
-            <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="hover:text-blue-600">Books</a>
+            <a href="<?php echo esc_url( get_permalink(wc_get_page_id('shop')) ); ?>" class="hover:text-blue-600">Books</a>
             <?php if ($genres && !is_wp_error($genres)): ?>
                 <span class="text-gray-300">/</span>
-                <a href="<?php echo get_term_link($genres[0]); ?>" class="hover:text-blue-600"><?php echo esc_html($genres[0]->name); ?></a>
+                <a href="<?php echo esc_url( trsss_safe_term_link($genres[0]) ); ?>" class="hover:text-blue-600"><?php echo esc_html($genres[0]->name); ?></a>
             <?php endif; ?>
             <span class="text-gray-300">/</span>
             <span class="text-gray-900 font-medium truncate max-w-xs"><?php echo esc_html($title); ?></span>
@@ -210,7 +210,7 @@ if (!empty($global_affiliates)) {
                     <?php if ($primary_publisher): ?>
                         <span class="text-gray-400">|</span>
                         <span class="text-gray-500">
-                            Published by <a href="<?php echo get_term_link($primary_publisher); ?>" class="text-gray-900 hover:text-blue-600 underline decoration-gray-300 underline-offset-2"><?php echo esc_html($primary_publisher->name); ?></a>
+                            Published by <a href="<?php echo esc_url( trsss_safe_term_link($primary_publisher) ); ?>" class="text-gray-900 hover:text-blue-600 underline decoration-gray-300 underline-offset-2"><?php echo esc_html($primary_publisher->name); ?></a>
                         </span>
                     <?php endif; ?>
                 </div>
@@ -293,9 +293,9 @@ if (!empty($global_affiliates)) {
                 <div class="bg-white rounded-xl mt-2">
                     <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-4">
                         <div class="flex items-center gap-3">
-                            <span class="text-4xl font-bold text-gray-900 tracking-tight"><?php echo wc_price($price); ?></span>
+                            <span class="text-4xl font-bold text-gray-900 tracking-tight"><?php echo wp_kses_post( wc_price($price) ); ?></span>
                             <?php if($is_on_sale && $regular_price): ?>
-                                <span class="text-lg text-gray-400 line-through decoration-red-400 decoration-2"><?php echo wc_price($regular_price); ?></span>
+                                <span class="text-lg text-gray-400 line-through decoration-red-400 decoration-2"><?php echo wp_kses_post( wc_price($regular_price) ); ?></span>
                                 <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md">SAVE <?php echo esc_html($discount_percentage); ?>%</span>
                             <?php endif; ?>
                         </div>
@@ -523,7 +523,7 @@ if (!empty($global_affiliates)) {
                     <p class="text-xs text-gray-500 mb-2 line-clamp-1">by <?php echo esc_html($r_author_name); ?></p>
                 <?php endif; ?>
                 <div class="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between">
-                    <span class="font-bold text-gray-900 text-sm"><?php echo $r_product->get_price_html(); ?></span>
+                    <span class="font-bold text-gray-900 text-sm"><?php echo wp_kses_post( $r_product->get_price_html() ); ?></span>
                 </div>
             </a>
             <?php endforeach; ?>

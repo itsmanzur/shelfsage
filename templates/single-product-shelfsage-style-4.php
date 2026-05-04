@@ -25,7 +25,7 @@ if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
 $product_id = $product->get_id();
 
 // Force CSS
-echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . time() ) . '" media="all" />';
+echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . trsss_asset_version( 'assets/index.css' ) ) . '" media="all" />';
 
 // ── Meta Fields ──────────────────────────────────────────────────────────────
 $isbn = get_post_meta($product_id, '_rmss_isbn', true);
@@ -49,13 +49,13 @@ $primary_author = ($authors && !is_wp_error($authors)) ? $authors[0] : null;
 $author_image_id = $primary_author ? get_term_meta($primary_author->term_id, 'rmss_image_id', true) : null;
 $author_image_url = $author_image_id ? wp_get_attachment_image_url($author_image_id, 'thumbnail') : null;
 $author_bio = $primary_author ? term_description($primary_author->term_id, 'rmss_author') : '';
-$author_link = $primary_author ? get_term_link($primary_author) : '#';
+$author_link = trsss_safe_term_link( $primary_author );
 
 $genre_names = ($genres && !is_wp_error($genres)) ? implode(', ', wp_list_pluck($genres, 'name')) : '';
 
 // ── Product Data ──────────────────────────────────────────────────────────────
 $title = $product->get_name();
-$price_html = $product->get_price_html();
+$price_html = wp_kses_post( $product->get_price_html() );
 $regular_price = $product->get_regular_price();
 $sale_price = $product->get_sale_price();
 $is_on_sale = $product->is_on_sale();
@@ -166,11 +166,11 @@ endif; ?>
                 <div class="s4-sans flex items-baseline gap-3">
                     <span class="text-3xl font-black text-gray-900">
                         <?php
-echo wc_price($product->get_price());
+echo wp_kses_post( wc_price($product->get_price()) );
 ?>
                     </span>
                     <?php if ($is_on_sale && $regular_price): ?>
-                        <span class="text-lg text-gray-400 line-through"><?php echo wc_price($regular_price); ?></span>
+                        <span class="text-lg text-gray-400 line-through"><?php echo wp_kses_post( wc_price($regular_price) ); ?></span>
                     <?php
 endif; ?>
                 </div>
@@ -455,8 +455,8 @@ $related_ids = array_slice($related_ids, 0, 4);
 
 if (!empty($related_ids)):
     // "View All" link — link to first genre or author archive
-    $view_all_url = (!is_wp_error($genres) && !empty($genres)) ? get_term_link($genres[0]) :
-        ((!is_wp_error($authors) && !empty($authors)) ? get_term_link($authors[0]) : '#');
+    $view_all_url = (!is_wp_error($genres) && !empty($genres)) ? trsss_safe_term_link($genres[0]) :
+        ((!is_wp_error($authors) && !empty($authors)) ? trsss_safe_term_link($authors[0]) : '#');
 ?>
     <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <!-- Header -->
@@ -479,7 +479,7 @@ if (!empty($related_ids)):
             continue;
         $r_thumb = get_the_post_thumbnail_url($rid, 'woocommerce_thumbnail') ?: wc_placeholder_img_src();
         $r_title = $rp->get_name();
-        $r_price = $rp->get_price_html();
+        $r_price = wp_kses_post( $rp->get_price_html() );
         $r_url = get_permalink($rid);
         $r_genre = get_the_terms($rid, 'rmss_genre');
         $r_genre_lbl = ($r_genre && !is_wp_error($r_genre)) ? $r_genre[0]->name : '';
@@ -569,7 +569,7 @@ if (!empty($upsell_ids)):
                     </div>
                     <div class="p-4">
                         <p class="s4-sans font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1"><?php echo esc_html($up_product->get_name()); ?></p>
-                        <p class="s4-sans text-indigo-600 font-black text-sm"><?php echo $up_product->get_price_html(); ?></p>
+                        <p class="s4-sans text-indigo-600 font-black text-sm"><?php echo wp_kses_post( $up_product->get_price_html() ); ?></p>
                     </div>
                 </a>
             <?php

@@ -21,6 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
+define('TRSSS_VERSION', '1.5.0');
 define('TRSSS_PATH', plugin_dir_path(__FILE__));
 define('TRSSS_URL', plugin_dir_url(__FILE__));
 
@@ -155,6 +156,10 @@ function trsss_template_loader($template)
 
     // Override Single Product Template for Books
     if (is_singular('product')) {
+        if ( ! trsss_is_woocommerce_available() ) {
+            return $template;
+        }
+
         $obj_id = get_queried_object_id();
 
         // Fallback: some themes/FSE setups return 0 from get_queried_object_id() during template_include
@@ -293,7 +298,17 @@ function trsss_unicode_product_fallback() {
  */
 add_filter( 'request', 'trsss_decode_unicode_product_request', 1 );
 function trsss_decode_unicode_product_request( $qv ) {
-	foreach ( array( 'product', 'name', 'pagename', 'category_name' ) as $key ) {
+	$keys = array();
+
+	if ( ! empty( $qv['product'] ) ) {
+		$keys[] = 'product';
+	}
+
+	if ( ! empty( $qv['post_type'] ) && 'product' === $qv['post_type'] && ! empty( $qv['name'] ) ) {
+		$keys[] = 'name';
+	}
+
+	foreach ( $keys as $key ) {
 		if ( ! empty( $qv[ $key ] ) && is_string( $qv[ $key ] ) && strpos( $qv[ $key ], '%' ) !== false ) {
 			$decoded = rawurldecode( $qv[ $key ] );
 			if ( $decoded !== $qv[ $key ] ) {
@@ -315,9 +330,18 @@ add_filter( 'posts_where', 'trsss_fix_unicode_slug_sql', 1, 2 );
 function trsss_fix_unicode_slug_sql( $where, $query ) {
 	global $wpdb;
 
+	if ( ! $query instanceof WP_Query || ! $query->is_main_query() ) {
+		return $where;
+	}
+
+	$post_type = $query->get( 'post_type' );
+	if ( ! in_array( $post_type, array( 'product', array( 'product' ) ), true ) && ! $query->get( 'product' ) ) {
+		return $where;
+	}
+
 	// Get the slug from query vars — at this point it's already URL-encoded (e.g. '%e0%a6%9a...')
 	$encoded_name = '';
-	foreach ( array( 'name', 'product', 'pagename' ) as $key ) {
+	foreach ( array( 'product', 'name' ) as $key ) {
 		if ( ! empty( $query->query_vars[ $key ] ) ) {
 			$encoded_name = $query->query_vars[ $key ];
 			break;
@@ -456,6 +480,9 @@ function trsss_fix_product_content_mojibake( $content ) {
 	if ( ! is_string( $content ) || $content === '' ) {
 		return $content;
 	}
+	if ( ! trsss_should_fix_mojibake_for_current_request( get_the_ID() ) ) {
+		return $content;
+	}
 	// Quick bail: only act when mojibake signature present.
 	if ( strpos( $content, 'à¦' ) === false && strpos( $content, 'à§' ) === false && strpos( $content, 'Ø' ) === false ) {
 		return $content;
@@ -476,10 +503,33 @@ function trsss_fix_product_content_mojibake( $content ) {
 }
 // Elementor editor context-এ mojibake filters skip করো
 $trsss_el_editor_action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
-if ( ! defined( 'ELEMENTOR_VERSION' ) || $trsss_el_editor_action !== 'elementor' ) {
+if ( ! is_admin() && ( ! defined( 'ELEMENTOR_VERSION' ) || $trsss_el_editor_action !== 'elementor' ) ) {
 	add_filter( 'the_content', 'trsss_fix_product_content_mojibake', 1 );
 }
 unset( $trsss_el_editor_action );
+
+/**
+ * Whether display-time mojibake repair should run for the current object.
+ *
+ * @param int $post_id Current post ID.
+ * @return bool
+ */
+function trsss_should_fix_mojibake_for_current_request( $post_id = 0 ) {
+	if ( is_admin() || wp_doing_ajax() || wp_is_json_request() || is_feed() ) {
+		return false;
+	}
+
+	$post_id = (int) $post_id;
+	if ( $post_id && 'product' === get_post_type( $post_id ) ) {
+		return true;
+	}
+
+	if ( function_exists( 'is_tax' ) && is_tax( array( 'rmss_author', 'rmss_publisher', 'rmss_translator', 'rmss_series', 'rmss_genre', 'rmss_collection' ) ) ) {
+		return true;
+	}
+
+	return (bool) apply_filters( 'trsss_should_fix_display_mojibake', false, $post_id );
+}
 
 /**
  * Also fix product title display (the_title filter) on frontend.
@@ -492,6 +542,9 @@ function trsss_fix_product_title_mojibake( $title, $id = 0 ) {
 	if ( ! is_string( $title ) || $title === '' ) {
 		return $title;
 	}
+	if ( ! trsss_should_fix_mojibake_for_current_request( $id ) ) {
+		return $title;
+	}
 	if ( strpos( $title, 'à¦' ) === false && strpos( $title, 'à§' ) === false && ! preg_match( '/[\x{00A0}-\x{00FF}]/u', $title ) ) {
 		return $title;
 	}
@@ -502,7 +555,7 @@ function trsss_fix_product_title_mojibake( $title, $id = 0 ) {
 }
 // Elementor editor context-এ title mojibake filter skip করো
 $trsss_el_editor_action_title = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
-if ( ! defined( 'ELEMENTOR_VERSION' ) || $trsss_el_editor_action_title !== 'elementor' ) {
+if ( ! is_admin() && ( ! defined( 'ELEMENTOR_VERSION' ) || $trsss_el_editor_action_title !== 'elementor' ) ) {
 	add_filter( 'the_title', 'trsss_fix_product_title_mojibake', 1, 2 );
 }
 unset( $trsss_el_editor_action_title );

@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function trsss_create_product_from_isbn( WP_REST_Request $request ) {
     // WooCommerce check
-    if ( ! class_exists( 'WC_Product' ) ) {
-        return new WP_Error( 'no_woocommerce', 'WooCommerce is required.', array( 'status' => 400 ) );
+    if ( ! trsss_is_woocommerce_available() || ! class_exists( 'WC_Product_Simple' ) ) {
+        return trsss_woocommerce_required_error();
     }
 
     $params  = $request->get_json_params();
@@ -104,8 +104,8 @@ function trsss_update_stock( WP_REST_Request $request ) {
     }
 
     if ( $source === 'wc' ) {
-        if ( ! class_exists( 'WooCommerce' ) ) {
-            return new WP_Error( 'wc_missing', 'WooCommerce is not active.', array( 'status' => 400 ) );
+        if ( ! trsss_is_woocommerce_available() ) {
+            return trsss_woocommerce_required_error();
         }
         $product = wc_get_product( $id );
         if ( ! $product ) {

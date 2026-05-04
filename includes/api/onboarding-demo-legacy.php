@@ -17,7 +17,10 @@ function trsss_save_onboarding_settings( $request ) {
     
     // 1. Save Taxonomies
     if ( isset( $params['taxonomies'] ) && is_array( $params['taxonomies'] ) ) {
-        $allowed = array( 'rmss_genre', 'rmss_author', 'rmss_publisher', 'rmss_series', 'rmss_collection', 'product_cat' );
+        $allowed = array( 'rmss_genre', 'rmss_author', 'rmss_publisher', 'rmss_series', 'rmss_collection' );
+        if ( trsss_is_woocommerce_available() ) {
+            $allowed[] = 'product_cat';
+        }
         $taxonomies = array_values( array_intersect( $params['taxonomies'], $allowed ) );
         update_option( 'shelfsage_active_taxonomies', $taxonomies );
     }
@@ -47,8 +50,8 @@ function trsss_save_onboarding_settings( $request ) {
  */
 function trsss_import_demo_content( $request ) {
     // Check if WooCommerce is active
-    if ( ! class_exists( 'WC_Product' ) ) {
-        return new WP_Error( 'no_woocommerce', 'WooCommerce is not active', array( 'status' => 400 ) );
+    if ( ! trsss_is_woocommerce_available() || ! class_exists( 'WC_Product_Simple' ) ) {
+        return trsss_woocommerce_required_error();
     }
 
     // Check if import has already run to prevent duplicates

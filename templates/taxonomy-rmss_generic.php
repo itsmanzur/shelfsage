@@ -65,32 +65,40 @@ if ( ! $image_url ) {
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
                 <?php while ( have_posts() ) : the_post(); 
                     global $product;
-                    $product = wc_get_product( get_the_ID() );
+                    $product = trsss_is_woocommerce_available() ? wc_get_product( get_the_ID() ) : null;
                 ?>
                     <div class="rmss-book-card group bg-white rounded-xl border border-gray-100 overflow-hidden rmss-card-hover h-full flex flex-col">
                         <div class="relative aspect-[2/3] bg-gray-100 overflow-hidden">
                             <a href="<?php the_permalink(); ?>">
-                                <?php echo $product->get_image( 'woocommerce_thumbnail', array( 'class' => 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-110' ) ); ?>
+                                <?php
+                                if ( $product ) {
+                                    echo $product->get_image( 'woocommerce_thumbnail', array( 'class' => 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-110' ) );
+                                } elseif ( has_post_thumbnail() ) {
+                                    the_post_thumbnail( 'medium', array( 'class' => 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-110' ) );
+                                }
+                                ?>
                             </a>
-                            <?php if ( $product->is_on_sale() ) : ?>
+                            <?php if ( $product && $product->is_on_sale() ) : ?>
                                 <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wide">Sale</span>
                             <?php endif; ?>
                             
                             <!-- Quick Action Overlay -->
+                            <?php if ( $product ) : ?>
                             <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center">
                                  <a href="<?php echo esc_url( $product->add_to_cart_url() ); ?>" data-quantity="1" class="button product_type_<?php echo esc_attr( $product->get_type() ); ?> add_to_cart_button ajax_add_to_cart bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300" data-product_id="<?php echo esc_attr( (string) $product->get_id() ); ?>" data-product_sku="<?php echo esc_attr( $product->get_sku() ); ?>" aria-label="Add to cart" rel="nofollow">
                                     Add to Cart
                                  </a>
                             </div>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="p-5 flex-1 flex flex-col">
                             <div class="text-xs text-blue-600 mb-2 font-semibold uppercase tracking-wide truncate">
                                 <?php 
-                                $genre_terms = get_the_terms( $product->get_id(), 'rmss_genre' );
+                                $genre_terms = get_the_terms( get_the_ID(), 'rmss_genre' );
                                 if ( $genre_terms && ! is_wp_error( $genre_terms ) ) {
                                     echo esc_html( $genre_terms[0]->name );
-                                } else {
+                                } elseif ( $product && function_exists( 'wc_get_product_category_list' ) ) {
                                     echo wc_get_product_category_list( $product->get_id(), ', ' );
                                 }
                                 ?>
@@ -103,7 +111,7 @@ if ( ! $image_url ) {
                             
                             <div class="mt-auto pt-3 flex items-end justify-between">
                                 <div class="text-lg font-extrabold text-gray-900">
-                                    <?php echo $product->get_price_html(); ?>
+                                    <?php echo $product ? wp_kses_post( $product->get_price_html() ) : ''; ?>
                                 </div>
                             </div>
                         </div>

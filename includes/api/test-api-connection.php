@@ -40,7 +40,7 @@ function trsss_test_api_connection( WP_REST_Request $request ): WP_REST_Response
  */
 function trsss_test_google_books_connection(): WP_REST_Response {
 	$saved   = trsss_get_shelfsage_settings_array();
-	$api_key = $saved['google_books_api_key'] ?? '';
+	$api_key = trsss_get_decrypted_setting_secret( $saved, 'google_books_api_key' );
 
 	if ( empty( $api_key ) ) {
 		return new WP_REST_Response(

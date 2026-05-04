@@ -105,6 +105,6 @@ class TRSSS_Google_Books_API {
 	 */
 	private function get_api_key() {
 		$settings = trsss_get_shelfsage_settings_array();
-		return isset( $settings['google_books_api_key'] ) ? trim( (string) $settings['google_books_api_key'] ) : '';
+		return trsss_get_decrypted_setting_secret( $settings, 'google_books_api_key' );
 	}
 }

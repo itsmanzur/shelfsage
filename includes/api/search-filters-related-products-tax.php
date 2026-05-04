@@ -95,7 +95,11 @@ function trsss_handle_search( $request ) {
     }
 
     $params = $request->get_params();
-    $skip_cache = ! empty( $params['no_cache'] );
+    if ( ! trsss_is_woocommerce_available() ) {
+        return trsss_woocommerce_required_error();
+    }
+
+    $skip_cache = ! empty( $params['no_cache'] ) && current_user_can( 'edit_posts' );
 
     // Caching Key (v8 — deterministic wp_json_encode); skip cache when no_cache=1 (e.g. admin preview)
     if ( ! $skip_cache ) {
@@ -113,7 +117,8 @@ function trsss_handle_search( $request ) {
     $genres = isset( $params['genre'] ) ? array_map( 'sanitize_title', array_map( 'trim', explode( ',', $params['genre'] ) ) ) : array();
     $collections = isset( $params['collection'] ) ? array_map( 'sanitize_title', array_map( 'trim', explode( ',', $params['collection'] ) ) ) : array();
     $raw_limit = isset( $params['limit'] ) ? intval( $params['limit'] ) : 12;
-    $limit = ( $raw_limit === -1 ) ? 100 : max( 1, $raw_limit ); // -1 means "show all" (capped at 100)
+    $max_limit = max( 1, (int) apply_filters( 'trsss_public_search_max_limit', 48 ) );
+    $limit = ( $raw_limit === -1 ) ? $max_limit : min( $max_limit, max( 1, $raw_limit ) ); // -1 means "show all" within the public cap.
 
     $include = isset( $params['include'] ) ? array_filter( array_map( 'absint', explode( ',', $params['include'] ) ) ) : array();
     $category = isset( $params['category'] ) ? sanitize_text_field( $params['category'] ) : '';
@@ -373,6 +378,10 @@ function trsss_handle_related_books( $request ) {
         return $rl;
     }
 
+    if ( ! trsss_is_woocommerce_available() ) {
+        return trsss_woocommerce_required_error();
+    }
+
     $product_id = (int) $request['product_id'];
     $limit      = (int) $request['limit'];
     if ( $limit < 1 || $limit > 20 ) {
@@ -554,6 +563,10 @@ function trsss_handle_related_books( $request ) {
 }
 
 function trsss_get_products_rest( $request ) {
+    if ( ! trsss_is_woocommerce_available() ) {
+        return trsss_woocommerce_required_error();
+    }
+
     $params = $request->get_params();
     $search = isset( $params['search'] ) ? sanitize_text_field( $params['search'] ) : '';
     
@@ -613,7 +626,10 @@ function trsss_get_taxonomy_terms_rest( $request ) {
     $taxonomy = $request['taxonomy'];
     
     // Validate taxonomy
-    $allowed_taxonomies = array( 'rmss_genre', 'rmss_author', 'rmss_publisher', 'product_cat' );
+    $allowed_taxonomies = array( 'rmss_genre', 'rmss_author', 'rmss_publisher' );
+    if ( trsss_is_woocommerce_available() ) {
+        $allowed_taxonomies[] = 'product_cat';
+    }
     if ( ! in_array( $taxonomy, $allowed_taxonomies ) ) {
         return new WP_Error( 'invalid_taxonomy', 'Invalid taxonomy', array( 'status' => 400 ) );
     }

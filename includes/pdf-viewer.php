@@ -36,17 +36,7 @@ if ( empty( $url ) || ! preg_match( '#^https?://#i', $url ) ) {
 }
 
 // ── 4. DB whitelist — URL must be a registered Look Inside URL ─────────────────
-global $wpdb;
-$exists = (int) $wpdb->get_var(
-	$wpdb->prepare(
-		"SELECT COUNT(*) FROM {$wpdb->postmeta}
-		 WHERE meta_key = '_rmss_look_inside_url'
-		   AND meta_value = %s
-		 LIMIT 1",
-		$url
-	)
-);
-if ( ! $exists ) {
+if ( ! function_exists( 'trsss_is_authorized_look_inside_url' ) || ! trsss_is_authorized_look_inside_url( $url ) ) {
 	http_response_code( 403 );
 	exit( 'URL not authorized.' );
 }
@@ -56,8 +46,18 @@ header( 'Content-Type: text/html; charset=utf-8' );
 header( 'X-Frame-Options: SAMEORIGIN' );
 header( 'X-Content-Type-Options: nosniff' );
 
-$safe_url = esc_attr( $url );
-$json_url = wp_json_encode( $url );
+$safe_url       = esc_attr( $url );
+$proxy_url      = add_query_arg(
+	array(
+		'file'  => $url,
+		'nonce' => $nonce,
+	),
+	rest_url( 'shelfsage/v1/pdf-proxy' )
+);
+$json_url       = wp_json_encode( esc_url_raw( $proxy_url ) );
+$pdfjs_url      = esc_url( TRSSS_URL . 'assets/pdfjs/pdf.min.js' );
+$pdf_worker_url = esc_url( TRSSS_URL . 'assets/pdfjs/pdf.worker.js' );
+$pdf_cmaps_url  = esc_url( TRSSS_URL . 'assets/pdfjs/cmaps/' );
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,15 +67,21 @@ $json_url = wp_json_encode( $url );
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#404040;overflow:hidden}
-#toolbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:rgba(15,15,15,.92);color:#f3f4f6;font-size:13px;gap:8px;user-select:none}
-#toolbar button{background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s}
+#toolbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));background:rgba(15,15,15,.94);color:#f3f4f6;font-size:13px;gap:8px;user-select:none}
+#toolbar button{min-width:74px;background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:8px;padding:8px 10px;cursor:pointer;font-size:13px;font-weight:700;transition:background .15s}
 #toolbar button:disabled{opacity:.4;cursor:default}
 #toolbar button:hover:not(:disabled){background:rgba(255,255,255,.22)}
 #page-info{flex:1;text-align:center;font-size:12px;opacity:.85}
-#viewer{height:calc(100vh - 45px);overflow-y:auto;overflow-x:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 8px}
+#viewer{height:calc(100dvh - 52px - env(safe-area-inset-top));overflow-y:auto;overflow-x:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 8px 20px}
 canvas{display:block;box-shadow:0 4px 20px rgba(0,0,0,.6);border-radius:3px;max-width:100%}
 #loading{color:#e5e7eb;font-size:14px;padding:40px;text-align:center}
 #error-msg{color:#fca5a5;font-size:14px;padding:40px;text-align:center;display:none}
+@media (max-width: 600px) {
+    #toolbar{padding-left:8px;padding-right:8px}
+    #toolbar button{min-width:64px;padding:8px 8px;font-size:12px}
+    #page-info{font-size:11px}
+    #viewer{padding-left:4px;padding-right:4px}
+}
 </style>
 </head>
 <body>
@@ -91,10 +97,10 @@ canvas{display:block;box-shadow:0 4px 20px rgba(0,0,0,.6);border-radius:3px;max-
     </p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+<script src="<?php echo $pdfjs_url; ?>"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    <?php echo wp_json_encode( $pdf_worker_url ); ?>;
 
 var pdfDoc = null, curPage = 1, totalPages = 0, rendering = false;
 var pdfUrl = <?php echo $json_url; ?>;
@@ -134,7 +140,7 @@ function renderPage(num) {
 
 pdfjsLib.getDocument({
     url: pdfUrl,
-    cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+    cMapUrl: <?php echo wp_json_encode( $pdf_cmaps_url ); ?>,
     cMapPacked: true
 }).promise.then(function(pdf) {
     pdfDoc = pdf; totalPages = pdf.numPages;

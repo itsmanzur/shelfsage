@@ -32,7 +32,7 @@ $product_id = $product->get_id();
 // BUT better to rely on the 'wp_enqueue_scripts' action we added in frontend.php with high priority.
 
 // FORCE CSS Loading if for some reason enqueue failed (fallback)
-echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . time() ) . '" media="all" />';
+echo '<link rel="stylesheet" id="rmss-app-css-forced" href="' . esc_url( TRSSS_URL . 'assets/index.css?ver=' . trsss_asset_version( 'assets/index.css' ) ) . '" media="all" />';
 ?>
 
 <!-- Reading Progress Bar -->
@@ -190,17 +190,17 @@ endif; ?>
                         
                         <!-- Genre/Category -->
                         <div class="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-2">
-                            <?php echo wc_get_product_category_list($product_id, ', '); ?>
+                            <?php echo wp_kses_post( wc_get_product_category_list($product_id, ', ') ); ?>
                         </div>
 
                         <!-- Title -->
                         <h1 class="text-[2.25rem] leading-tight font-serif font-bold text-gray-900 mb-2">
-                            <?php the_title(); ?>
+                            <?php echo esc_html( get_the_title() ); ?>
                         </h1>
 
                         <!-- Author Badge -->
                         <?php if ($primary_author): ?>
-                            <a href="<?php echo get_term_link($primary_author); ?>" class="inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full pr-6 pl-2 py-1 mb-6 transition-all w-max group">
+                            <a href="<?php echo esc_url( trsss_safe_term_link($primary_author) ); ?>" class="inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full pr-6 pl-2 py-1 mb-6 transition-all w-max group">
                                 <?php if ($author_image_url): ?>
                                     <img src="<?php echo esc_url($author_image_url); ?>" alt="<?php echo esc_attr($primary_author->name); ?>" class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
                                 <?php
@@ -227,7 +227,7 @@ endif; ?>
 // We can use CSS to target them inside .rmss-single-price
 ?>
                                 <div class="rmss-single-price text-gray-900 flex items-baseline gap-2">
-                                    <?php echo $product->get_price_html(); ?>
+                                    <?php echo wp_kses_post( $product->get_price_html() ); ?>
                                 </div>
                             </div>
                              <?php if ($product->is_on_sale()): ?>
@@ -246,7 +246,7 @@ endif; ?>
 
                         <!-- Short Description -->
                         <div class="prose text-gray-600 mb-8 leading-relaxed">
-                            <?php echo apply_filters('woocommerce_short_description', $post->post_excerpt); ?>
+                            <?php echo wp_kses_post( apply_filters('woocommerce_short_description', $post->post_excerpt) ); ?>
                         </div>
 
                         <!-- Conversion Zone -->
@@ -389,7 +389,7 @@ endforeach; ?>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 rmss-animate-slide-up" style="animation-delay: 300ms">
                     <h3 class="text-xl font-bold text-gray-900 mb-6">About the Book</h3>
                     <div class="prose max-w-none text-gray-600">
-                        <?php echo apply_filters('the_content', $product->get_description()); ?>
+                        <?php echo wp_kses_post( apply_filters('the_content', $product->get_description()) ); ?>
                     </div>
                 </div>
             </div>
@@ -421,7 +421,7 @@ endforeach; ?>
                             </p>
                         <?php
     endif; ?>
-                        <a href="<?php echo get_term_link($primary_author); ?>" class="block w-full text-center py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-bold text-sm transition-colors">
+                        <a href="<?php echo esc_url( trsss_safe_term_link($primary_author) ); ?>" class="block w-full text-center py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-bold text-sm transition-colors">
                             View Author Profile
                         </a>
                     </div>
@@ -446,7 +446,7 @@ endif; ?>
                                 <span class="text-xs text-purple-600 font-bold uppercase tracking-wider"><?php echo esc_html(rmss_get_label('publisher', 'Publisher', $labels)); ?></span>
                             </div>
                         </div>
-                        <a href="<?php echo get_term_link($primary_publisher); ?>" class="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1 transition-colors">
+                        <a href="<?php echo esc_url( trsss_safe_term_link($primary_publisher) ); ?>" class="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1 transition-colors">
                             More books from this publisher &rarr;
                         </a>
                     </div>

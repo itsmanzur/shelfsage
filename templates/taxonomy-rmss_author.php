@@ -21,7 +21,7 @@ get_header(); ?>
     <?php if ( have_posts() ) : ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <?php while ( have_posts() ) : the_post(); 
-                $product = wc_get_product( get_the_ID() );
+                $product = trsss_is_woocommerce_available() ? wc_get_product( get_the_ID() ) : null;
                 ?>
                 <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 overflow-hidden">
                     <a href="<?php the_permalink(); ?>" class="block">
@@ -42,7 +42,7 @@ get_header(); ?>
                             </a>
                         </h2>
                         <div class="text-gray-600 text-sm mb-2">
-                             <?php echo $product->get_price_html(); ?>
+                             <?php echo $product ? wp_kses_post( $product->get_price_html() ) : ''; ?>
                         </div>
                         
                         <?php 
@@ -54,9 +54,11 @@ get_header(); ?>
                              </button>
                         <?php endif; ?>
                         
-                        <a href="?add-to-cart=<?php echo get_the_ID(); ?>" class="mt-2 block text-center px-4 py-2 border border-blue-500 text-blue-500 text-xs font-bold rounded hover:bg-blue-50 transition-colors w-full">
+                        <?php if ( $product ) : ?>
+                        <a href="?add-to-cart=<?php echo esc_attr( (string) get_the_ID() ); ?>" class="mt-2 block text-center px-4 py-2 border border-blue-500 text-blue-500 text-xs font-bold rounded hover:bg-blue-50 transition-colors w-full">
                             <?php _e( 'Add to Cart', 'woocommerce' ); ?>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endwhile; ?>
