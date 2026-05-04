@@ -194,6 +194,7 @@ endif; ?>
                 <?php
 endif; ?>
             </div>
+            <?php trsss_render_preorder_countdown( $product_id, array( 'class' => 's4-sans' ) ); ?>
 
             <!-- Short description -->
             <?php if ($short_desc): ?>

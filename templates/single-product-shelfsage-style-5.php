@@ -309,6 +309,7 @@ if (!empty($global_affiliates)) {
                                 <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Out of Stock</span>
                             <?php endif; ?>
                         </div>
+                        <?php trsss_render_preorder_countdown( $product_id ); ?>
                     </div>
 
                     <?php $show_cart_s5 = !filter_var($settings['hide_add_to_cart'] ?? false, FILTER_VALIDATE_BOOLEAN) && $product->is_in_stock(); ?>

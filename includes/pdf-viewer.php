@@ -46,7 +46,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 header( 'X-Frame-Options: SAMEORIGIN' );
 header( 'X-Content-Type-Options: nosniff' );
 
-$safe_url       = esc_attr( $url );
+$safe_url       = $url;
 $proxy_url      = add_query_arg(
 	array(
 		'file'  => $url,
@@ -93,7 +93,7 @@ canvas{display:block;box-shadow:0 4px 20px rgba(0,0,0,.6);border-radius:3px;max-
 <div id="viewer">
     <p id="loading">&#9203; Loading PDF...</p>
     <p id="error-msg">&#10060; Could not load PDF.
-        <a href="<?php echo $safe_url; ?>" target="_blank" rel="noopener noreferrer" style="color:#93c5fd">Download instead</a>
+        <a href="<?php echo esc_attr( $safe_url ); ?>" target="_blank" rel="noopener noreferrer" style="color:#93c5fd">Download instead</a>
     </p>
 </div>
 

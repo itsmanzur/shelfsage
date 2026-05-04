@@ -150,3 +150,147 @@ function trsss_safe_term_link( $term ) {
 
 	return is_wp_error( $link ) ? '#' : $link;
 }
+
+/**
+ * Get release timestamp for an active pre-order product.
+ *
+ * @param int $product_id Product ID.
+ * @return int Unix timestamp in the site timezone, or 0 when not applicable.
+ */
+function trsss_get_preorder_release_timestamp( $product_id ) {
+	$product_id   = absint( $product_id );
+	$pre_order    = get_post_meta( $product_id, '_rmss_pre_order', true );
+	$release_date = trim( (string) get_post_meta( $product_id, '_rmss_release_date', true ) );
+	$pre_order_on = ! in_array( strtolower( trim( (string) $pre_order ) ), array( '', '0', 'no', 'false', 'off' ), true );
+
+	if ( ! $product_id || ! $pre_order_on || '' === $release_date ) {
+		return 0;
+	}
+
+	try {
+		$timezone = function_exists( 'wp_timezone' ) ? wp_timezone() : new DateTimeZone( 'UTC' );
+		$date     = new DateTimeImmutable( $release_date, $timezone );
+		$date     = $date->setTime( 0, 0, 0 );
+		return $date->getTimestamp();
+	} catch ( Exception $e ) {
+		$timestamp = strtotime( $release_date );
+		return $timestamp ? (int) $timestamp : 0;
+	}
+}
+
+/**
+ * Render a pre-order countdown for single product templates.
+ *
+ * @param int   $product_id Product ID.
+ * @param array $args       Display options.
+ * @return void
+ */
+function trsss_render_preorder_countdown( $product_id, $args = array() ) {
+	$product_id  = absint( $product_id );
+	$release_ts  = trsss_get_preorder_release_timestamp( $product_id );
+	$current_ts  = current_time( 'timestamp' );
+
+	if ( ! $product_id || $release_ts <= $current_ts ) {
+		return;
+	}
+
+	$args = wp_parse_args(
+		$args,
+		array(
+			'class' => '',
+			'title' => __( 'Pre-order countdown', 'shelfsage' ),
+		)
+	);
+
+	static $assets_printed = false;
+	$countdown_id          = 'trsss-preorder-countdown-' . $product_id . '-' . wp_rand( 1000, 9999 );
+	$release_text          = sprintf(
+		/* translators: %s: formatted release date. */
+		__( 'Releases on %s', 'shelfsage' ),
+		date_i18n( get_option( 'date_format' ), $release_ts )
+	);
+	$labels                = array(
+		'days'      => __( 'Days', 'shelfsage' ),
+		'hours'     => __( 'Hours', 'shelfsage' ),
+		'minutes'   => __( 'Minutes', 'shelfsage' ),
+		'seconds'   => __( 'Seconds', 'shelfsage' ),
+		'available' => __( 'Available now', 'shelfsage' ),
+	);
+
+	if ( ! $assets_printed ) :
+		$assets_printed = true;
+		?>
+		<style id="trsss-preorder-countdown-css">
+			.trsss-preorder-countdown{margin:1rem 0;padding:1rem;border:1px solid rgba(37,99,235,.18);border-radius:.75rem;background:linear-gradient(135deg,rgba(239,246,255,.98),rgba(255,255,255,.98));box-shadow:0 10px 28px rgba(15,23,42,.06)}
+			.trsss-preorder-countdown__head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.75rem}
+			.trsss-preorder-countdown__title{margin:0;font-size:.82rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#1d4ed8}
+			.trsss-preorder-countdown__date{font-size:.8rem;font-weight:600;color:#64748b;text-align:right}
+			.trsss-preorder-countdown__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
+			.trsss-preorder-countdown__unit{min-width:0;border-radius:.65rem;background:#fff;border:1px solid rgba(148,163,184,.22);padding:.65rem .35rem;text-align:center}
+			.trsss-preorder-countdown__value{display:block;font-size:1.35rem;line-height:1;font-weight:900;color:#0f172a;font-variant-numeric:tabular-nums}
+			.trsss-preorder-countdown__label{display:block;margin-top:.35rem;font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.03em}
+			.trsss-preorder-countdown.is-complete .trsss-preorder-countdown__grid{display:none}
+			.trsss-preorder-countdown__complete{display:none;margin:0;font-weight:800;color:#15803d}
+			.trsss-preorder-countdown.is-complete .trsss-preorder-countdown__complete{display:block}
+			@media (max-width:480px){.trsss-preorder-countdown{padding:.85rem}.trsss-preorder-countdown__head{align-items:flex-start;flex-direction:column}.trsss-preorder-countdown__date{text-align:left}.trsss-preorder-countdown__grid{gap:.4rem}.trsss-preorder-countdown__value{font-size:1.08rem}.trsss-preorder-countdown__label{font-size:.58rem}}
+		</style>
+		<script id="trsss-preorder-countdown-js">
+		(function(){
+			if (window.trsssPreorderCountdownInit) return;
+			window.trsssPreorderCountdownInit = function(root) {
+				if (!root || root.dataset.trsssCountdownReady) return;
+				root.dataset.trsssCountdownReady = '1';
+				var target = parseInt(root.getAttribute('data-release-ts'), 10) * 1000;
+				var values = {
+					days: root.querySelector('[data-countdown-days]'),
+					hours: root.querySelector('[data-countdown-hours]'),
+					minutes: root.querySelector('[data-countdown-minutes]'),
+					seconds: root.querySelector('[data-countdown-seconds]')
+				};
+				function pad(value) { return value < 10 ? '0' + value : String(value); }
+				function tick() {
+					var diff = target - Date.now();
+					if (diff <= 0) {
+						root.classList.add('is-complete');
+						if (root._trsssTimer) window.clearInterval(root._trsssTimer);
+						return;
+					}
+					var total = Math.floor(diff / 1000);
+					var days = Math.floor(total / 86400);
+					total -= days * 86400;
+					var hours = Math.floor(total / 3600);
+					total -= hours * 3600;
+					var minutes = Math.floor(total / 60);
+					var seconds = total - minutes * 60;
+					if (values.days) values.days.textContent = String(days);
+					if (values.hours) values.hours.textContent = pad(hours);
+					if (values.minutes) values.minutes.textContent = pad(minutes);
+					if (values.seconds) values.seconds.textContent = pad(seconds);
+				}
+				tick();
+				root._trsssTimer = window.setInterval(tick, 1000);
+			};
+			document.addEventListener('DOMContentLoaded', function(){
+				document.querySelectorAll('[data-trsss-preorder-countdown]').forEach(window.trsssPreorderCountdownInit);
+			});
+		}());
+		</script>
+		<?php
+	endif;
+	?>
+	<div id="<?php echo esc_attr( $countdown_id ); ?>" class="trsss-preorder-countdown <?php echo esc_attr( $args['class'] ); ?>" data-trsss-preorder-countdown data-release-ts="<?php echo esc_attr( $release_ts ); ?>">
+		<div class="trsss-preorder-countdown__head">
+			<p class="trsss-preorder-countdown__title"><?php echo esc_html( $args['title'] ); ?></p>
+			<span class="trsss-preorder-countdown__date"><?php echo esc_html( $release_text ); ?></span>
+		</div>
+		<div class="trsss-preorder-countdown__grid" aria-live="polite">
+			<span class="trsss-preorder-countdown__unit"><span class="trsss-preorder-countdown__value" data-countdown-days>0</span><span class="trsss-preorder-countdown__label"><?php echo esc_html( $labels['days'] ); ?></span></span>
+			<span class="trsss-preorder-countdown__unit"><span class="trsss-preorder-countdown__value" data-countdown-hours>00</span><span class="trsss-preorder-countdown__label"><?php echo esc_html( $labels['hours'] ); ?></span></span>
+			<span class="trsss-preorder-countdown__unit"><span class="trsss-preorder-countdown__value" data-countdown-minutes>00</span><span class="trsss-preorder-countdown__label"><?php echo esc_html( $labels['minutes'] ); ?></span></span>
+			<span class="trsss-preorder-countdown__unit"><span class="trsss-preorder-countdown__value" data-countdown-seconds>00</span><span class="trsss-preorder-countdown__label"><?php echo esc_html( $labels['seconds'] ); ?></span></span>
+		</div>
+		<p class="trsss-preorder-countdown__complete"><?php echo esc_html( $labels['available'] ); ?></p>
+	</div>
+	<script>window.trsssPreorderCountdownInit&&window.trsssPreorderCountdownInit(document.getElementById(<?php echo wp_json_encode( $countdown_id ); ?>));</script>
+	<?php
+}

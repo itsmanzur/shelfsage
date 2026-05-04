@@ -246,6 +246,7 @@ endif; ?>
                                 .rmss-single-price del .amount { font-size: 1rem; color: #9ca3af; text-decoration: line-through; font-weight: 400; } /* Old Price Size */
                                 .rmss-single-price ins { text-decoration: none; }
                             </style>
+                            <?php trsss_render_preorder_countdown( $product_id ); ?>
                         </div>
 
                         <!-- Short Description -->
