@@ -686,6 +686,68 @@ const SettingsApp = ({ initialTab = 'general' }) => {
 
                         {activeTab === 'appearance' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+                                {/* ── Book Page Font ── */}
+                                <div className="bg-white rounded-2xl shadow-sm border-2 border-indigo-100 overflow-hidden">
+                                    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+                                        <div className="w-9 h-9 bg-indigo-100 rounded-xl flex items-center justify-center text-xl">🔤</div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-800 text-sm">Book Page Font Family</h4>
+                                            <p className="text-xs text-gray-500">Applies to single product pages rendered by ShelfSage templates.</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-5 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Font Family</label>
+                                            <select
+                                                value={settings.book_font_family || 'inherit'}
+                                                onChange={e => handleChange('book_font_family', e.target.value)}
+                                                className="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white"
+                                            >
+                                                <optgroup label="Recommended">
+                                                    <option value="inherit">Theme Default (Recommended — zero extra requests)</option>
+                                                </optgroup>
+                                                <optgroup label="Bengali / Arabic">
+                                                    <option value="'Hind Siliguri', sans-serif">Hind Siliguri — হিন্দ সিলিগুড়ি (Google Fonts)</option>
+                                                    <option value="'Noto Serif Bengali', serif">Noto Serif Bengali — নোটো সেরিফ (Google Fonts)</option>
+                                                    <option value="'Noto Sans Bengali', sans-serif">Noto Sans Bengali — নোটো সান্স (Google Fonts)</option>
+                                                    <option value="'Kalpurush', sans-serif">Kalpurush — কালপুরুষ (Google Fonts)</option>
+                                                    <option value="'SolaimanLipi', sans-serif">SolaimanLipi — সোলায়মানলিপি (Google Fonts)</option>
+                                                </optgroup>
+                                                <optgroup label="English / System">
+                                                    <option value="Georgia, serif">Georgia (system — no download)</option>
+                                                    <option value="'Times New Roman', Times, serif">Times New Roman (system)</option>
+                                                    <option value="system-ui, sans-serif">System UI (OS default sans)</option>
+                                                </optgroup>
+                                                <optgroup label="Custom">
+                                                    <option value="custom">Custom (type your own CSS value)</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+
+                                        {settings.book_font_family === 'custom' && (
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">Custom CSS font-family value</label>
+                                                <input
+                                                    type="text"
+                                                    value={settings.book_font_family_custom || ''}
+                                                    onChange={e => handleChange('book_font_family_custom', e.target.value)}
+                                                    placeholder="e.g. 'MyFont', sans-serif"
+                                                    className="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm"
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Make sure the font is already loaded by your theme or via @font-face.</p>
+                                            </div>
+                                        )}
+
+                                        {settings.book_font_family && settings.book_font_family !== 'inherit' && settings.book_font_family !== 'custom' && (
+                                            <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
+                                                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                This font will be loaded from Google Fonts on product pages — one extra HTTP request per page.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
                                     <h3 className="text-lg font-bold text-gray-800 border-b pb-2">Color Scheme</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

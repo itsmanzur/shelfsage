@@ -310,16 +310,62 @@ function trsss_enqueue_scripts()
         $primary = trsss_sanitize_theme_hex(isset($settings['primary_color']) ? $settings['primary_color'] : '', '#2563eb');
         $accent = trsss_sanitize_theme_hex(isset($settings['accent_color']) ? $settings['accent_color'] : '', '#1d4ed8');
 
+        // ── Book page font family ────────────────────────────────────────────────
+        $book_font_raw    = sanitize_text_field( $settings['book_font_family'] ?? 'inherit' );
+        $book_font_custom = sanitize_text_field( $settings['book_font_family_custom'] ?? '' );
+
+        // Map of preset value → Google Fonts query string
+        $gfont_map = array(
+            "'Hind Siliguri', sans-serif"     => 'Hind+Siliguri:wght@400;600;700',
+            "'Noto Serif Bengali', serif"     => 'Noto+Serif+Bengali:wght@400;600;700',
+            "'Kalpurush', sans-serif"         => 'Kalpurush',
+            "'SolaimanLipi', sans-serif"      => 'SolaimanLipi',
+            "'Noto Sans Bengali', sans-serif" => 'Noto+Sans+Bengali:wght@400;600;700',
+        );
+
+        // Conditionally load Google Font — only when a non-system font is selected
+        if ( isset( $gfont_map[ $book_font_raw ] ) ) {
+            wp_enqueue_style(
+                'trsss-book-font',
+                'https://fonts.googleapis.com/css2?family=' . $gfont_map[ $book_font_raw ] . '&display=swap',
+                array(),
+                null
+            );
+        }
+
+        // Resolve final CSS value
+        if ( $book_font_raw === 'custom' ) {
+            $book_font_css = ! empty( $book_font_custom ) ? esc_attr( $book_font_custom ) : 'inherit';
+        } elseif ( $book_font_raw === 'inherit' || empty( $book_font_raw ) ) {
+            $book_font_css = 'inherit';
+        } else {
+            $book_font_css = esc_attr( $book_font_raw );
+        }
+
         $custom_css = "
             :root {
                 --rmss-primary: {$primary};
                 --rmss-accent: {$accent};
                 --rmss-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
                 --rmss-font-serif: 'Lora', Georgia, serif;
+                --rmss-book-font: {$book_font_css};
             }
             .rmss-btn-primary { background-color: var(--rmss-primary) !important; }
             .rmss-text-primary { color: var(--rmss-primary) !important; }
             .rmss-btn-accent { background-color: var(--rmss-accent) !important; }
+
+            /* Book single-page font — applies to all ShelfSage product templates */
+            .shelfsage-single-product, .rmss-book-single {
+                font-family: var(--rmss-book-font) !important;
+            }
+            .shelfsage-single-product p,
+            .shelfsage-single-product span,
+            .shelfsage-single-product div,
+            .shelfsage-single-product h1,
+            .shelfsage-single-product h2,
+            .shelfsage-single-product h3 {
+                font-family: var(--rmss-book-font);
+            }
             
             /* Global Typography Overrides */
             .rmss-container, .rmss-books-container, #rmss-app-root, #rmss-welcome-root {

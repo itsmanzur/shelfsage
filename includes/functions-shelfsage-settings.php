@@ -27,6 +27,8 @@ function trsss_shelfsage_option_defaults() {
 		'default_book_image'       => '',
 		'primary_color'            => '#2563eb',
 		'accent_color'             => '#1d4ed8',
+		'book_font_family'         => 'inherit',
+		'book_font_family_custom'  => '',
 		'enable_look_inside'       => true,
 		'pdf_reader_style'         => 'style-1',
 		'look_inside_btn_position' => 'bottom-left',
