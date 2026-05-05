@@ -294,7 +294,7 @@ endif; ?>
                                         <?php $custom_btn_url = (!empty($affiliates) && !empty($affiliates[0]['url'])) ? $affiliates[0]['url'] : '#product-details'; ?>
                                         <a href="<?php echo esc_url($custom_btn_url); ?>" target="<?php echo (strpos($custom_btn_url, '#') === 0) ? '_self' : '_blank'; ?>" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 border-2 border-gray-900 hover:bg-gray-900 hover:text-white text-gray-900 font-bold rounded-full transition-all"><?php echo esc_html(rmss_get_label('custom_button', 'View Details', $labels)); ?></a>
                                     <?php endif; ?>
-                                    <?php if ($show_cart && (!empty($ebook_url) || !empty($audio_url))): ?>
+                                    <?php if ($show_cart && !empty($ebook_url)): ?>
                                         <div class="mt-4 pt-4 border-t border-gray-100">
                                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"><?php esc_html_e('Digital', 'shelfsage'); ?></p>
                                             <div class="flex flex-wrap gap-2">
@@ -302,13 +302,6 @@ endif; ?>
                                                 <a href="<?php echo esc_url($ebook_url); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium transition-colors">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                                     <?php echo esc_html(apply_filters('rmss_ebook_link_label', __('E-book / Download', 'shelfsage'))); ?>
-                                                </a>
-                                                <?php
-        endif; ?>
-                                                <?php if (!empty($audio_url)): ?>
-                                                <a href="<?php echo esc_url($audio_url); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                                                    <?php echo esc_html(apply_filters('rmss_audio_link_label', __('Audiobook / Sample', 'shelfsage'))); ?>
                                                 </a>
                                                 <?php
         endif; ?>

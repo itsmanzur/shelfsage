@@ -18,6 +18,13 @@ export const changelog = [
       {
         badge: 'NEW',
         category: 'Feature',
+        icon: '🎧',
+        title: 'Audiobook Preview Player',
+        summary: 'Turn the existing audiobook/sample URL field into an inline audio player on book product pages.',
+        usage: 'Product edit → Book Details → Audiobook or Sample Audio URL. The player appears near the cart area, or use shortcode: [shelfsage_audiobook_preview product_id=123].',
+      },      {
+        badge: 'NEW',
+        category: 'Feature',
         icon: '👤',
         title: 'Author Profile Pages',
         summary: 'Create richer Book Author pages with full biography, profile photo, social links, and multiple profile layouts.',
