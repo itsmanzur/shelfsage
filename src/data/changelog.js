@@ -17,6 +17,37 @@ export const changelog = [
     features: [
       {
         badge: 'NEW',
+        category: 'Feature',
+        icon: '👤',
+        title: 'Author Profile Pages',
+        summary: 'Create richer Book Author pages with full biography, profile photo, social links, and multiple profile layouts.',
+        usage: 'Products → Book Authors → edit an author to add bio, photo, and social links. Settings → General → Author Profile Layout controls the frontend design.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
+        icon: '🔢',
+        title: 'Series Reading Order Management',
+        summary: 'Organize books inside a series with explicit reading order numbers and show readers the full sequence.',
+        usage: 'Product edit → Series Reading Order. Assign a Book Series term, set the order number, then use the product Series Order tab or shortcode: [shelfsage_series_order product_id=123].',
+      },      {
+        badge: 'NEW',
+        category: 'Feature',
+        icon: '📊',
+        title: 'Analytics Dashboard',
+        summary: 'See the books readers view most and the search terms shoppers use across ShelfSage discovery experiences.',
+        usage: 'ShelfSage → SS Dashboard → Insights. Most Viewed updates from WooCommerce product page visits; Search Trends updates from ShelfSage search requests.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
+        icon: '⭐',
+        title: 'Book Review System',
+        summary: 'Collect guest reviews, show WooCommerce verified purchase badges, and embed book reviews anywhere with the [shelfsage_book_reviews] shortcode.',
+        usage: 'Product page → Reviews section, or use shortcode: [shelfsage_book_reviews] / [shelfsage_book_reviews product_id=123]. Guests can submit reviews; customers with matching WooCommerce orders receive a Verified Purchase badge automatically.',
+      },
+      {
+        badge: 'NEW',
         category: 'UX',
         icon: '🔤',
         title: 'Book Page Font Family',
@@ -84,8 +115,7 @@ export const changelog = [
   {
     version: '1.2.0',
     date: '2025-12-01',
-    features: [
-      {
+    features: [      {
         badge: 'NEW',
         category: 'UX',
         icon: '🏗️',
@@ -130,8 +160,7 @@ export const changelog = [
   {
     version: '1.5.0',
     date: '2026-04-01',
-    features: [
-      {
+    features: [      {
         badge: 'NEW',
         category: 'Feature',
         icon: '🎨',

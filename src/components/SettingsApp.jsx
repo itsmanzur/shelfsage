@@ -23,6 +23,7 @@ const SettingsApp = ({ initialTab = 'general' }) => {
         enable_custom_template: true,
         single_product_layout: 'style-1',
         vault_single_layout: 'style-1',
+        author_profile_layout: 'style-1',
         default_book_image: '',
         primary_color: '#2563eb',
         accent_color: '#1d4ed8',
@@ -610,6 +611,41 @@ const SettingsApp = ({ initialTab = 'general' }) => {
                                             <p className="text-xs text-gray-400 mt-1">After saving, reload the product page (Ctrl+Shift+R) to apply.</p>
                                         </div>
                                     )}
+
+
+
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <label className="font-semibold text-gray-700 block mb-1">Author Profile Layout</label>
+                                        <p className="text-sm text-gray-500 mb-3">Choose the design style for Book Author archive/profile pages.</p>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                            {[
+                                                { value: 'style-1', label: 'Portrait Card', desc: 'Photo + full bio', icon: '👤' },
+                                                { value: 'style-2', label: 'Editorial Split', desc: 'Magazine style', icon: '📰' },
+                                                { value: 'style-3', label: 'Dark Hero', desc: 'Centered profile', icon: '✨' },
+                                                { value: 'style-4', label: 'Compact Bio', desc: 'Clean archive header', icon: '📚' },
+                                            ].map(layout => {
+                                                const isSelected = (settings.author_profile_layout || 'style-1') === layout.value;
+                                                return (
+                                                    <button
+                                                        key={layout.value}
+                                                        type="button"
+                                                        onClick={() => handleChange('author_profile_layout', layout.value)}
+                                                        className={`relative p-3 rounded-xl border-2 text-left transition-all bg-white hover:border-purple-400 ${isSelected ? 'border-purple-600 bg-purple-50 shadow-md' : 'border-gray-200'}`}
+                                                    >
+                                                        <div className="text-2xl mb-1">{layout.icon}</div>
+                                                        <div className="font-bold text-sm text-gray-800">{layout.label}</div>
+                                                        <div className="text-xs text-gray-500 mt-0.5">{layout.desc}</div>
+                                                        {isSelected && (
+                                                            <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-purple-600 flex items-center justify-center">
+                                                                <svg width="8" height="8" fill="white" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">Applies to Book Author pages. Bio comes from the author description; photo and socials are edited on the author term.</p>
+                                    </div>
 
                                     {isPro && (
                                         <div className="pt-4 border-t border-gray-100">

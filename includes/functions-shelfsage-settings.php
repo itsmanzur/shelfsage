@@ -24,6 +24,7 @@ function trsss_shelfsage_option_defaults() {
 		'apply_to_all_products'    => true,
 		'single_product_layout'    => 'style-1',
 		'vault_single_layout'      => 'style-1',
+		'author_profile_layout'    => 'style-1',
 		'default_book_image'       => '',
 		'primary_color'            => '#2563eb',
 		'accent_color'             => '#1d4ed8',

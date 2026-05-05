@@ -19,10 +19,11 @@ if ( ! $image_url ) {
 ?>
 
 <div class="rmss-container max-w-7xl mx-auto px-4 py-12">
-    
     <!-- Header Section -->
+    <?php if ( 'rmss_author' === $term->taxonomy && function_exists( 'trsss_author_profile_render_header' ) ) : ?>
+        <?php trsss_author_profile_render_header( $term, $taxonomy ); ?>
+    <?php else : ?>
     <div class="rmss-term-header bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-12 flex flex-col md:flex-row items-center md:items-start gap-10 rmss-animate-fade-in">
-        
         <?php if ( $image_url ) : ?>
             <div class="rmss-term-image flex-shrink-0 rmss-animate-scale-in">
                 <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" class="w-40 h-40 md:w-56 md:h-56 rounded-full object-cover shadow-lg border-4 border-white ring-1 ring-gray-100">
@@ -38,21 +39,19 @@ if ( ! $image_url ) {
                 <?php echo esc_html( $taxonomy->labels->singular_name ); ?>
             </span>
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight tracking-tight"><?php echo esc_html( $term->name ); ?></h1>
-            
             <?php if ( ! empty( $term->description ) ) : ?>
                 <div class="rmss-term-description text-gray-600 text-lg max-w-3xl leading-relaxed mb-6">
                     <?php echo wp_kses_post( $term->description ); ?>
                 </div>
             <?php endif; ?>
-
             <div class="flex flex-wrap gap-4 justify-center md:justify-start">
                 <div class="inline-flex items-center bg-gray-50 px-4 py-2 rounded-lg text-gray-600 font-medium">
-                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     <span><?php echo sprintf( _n( '%s Book', '%s Books', $term->count, 'shelfsage' ), number_format_i18n( $term->count ) ); ?></span>
                 </div>
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- Books Grid -->
     <div class="rmss-term-books rmss-animate-slide-up rmss-stagger-2">

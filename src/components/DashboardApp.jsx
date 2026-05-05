@@ -284,6 +284,7 @@ const DashboardApp = ({ initialTab = 'home' }) => {
         low_stock_count: 0,
         recent_activity: []
     };
+    const analytics = window.rmssAdminSettings?.analytics || { mostViewed: [], searchTrends: [] };
     const apiStatus = window.rmssAdminSettings?.apiStatus || { googleBooks: false, amazonPA: false };
     const isPro = window.rmssAdminSettings?.isPro;
 
@@ -695,105 +696,103 @@ const DashboardApp = ({ initialTab = 'home' }) => {
     };
 
     const renderInsights = () => {
-        const googleStatus = apiStatus.googleBooks;
-        const amazonStatus = apiStatus.amazonPA;
+        const mostViewed = analytics.mostViewed || [];
+        const searchTrends = analytics.searchTrends || [];
+        const totalViews = mostViewed.reduce((sum, item) => sum + (Number(item.views) || 0), 0);
+        const totalSearches = searchTrends.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
+        const topSearchCount = Math.max(1, ...searchTrends.map(item => Number(item.count) || 0));
 
         return (
-            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                {/* 1. Analytics Hero */}
-                <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-purple-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
-                        <div className="max-w-xl">
-                            <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">
-                                Visual <span className="text-purple-600">Analytics Hub</span>
-                            </h2>
-                            <p className="text-gray-500 font-medium text-lg leading-relaxed">
-                                Monitor your bookstore's reach and engagement in real-time. Insights are distilled from your live shortcodes and visitor interactions.
-                            </p>
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div>
+                            <p className="text-[10px] font-black text-purple-600 uppercase tracking-[0.25em] mb-2">Analytics Dashboard</p>
+                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Most Viewed Books & Search Trends</h2>
+                            <p className="text-sm text-gray-500 font-medium mt-2 max-w-2xl">Track which books readers open most and what they search for inside ShelfSage-powered book discovery.</p>
                         </div>
-                        <div className="flex-1 w-full max-w-sm">
-                            {/* Mock SVG Chart */}
-                            <svg viewBox="0 0 400 200" className="w-full h-auto drop-shadow-xl">
-                                <path
-                                    d="M0 150 Q 50 120, 100 140 T 200 80 T 300 110 T 400 40"
-                                    fill="none"
-                                    stroke="url(#grad)"
-                                    strokeWidth="8"
-                                    strokeLinecap="round"
-                                />
-                                <defs>
-                                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" style={{ stopColor: '#8b5cf6', stopOpacity: 1 }} />
-                                        <stop offset="100%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
+                        <div className="grid grid-cols-2 gap-3 min-w-[280px]">
+                            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+                                <p className="text-[9px] font-black text-purple-500 uppercase tracking-widest">Tracked Views</p>
+                                <p className="text-2xl font-black text-purple-900 mt-1">{totalViews}</p>
+                            </div>
+                            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                                <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest">Tracked Searches</p>
+                                <p className="text-2xl font-black text-blue-900 mt-1">{totalSearches}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* 2. System Health & Maintenance Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* API Performance */}
-                    <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
-                            <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" /></svg>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider">Most Viewed</h3>
+                                <p className="text-xs text-gray-400 font-medium mt-1">Ranked by product page visits.</p>
+                            </div>
+                            <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-purple-50 text-purple-600 uppercase tracking-widest">Live</span>
                         </div>
-                        <h3 className="text-xs font-black text-purple-400 uppercase tracking-[0.3em] mb-6">System Health</h3>
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <span className="font-bold text-gray-400">Google Books API</span>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-black text-white/60">42ms</span>
-                                    <span className={`h-2.5 w-2.5 rounded-full ${googleStatus ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-red-500'}`}></span>
+                        <div className="p-4 space-y-3">
+                            {mostViewed.length > 0 ? mostViewed.map((book, idx) => (
+                                <a key={book.id || idx} href={book.editUrl || book.url || '#'} className="flex items-center gap-4 p-3 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/40 transition-all group">
+                                    <div className="w-9 h-9 rounded-xl bg-gray-900 text-white flex items-center justify-center text-xs font-black flex-shrink-0">#{idx + 1}</div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm font-black text-gray-900 truncate group-hover:text-purple-700">{book.title || 'Untitled Book'}</p>
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Product ID: {book.id}</p>
+                                    </div>
+                                    <div className="text-right flex-shrink-0">
+                                        <p className="text-lg font-black text-purple-600">{book.views || 0}</p>
+                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Views</p>
+                                    </div>
+                                </a>
+                            )) : (
+                                <div className="text-center py-12 px-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 mx-auto mb-3 flex items-center justify-center text-gray-400">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7z" /></svg>
+                                    </div>
+                                    <p className="text-sm font-bold text-gray-500">No product views tracked yet.</p>
                                 </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="font-bold text-gray-400">Amazon PA-API</span>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-black text-white/60">128ms</span>
-                                    <span className={`h-2.5 w-2.5 rounded-full ${amazonStatus ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-red-500'}`}></span>
-                                </div>
-                            </div>
-                            <div className="pt-4 border-t border-white/10 text-center">
-                                <span className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Global Backend: No Latency</span>
-                            </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Technical Maintenance */}
-                    <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm col-span-2">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-xl font-black text-gray-900 tracking-tight">Smart Maintenance</h3>
-                            <span className="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-widest rounded-lg">3 Actions Required</span>
+                    <div className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider">Search Trends</h3>
+                                <p className="text-xs text-gray-400 font-medium mt-1">Top terms from ShelfSage search requests.</p>
+                            </div>
+                            <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 uppercase tracking-widest">Terms</span>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all cursor-pointer">
-                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-purple-500 shadow-sm">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        <div className="p-4 space-y-3">
+                            {searchTrends.length > 0 ? searchTrends.map((trend, idx) => {
+                                const width = `${Math.max(12, Math.round(((Number(trend.count) || 0) / topSearchCount) * 100))}%`;
+                                return (
+                                    <div key={`${trend.term}-${idx}`} className="p-3 rounded-2xl border border-gray-100 bg-gray-50/50">
+                                        <div className="flex items-center justify-between gap-3 mb-2">
+                                            <p className="text-sm font-black text-gray-900 truncate">{trend.term}</p>
+                                            <span className="text-xs font-black text-blue-600 flex-shrink-0">{trend.count || 0} searches</span>
+                                        </div>
+                                        <div className="h-2 rounded-full bg-white overflow-hidden border border-gray-100">
+                                            <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500" style={{ width }}></div>
+                                        </div>
+                                    </div>
+                                );
+                            }) : (
+                                <div className="text-center py-12 px-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 mx-auto mb-3 flex items-center justify-center text-gray-400">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    </div>
+                                    <p className="text-sm font-bold text-gray-500">No search trends tracked yet.</p>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-sm text-gray-900 uppercase tracking-tighter">Sync Price Data</h4>
-                                    <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Amazon API • 12 Books</p>
-                                </div>
-                            </div>
-                            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all cursor-pointer">
-                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-blue-500 shadow-sm">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-sm text-gray-900 uppercase tracking-tighter">Missing Metadata</h4>
-                                    <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Audit Required • 8 Books</p>
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
         );
     };
-
     const renderOverview = () => {
         const totalAssets = (statsEnriched.total_books || 0) + (statsEnriched.total_vault || 0);
         const googleStatus = apiStatus.googleBooks;

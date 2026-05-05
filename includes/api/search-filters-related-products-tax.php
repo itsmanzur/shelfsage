@@ -95,6 +95,10 @@ function trsss_handle_search( $request ) {
     }
 
     $params = $request->get_params();
+    if ( function_exists( 'trsss_analytics_track_search' ) ) {
+        trsss_analytics_track_search( $params );
+    }
+
     if ( ! trsss_is_woocommerce_available() ) {
         return trsss_woocommerce_required_error();
     }

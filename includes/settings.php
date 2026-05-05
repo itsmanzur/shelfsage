@@ -162,6 +162,11 @@ class TRSSS_Settings
             $v = sanitize_text_field($params['vault_single_layout']);
             $settings['vault_single_layout'] = in_array($v, $valid_vault_layouts, true) ? $v : 'style-1';
         }
+        if (isset($params['author_profile_layout'])) {
+            $valid_author_layouts = array('style-1', 'style-2', 'style-3', 'style-4');
+            $author_layout = sanitize_text_field($params['author_profile_layout']);
+            $settings['author_profile_layout'] = in_array($author_layout, $valid_author_layouts, true) ? $author_layout : 'style-1';
+        }
         if (isset($params['default_book_image']))
             $settings['default_book_image'] = sanitize_text_field($params['default_book_image']);
         if (isset($params['primary_color']))

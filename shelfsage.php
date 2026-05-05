@@ -71,6 +71,10 @@ require_once TRSSS_PATH . 'includes/api.php';
 
 // Include frontend assets
 require_once TRSSS_PATH . 'includes/frontend.php';
+require_once TRSSS_PATH . 'includes/book-reviews.php';
+require_once TRSSS_PATH . 'includes/analytics.php';
+require_once TRSSS_PATH . 'includes/series-reading-order.php';
+require_once TRSSS_PATH . 'includes/author-profiles.php';
 
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
