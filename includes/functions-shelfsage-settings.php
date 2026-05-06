@@ -32,6 +32,7 @@ function trsss_shelfsage_option_defaults() {
 		'book_font_family_custom'  => '',
 		'enable_look_inside'       => true,
 		'pdf_reader_style'         => 'style-1',
+		'pdf_reader_engine'        => 'basic',
 		'look_inside_btn_position' => 'bottom-left',
 		'enable_affiliate'         => true,
 		'enable_schema'            => true,

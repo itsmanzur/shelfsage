@@ -916,6 +916,20 @@ const SettingsApp = ({ initialTab = 'general' }) => {
                                             <p className="text-xs text-amber-600 mt-2">🔒 Style 2 &amp; 3 are available with ShelfSage Pro.</p>
                                         )}
                                     </div>
+                                    
+                                    {/* PDF Reader Engine */}
+                                    <div className="mb-6 pt-4 border-t border-gray-100">
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">PDF Reader Engine</label>
+                                        <p className="text-xs text-gray-500 mb-3">Choose the technology used to render and interact with PDFs.</p>
+                                        <select
+                                            value={settings.pdf_reader_engine || 'basic'}
+                                            onChange={e => handleChange('pdf_reader_engine', e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                        >
+                                            <option value="basic">Basic Scroll (Vertical Scrolling)</option>
+                                            <option value="flipbook">3D Flipbook (Realistic Page Turning)</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                             </div>

@@ -38,7 +38,6 @@ function trsss_register_search_route() {
         'permission_callback' => '__return_true',
         'args'                => array(
             'file'  => array( 'required' => true, 'type' => 'string', 'sanitize_callback' => 'esc_url_raw' ),
-            'nonce' => array( 'required' => true, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ),
         ),
     ) );
 

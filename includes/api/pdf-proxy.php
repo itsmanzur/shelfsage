@@ -41,11 +41,6 @@ function trsss_is_authorized_look_inside_url( $url ) {
  * @return void
  */
 function trsss_handle_pdf_proxy( WP_REST_Request $request ) {
-	$nonce = sanitize_text_field( (string) $request->get_param( 'nonce' ) );
-	if ( ! wp_verify_nonce( $nonce, 'trsss_pdf_view' ) ) {
-		status_header( 403 );
-		exit;
-	}
 
 	$url = esc_url_raw( (string) $request->get_param( 'file' ) );
 	if ( empty( $url ) || ! preg_match( '#^https?://#i', $url ) || ! trsss_is_authorized_look_inside_url( $url ) ) {

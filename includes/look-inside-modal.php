@@ -17,6 +17,7 @@ if ( empty( $look_inside_url ) ) return;
 
 $ss            = trsss_get_shelfsage_settings_array();
 $reader_style  = isset( $ss['pdf_reader_style'] ) ? sanitize_text_field( $ss['pdf_reader_style'] ) : 'style-1';
+$reader_engine = isset( $ss['pdf_reader_engine'] ) ? sanitize_text_field( $ss['pdf_reader_engine'] ) : 'basic';
 
 $modal_title   = ( isset( $product ) && is_a( $product, 'WC_Product' ) ) ? esc_js( $product->get_name() ) : '';
 $modal_thumb   = esc_url( get_the_post_thumbnail_url( isset( $product_id ) ? $product_id : get_the_ID(), 'medium' ) ?: '' );
@@ -160,14 +161,16 @@ $label_li      = isset( $labels ) ? esc_html( rmss_get_label( 'look_inside', 'Lo
     }
 
     /**
-     * On mobile, iframes cannot render PDFs natively.
-     * Route all non-image URLs through our PDF.js viewer.
+     * Route PDFs through our custom viewer.
+     * Basic engine uses viewer only on mobile (desktop uses native iframe).
+     * Flipbook engine uses custom viewer on all devices.
      */
-    var _pdfViewerBase = <?php echo wp_json_encode( TRSSS_URL . 'includes/pdf-viewer.php' ); ?>;
+    var _readerEngine = <?php echo wp_json_encode( $reader_engine ); ?>;
+    var _pdfViewerBase = <?php echo wp_json_encode( TRSSS_URL . 'includes/' ); ?> + (_readerEngine === 'flipbook' ? 'pdf-flipbook-viewer.php' : 'pdf-viewer.php');
     var _pdfNonce = <?php echo wp_json_encode( wp_create_nonce( 'trsss_pdf_view' ) ); ?>;
 
     function getViewerUrl(rawUrl) {
-        if (!isImage(rawUrl) && isMobileDevice()) {
+        if (!isImage(rawUrl) && (_readerEngine === 'flipbook' || isMobileDevice())) {
             return _pdfViewerBase
                 + '?file='  + encodeURIComponent(rawUrl)
                 + '&nonce=' + encodeURIComponent(_pdfNonce);

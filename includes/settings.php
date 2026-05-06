@@ -180,6 +180,11 @@ class TRSSS_Settings
             $sanitized = sanitize_text_field($params['pdf_reader_style']);
             $settings['pdf_reader_style'] = in_array($sanitized, $valid_reader_styles, true) ? $sanitized : 'style-1';
         }
+        if (isset($params['pdf_reader_engine'])) {
+            $valid_reader_engines = ['basic', 'flipbook'];
+            $sanitized = sanitize_text_field($params['pdf_reader_engine']);
+            $settings['pdf_reader_engine'] = in_array($sanitized, $valid_reader_engines, true) ? $sanitized : 'basic';
+        }
         if (isset($params['look_inside_btn_position'])) {
             $valid_positions = ['bottom-left', 'bottom-center', 'bottom-right', 'top-left', 'top-left-outer', 'top-right', 'overlay-center'];
             $sanitized = sanitize_text_field($params['look_inside_btn_position']);
