@@ -198,7 +198,7 @@ endif; ?>
                         </div>
 
                         <!-- Title -->
-                        <h1 class="text-[2.25rem] leading-tight font-serif font-bold text-gray-900 mb-2">
+                        <h1 class="text-[1.75rem] md:text-[2rem] leading-tight font-serif font-bold text-gray-900 mb-2">
                             <?php echo esc_html( get_the_title() ); ?>
                         </h1>
 

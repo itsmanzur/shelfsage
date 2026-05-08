@@ -10,7 +10,7 @@ get_header(); ?>
     $term = get_queried_object();
     ?>
     <header class="mb-8 border-b pb-4">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo esc_html( $term->name ); ?></h1>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800"><?php echo esc_html( $term->name ); ?></h1>
         <?php if ( ! empty( $term->description ) ) : ?>
             <div class="mt-4 text-gray-600 prose">
                 <?php echo wp_kses_post( wpautop( $term->description ) ); ?>

@@ -223,6 +223,8 @@ class TRSSS_Settings
             $settings['enable_affiliate'] = (bool)$params['enable_affiliate'];
         if (isset($params['enable_schema']))
             $settings['enable_schema'] = (bool)$params['enable_schema'];
+        if (isset($params['enable_advanced_schema']))
+            $settings['enable_advanced_schema'] = (bool)$params['enable_advanced_schema'];
         if (isset($params['enable_custom_button']))
             $settings['enable_custom_button'] = (bool)$params['enable_custom_button'];
         if (isset($params['hide_add_to_cart']))

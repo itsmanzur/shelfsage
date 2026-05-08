@@ -47,7 +47,7 @@ if (!defined('ABSPATH')) exit;
                         <?php if ($category): ?>
                             <div class="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-2"><?php echo esc_html($category); ?></div>
                         <?php endif; ?>
-                        <h1 class="text-[2.25rem] leading-tight font-serif font-bold text-gray-900 mb-2"><?php the_title(); ?></h1>
+                        <h1 class="text-[1.75rem] md:text-[2rem] leading-tight font-serif font-bold text-gray-900 mb-2"><?php the_title(); ?></h1>
                         <?php if ($author): ?>
                             <div class="inline-flex bg-gray-50 border border-gray-200 rounded-full pr-6 pl-2 py-1 mb-6 w-max">
                                 <div class="flex flex-col leading-none">

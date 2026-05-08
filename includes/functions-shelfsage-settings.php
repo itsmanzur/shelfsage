@@ -36,6 +36,7 @@ function trsss_shelfsage_option_defaults() {
 		'look_inside_btn_position' => 'bottom-left',
 		'enable_affiliate'         => true,
 		'enable_schema'            => true,
+		'enable_advanced_schema'   => true,
 		'enable_custom_button'     => false,
 		'hide_add_to_cart'         => false,
 		'amazon_access_key'        => '',

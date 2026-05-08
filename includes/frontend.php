@@ -1233,67 +1233,7 @@ function trsss_render_shelf_talker_container()
 }
 add_action('woocommerce_product_meta_end', 'trsss_render_shelf_talker_container', 20);
 
-/**
- * JSON-LD Schema for Product, Author, Publisher
- */
-function trsss_output_schema()
-{
-    if ( ! trsss_is_woocommerce_available() ) {
-        return;
-    }
-
-    $settings = trsss_get_shelfsage_settings_array();
-    if (isset($settings['enable_schema']) && !$settings['enable_schema']) {
-        return;
-    }
-
-    if (is_singular('product')) {
-        global $post;
-        $product = wc_get_product($post->ID);
-        $isbn = get_post_meta($post->ID, '_rmss_isbn', true);
-
-        $authors = get_the_terms($post->ID, 'rmss_author');
-        $publishers = get_the_terms($post->ID, 'rmss_publisher');
-
-        $schema = array(
-            '@context' => 'https://schema.org',
-            '@type' => 'Book',
-            'name' => $product->get_name(),
-            'image' => wp_get_attachment_url($product->get_image_id()),
-            'description' => wp_strip_all_tags($product->get_short_description()),
-            'isbn' => $isbn,
-            'offers' => array(
-                '@type' => 'Offer',
-                'price' => $product->get_price(),
-                'priceCurrency' => get_woocommerce_currency(),
-                'availability' => $product->is_in_stock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-            ),
-        );
-
-        if ($authors && !is_wp_error($authors)) {
-            $schema['author'] = array();
-            foreach ($authors as $author) {
-                $schema['author'][] = array(
-                    '@type' => 'Person',
-                    'name' => $author->name
-                );
-            }
-        }
-
-        if ($publishers && !is_wp_error($publishers)) {
-            $schema['publisher'] = array();
-            foreach ($publishers as $publisher) {
-                $schema['publisher'][] = array(
-                    '@type' => 'Organization',
-                    'name' => $publisher->name
-                );
-            }
-        }
-
-        echo '<script type="application/ld+json">' . json_encode($schema) . '</script>';
-    }
-}
-add_action('wp_head', 'trsss_output_schema');
+// JSON-LD Book schema is handled by includes/seo-schema.php (Advanced SEO Schema).
 
 /**
  * Add type="module" to ShelfSage JS scripts

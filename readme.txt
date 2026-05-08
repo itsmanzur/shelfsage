@@ -218,6 +218,13 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 
 == Changelog ==
 
+= 1.5.1 =
+* **New:** Advanced SEO Book schema with co-author, translator, series, genre, awards, bookFormat, bookEdition, numberOfPages, inLanguage, and datePublished.
+* **New:** Co-Author(s) and Book Awards meta fields (Product → Book Details) feed JSON-LD.
+* **New:** `trsss_book_schema` filter and `enable_advanced_schema` toggle for fine-grained control.
+* **Enhancement:** Mobile-responsive single product, vault, and taxonomy page titles to prevent overflow on small screens.
+* **Enhancement:** Schema output moved from `frontend.php` into dedicated `includes/seo-schema.php` for clarity and extensibility.
+
 = 1.5.0 =
 * **New:** Smart Fallback for Google Books API and Amazon PA-API.
 * **New:** Secure server-side Google Books fetch endpoint (`/fetch-books`).
@@ -247,6 +254,9 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 * Core: Taxonomies, Shortcodes, Metadata, React Frontend.
 
 == Upgrade Notice ==
+
+= 1.5.1 =
+* New: Advanced SEO Book schema (co-author, translator, series, awards, bookFormat) and mobile-responsive single product titles. No breaking changes.
 
 = 1.5.0 =
 * New: Secure fetch-books endpoint, Growth & Ecosystem layer, dashboard enhancements, Look Inside fix, and performance optimizations.

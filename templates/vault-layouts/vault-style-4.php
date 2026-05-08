@@ -44,7 +44,7 @@ if (!defined('ABSPATH')) exit;
                         <?php if ($category): ?>
                             <div class="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2"><?php echo esc_html($category); ?></div>
                         <?php endif; ?>
-                        <h1 class="text-[2.5rem] leading-tight font-bold text-stone-900 mb-2"><?php the_title(); ?></h1>
+                        <h1 class="text-[1.75rem] md:text-[2rem] leading-tight font-bold text-stone-900 mb-2"><?php the_title(); ?></h1>
                         <?php if ($author): ?>
                             <div class="text-sm text-stone-600 mb-6">
                                 <span class="uppercase tracking-wider text-stone-400"><?php echo esc_html(trsss_vault_get_label('author', __('Author', 'shelfsage-pro'), $labels)); ?></span>

@@ -103,7 +103,7 @@ if (!empty($global_affiliates)) {
 .s4-wrap { font-family: 'Georgia', 'Times New Roman', serif; }
 .s4-wrap * { box-sizing: border-box; }
 .s4-sans { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; }
-.s4-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
+.s4-title { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
 .s4-tab-btn { position: relative; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9ca3af; padding: 1rem 0; border: none; background: none; cursor: pointer; transition: color 0.2s; }
 .s4-tab-btn.active { color: #111827; }
 .s4-tab-btn::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #111827; transform: scaleX(0); transition: transform 0.2s; }

@@ -13,8 +13,24 @@ export const CURRENT_VERSION = '1.5.1';
 export const changelog = [
   {
     version: '1.5.1',
-    date: '2026-05-04',
+    date: '2026-05-09',
     features: [
+      {
+        badge: 'NEW',
+        category: 'Feature',
+        icon: '🔍',
+        title: 'Advanced SEO Book Schema',
+        summary: 'Richer JSON-LD Book schema on single product pages — co-authors, translators, series (isPartOf), genres, awards, bookFormat, bookEdition, numberOfPages, inLanguage, and datePublished are now exposed to search engines.',
+        usage: 'Automatic when "Enable Schema" is on. Add Book Awards / Co-Author(s) under Product → Book Details. Filter: trsss_book_schema for custom adjustments. Toggle: enable_advanced_schema (default on).',
+      },
+      {
+        badge: 'IMPROVED',
+        category: 'UX',
+        icon: '📱',
+        title: 'Mobile-Responsive Single Product Title',
+        summary: 'Single product, vault, and taxonomy page titles now scale down on small screens to prevent overflow and improve mobile readability.',
+        usage: 'Automatic. Affects all single-product styles (1–5 + default), vault layouts (1–5), and rmss_author / rmss_generic taxonomy templates.',
+      },
       {
         badge: 'NEW',
         category: 'Feature',

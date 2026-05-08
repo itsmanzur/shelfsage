@@ -95,7 +95,7 @@ if (!empty($global_affiliates)) {
 /* ── Style-5 Scoped Styles (Colorful Edition) ── */
 .s5-wrap { font-family: 'Inter', sans-serif; color: #374151; }
 .s5-serif { font-family: 'Lora', 'Georgia', serif; }
-.s5-title { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; font-weight: 700; color: #111827; }
+.s5-title { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.1; font-weight: 700; color: #111827; }
 /* Colorful gradient primary button */
 .s5-btn-primary { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%); color: white; transition: all 0.25s; box-shadow: 0 4px 15px rgba(99,102,241,0.35); }
 .s5-btn-primary:hover { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.45); }

@@ -38,29 +38,32 @@ function trsss_render_book_details_meta_box( $post ) {
     
     // ... (Keep existing fields: ISBN, etc.)
     $fields = array(
-        'isbn' => 'ISBN',
-        'isbn13' => 'ISBN 13',
-        'asin' => 'ASIN',
-        'product_badge' => 'Badge/Ribbon Text', // New Feature
-        'doi' => 'DOI',
-        'edition' => 'Edition',
-        'pages' => 'Pages',
-        'dimension' => 'Dimension',
-        'weight' => 'Weight',
-        'file_size' => 'File Size (e-book)',
-        'language' => 'Language',
-        'binding' => 'Binding',
-        'age_group' => 'Age Group',
-        'reading_level' => 'Reading Level',
-        'awards' => 'Book Awards',
-        'reading_time' => 'Book Reading Time',
-        'accessibility' => 'Accessibility Features',
-        'availability' => 'Book Availability',
-        'pre_order' => 'Pre Order Availability',
-        'release_date' => 'Release Date (YYYY-MM-DD, for pre-order countdown)',
-        'ebook_url' => 'E-book / Digital Download URL',
-        'audio_url' => 'Audiobook or Sample Audio URL',
-        'look_inside_url' => 'Look Inside URL (PDF/Image Link)'
+        'isbn'           => 'ISBN',
+        'isbn13'         => 'ISBN 13',
+        'asin'           => 'ASIN',
+        'product_badge'  => 'Badge/Ribbon Text', // New Feature
+        'doi'            => 'DOI',
+        'edition'        => 'Edition',
+        'pages'          => 'Pages',
+        'dimension'      => 'Dimension',
+        'weight'         => 'Weight',
+        'file_size'      => 'File Size (e-book)',
+        'language'       => 'Language',
+        'binding'        => 'Binding',
+        'age_group'      => 'Age Group',
+        'reading_level'  => 'Reading Level',
+        // ── Advanced SEO Schema fields ──────────────────────────────────
+        'awards'         => 'Book Awards (comma-separated for schema)',
+        'co_author'      => 'Co-Author(s) (comma-separated, e.g. Jane Doe, John Smith)',
+        // ───────────────────────────────────────────────────────────────
+        'reading_time'   => 'Book Reading Time',
+        'accessibility'  => 'Accessibility Features',
+        'availability'   => 'Book Availability',
+        'pre_order'      => 'Pre Order Availability',
+        'release_date'   => 'Release Date (YYYY-MM-DD, for pre-order countdown)',
+        'ebook_url'      => 'E-book / Digital Download URL',
+        'audio_url'      => 'Audiobook or Sample Audio URL',
+        'look_inside_url' => 'Look Inside URL (PDF/Image Link)',
     );
 
     echo '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">';
@@ -94,8 +97,10 @@ function trsss_save_book_details( $post_id ) {
     $url_fields = array( 'ebook_url', 'audio_url', 'look_inside_url' );
     $fields = array(
         'isbn', 'isbn13', 'asin', 'product_badge', 'doi', 'edition', 'pages', 'dimension', 'weight',
-        'file_size', 'language', 'binding', 'age_group', 'reading_level', 'awards',
-        'reading_time', 'accessibility', 'availability', 'pre_order', 'release_date', 'ebook_url', 'audio_url', 'look_inside_url'
+        'file_size', 'language', 'binding', 'age_group', 'reading_level',
+        'awards', 'co_author',
+        'reading_time', 'accessibility', 'availability', 'pre_order', 'release_date',
+        'ebook_url', 'audio_url', 'look_inside_url',
     );
 
     foreach ( $fields as $field ) {

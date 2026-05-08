@@ -76,6 +76,7 @@ require_once TRSSS_PATH . 'includes/analytics.php';
 require_once TRSSS_PATH . 'includes/series-reading-order.php';
 require_once TRSSS_PATH . 'includes/author-profiles.php';
 require_once TRSSS_PATH . 'includes/audio-preview.php';
+require_once TRSSS_PATH . 'includes/seo-schema.php';
 
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
