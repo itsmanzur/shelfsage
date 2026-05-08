@@ -38,7 +38,7 @@ if ( ! $image_url ) {
             <span class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
                 <?php echo esc_html( $taxonomy->labels->singular_name ); ?>
             </span>
-            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4 leading-tight tracking-tight"><?php echo esc_html( $term->name ); ?></h1>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight tracking-tight"><?php echo esc_html( $term->name ); ?></h1>
             <?php if ( ! empty( $term->description ) ) : ?>
                 <div class="rmss-term-description text-gray-600 text-lg max-w-3xl leading-relaxed mb-6">
                     <?php echo wp_kses_post( $term->description ); ?>

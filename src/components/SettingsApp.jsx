@@ -32,6 +32,7 @@ const SettingsApp = ({ initialTab = 'general' }) => {
         look_inside_btn_position: 'bottom-left',
         enable_affiliate: true,
         enable_schema: true,
+        enable_advanced_schema: true,
         enable_custom_button: false,
         hide_add_to_cart: false,
         affiliates: [
@@ -843,6 +844,7 @@ const SettingsApp = ({ initialTab = 'general' }) => {
                                         { key: 'enable_look_inside', label: 'Enable "Look Inside" Feature', desc: 'Allows users to preview PDF/Images of the book.' },
                                         { key: 'enable_affiliate', label: 'Enable Affiliate Buttons', desc: 'Show external buy buttons (Amazon, Rokomari) on product page.' },
                                         { key: 'enable_schema', label: 'Enable Schema Markup', desc: 'Output JSON-LD Schema for Book, Author, and Publisher (SEO).' },
+                                        { key: 'enable_advanced_schema', label: 'Enable Advanced SEO Schema', desc: 'Adds co-author, translator, series, genre, awards, bookFormat, bookEdition, numberOfPages, inLanguage, and datePublished to the JSON-LD output. Requires Schema Markup above to be enabled.' },
                                         { key: 'enable_custom_button', label: 'Enable Custom Action Button', desc: 'Show a custom button (e.g. View Details) next to Add to Cart.' },
                                         { key: 'hide_add_to_cart', label: 'Hide Standard "Add to Cart"', desc: 'Disable the default WooCommerce Add to Cart button globally.' },
                                     ].map(feature => (
