@@ -47,6 +47,9 @@ function trsss_shelfsage_option_defaults() {
 		'google_books_api_key'     => '',
 		'wc_sync_enabled'          => true,
 		'smart_fallback_enabled'   => true,
+		'enable_stock_alerts'      => true,
+		'low_stock_alert_qty'      => 5,
+		'low_stock_alert_email'    => '',
 		'affiliates'               => array(
 			array(
 				'label' => 'Buy on Amazon',

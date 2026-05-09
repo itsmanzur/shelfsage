@@ -251,6 +251,26 @@ class TRSSS_Settings
         if (isset($params['smart_fallback_enabled']))
             $settings['smart_fallback_enabled'] = (bool)$params['smart_fallback_enabled'];
 
+        // Inventory / Stock Alerts.
+        if (isset($params['enable_stock_alerts'])) {
+            $settings['enable_stock_alerts'] = (bool) $params['enable_stock_alerts'];
+        }
+        if (isset($params['low_stock_alert_qty'])) {
+            $settings['low_stock_alert_qty'] = max(0, (int) $params['low_stock_alert_qty']);
+        }
+        if (isset($params['low_stock_alert_email']) && is_string($params['low_stock_alert_email'])) {
+            $raw    = $params['low_stock_alert_email'];
+            $emails = preg_split('/[\s,;]+/', $raw, -1, PREG_SPLIT_NO_EMPTY);
+            $clean  = array();
+            foreach ((array) $emails as $email) {
+                $email = trim((string) $email);
+                if (is_email($email)) {
+                    $clean[] = sanitize_email($email);
+                }
+            }
+            $settings['low_stock_alert_email'] = implode(', ', array_unique($clean));
+        }
+
         // Dynamic Affiliates
         if (isset($params['affiliates']) && is_array($params['affiliates'])) {
             $settings['affiliates'] = array_map(function ($item) {

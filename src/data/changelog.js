@@ -18,6 +18,14 @@ export const changelog = [
       {
         badge: 'NEW',
         category: 'Feature',
+        icon: '📦',
+        title: 'Low / Out-of-Stock Email Alerts',
+        summary: 'The Inventory dashboard already shows low-stock counts, but shop owners do not check the dashboard every day. ShelfSage now hooks WooCommerce woocommerce_low_stock and woocommerce_no_stock to send a customized HTML email (book cover, ISBN, current stock, "Edit Product" button) the moment stock drops at or below the configured threshold. Throttled to one alert per book per 12 hours so the inbox never floods; throttle resets the moment stock is replenished above the threshold.',
+        usage: 'Settings → Features → Inventory Alerts. Toggle the alert, set the threshold (default 5), and add comma-separated recipient emails (blank = WP admin email). Filters: trsss_stock_alert_throttle, trsss_stock_alert_subject, trsss_stock_alert_html, trsss_stock_alert_recipients, trsss_stock_alert_should_send. Action: trsss_stock_alert_sent.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
         icon: '🏷️',
         title: 'Book Condition Badge (Used / Second-hand books)',
         summary: 'Colour-coded condition badge for second-hand bookstores: New / Used – Like New / Used – Good / Used – Acceptable / Used – Poor. Auto-injected on product pages, also pushed into JSON-LD as schema.org/UsedCondition for Google Shopping.',

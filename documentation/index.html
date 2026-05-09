@@ -312,6 +312,7 @@
       <li><a href="#look-inside">Look Inside (PDF / Image)</a></li>
       <li><a href="#preorder">Pre-order Countdown</a></li>
       <li><a href="#book-condition">Book Condition Badge</a></li>
+      <li><a href="#stock-alerts">Stock Alerts (Email)</a></li>
       <li><a href="#ebook-gate">E-book Download Gate</a></li>
       <li><a href="#reading-list">Reading List / Wishlist</a></li>
       <li><a href="#author-profiles">Author Profile Pages</a></li>
@@ -678,6 +679,66 @@
         <strong>Migration tip</strong>
         Bulk-tag existing used-stock products by writing a one-time WP-CLI script that loops <code>wc_get_products</code> and calls <code>update_post_meta( $id, '_rmss_condition', 'good' )</code>.
       </div>
+    </section>
+
+    <section id="stock-alerts">
+      <h2>Stock Alerts (Email) <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>The Inventory dashboard shows low-stock counts at a glance, but most shop owners do not log in every day. This module sends a customised HTML email the moment a book drops at or below the threshold (low stock) or runs out completely (no stock).</p>
+
+      <h4>Setup</h4>
+      <ol>
+        <li>Make sure WooCommerce → Products → Inventory → <strong>Manage stock</strong> is enabled on each product (or globally in WooCommerce → Settings → Products → Inventory).</li>
+        <li>Open ShelfSage → <strong>Settings → Features → Inventory Alerts</strong>.</li>
+        <li>Toggle <strong>Enable Low / Out-of-Stock Email Alerts</strong>.</li>
+        <li>Set <strong>Low Stock Threshold</strong> (default <code>5</code>).</li>
+        <li>Add one or more <strong>Alert Email Recipient(s)</strong> — comma- or semicolon-separated. Leave blank to use the WordPress admin email.</li>
+        <li>Save Settings.</li>
+      </ol>
+
+      <h4>What the email contains</h4>
+      <ul>
+        <li>Book cover thumbnail.</li>
+        <li>Book title and ISBN (from <code>_rmss_isbn</code>).</li>
+        <li>Current stock quantity vs configured threshold.</li>
+        <li>"Edit Product" and "View Product" buttons.</li>
+        <li>"Out of Stock" badge for the no-stock variant.</li>
+      </ul>
+
+      <h4>Throttle behaviour</h4>
+      <p>WooCommerce fires <code>woocommerce_low_stock</code> on every stock change, which would normally flood the inbox during bulk edits. ShelfSage stores a 12-hour transient per product per alert type (<code>trsss_stock_alert_low_{id}</code> / <code>trsss_stock_alert_no_{id}</code>), so each book can only generate one alert per cycle. The throttle is automatically cleared the moment stock is replenished above the threshold, so the next dip below threshold sends a fresh alert immediately.</p>
+
+      <div class="doc-callout is-tip">
+        <strong>Multiple recipients</strong>
+        Add comma-separated addresses, e.g. <code>owner@store.com, manager@store.com, warehouse@store.com</code>. Invalid addresses are silently dropped.
+      </div>
+
+      <h4>Filters &amp; actions</h4>
+      <table>
+        <thead><tr><th>Hook</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_stock_alerts_enabled</code></td><td>filter (bool)</td><td>Force-disable alerts (e.g. on a staging site).</td></tr>
+          <tr><td><code>trsss_stock_alert_threshold</code></td><td>filter (int)</td><td>Override the threshold programmatically (e.g. per category).</td></tr>
+          <tr><td><code>trsss_stock_alert_recipients</code></td><td>filter (array)</td><td>Add or remove recipients per product / alert type.</td></tr>
+          <tr><td><code>trsss_stock_alert_subject</code></td><td>filter (string)</td><td>Customise the email subject.</td></tr>
+          <tr><td><code>trsss_stock_alert_html</code></td><td>filter (string)</td><td>Replace the entire HTML body.</td></tr>
+          <tr><td><code>trsss_stock_alert_throttle</code></td><td>filter (int seconds)</td><td>Change the per-product cooldown. Default 12 × HOUR_IN_SECONDS.</td></tr>
+          <tr><td><code>trsss_stock_alert_should_send</code></td><td>filter (bool)</td><td>Skip alerts for specific products (e.g. digital books).</td></tr>
+          <tr><td><code>trsss_stock_alert_sent</code></td><td>action</td><td>Fires after dispatch (or skip). Useful for logging.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Example: skip alerts for digital products</h4>
+      <pre><code>add_filter( 'trsss_stock_alert_should_send', function ( $allow, $product, $type ) {
+    if ( $product-&gt;is_virtual() || $product-&gt;is_downloadable() ) {
+        return false;
+    }
+    return $allow;
+}, 10, 3 );</code></pre>
+
+      <h4>Example: lower throttle to 2 hours during sale events</h4>
+      <pre><code>add_filter( 'trsss_stock_alert_throttle', function () {
+    return 2 * HOUR_IN_SECONDS;
+} );</code></pre>
     </section>
 
     <section id="ebook-gate">

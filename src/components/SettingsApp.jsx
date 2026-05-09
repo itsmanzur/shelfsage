@@ -51,6 +51,10 @@ const SettingsApp = ({ initialTab = 'general' }) => {
         wc_sync_enabled: true,
         // Smart API Fallback
         smart_fallback_enabled: true,
+        // Inventory / Stock Alerts
+        enable_stock_alerts: true,
+        low_stock_alert_qty: 5,
+        low_stock_alert_email: '',
         labels: {
             author: 'Author',
             publisher: 'Publisher',
@@ -864,6 +868,62 @@ const SettingsApp = ({ initialTab = 'general' }) => {
                                             </label>
                                         </div>
                                     ))}
+                                </div>
+
+                                {/* ── Inventory / Stock Alerts ── */}
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <div className="flex items-center gap-2 mb-1 border-b pb-3">
+                                        <span className="text-lg">📦</span>
+                                        <h3 className="text-lg font-bold text-gray-800">Inventory Alerts</h3>
+                                        <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 uppercase tracking-wider">New</span>
+                                    </div>
+                                    <p className="text-sm text-gray-500 mb-5">Email the shop owner the moment a book drops below the configured stock threshold or runs out completely. Throttled to one alert per book per 12 hours so the inbox never floods.</p>
+
+                                    <div className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors border-b border-gray-100">
+                                        <div>
+                                            <label className="font-semibold text-gray-700 block">Enable Low / Out-of-Stock Email Alerts</label>
+                                            <p className="text-sm text-gray-500 mt-1">Hooks WooCommerce <code className="text-xs bg-gray-100 px-1 rounded">woocommerce_low_stock</code> and <code className="text-xs bg-gray-100 px-1 rounded">woocommerce_no_stock</code>. Requires WooCommerce Manage Stock to be on.</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={!!settings.enable_stock_alerts}
+                                                onChange={e => handleChange('enable_stock_alerts', e.target.checked)}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                        </label>
+                                    </div>
+
+                                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 ${settings.enable_stock_alerts ? '' : 'opacity-60 pointer-events-none'}`}>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Low Stock Threshold</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="1"
+                                                value={settings.low_stock_alert_qty}
+                                                onChange={e => handleChange('low_stock_alert_qty', Math.max(0, parseInt(e.target.value, 10) || 0))}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">Send a "Low Stock" email when stock quantity is at or below this number. Default: 5.</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Alert Email Recipient(s)</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Leave blank to use the WordPress admin email"
+                                                value={settings.low_stock_alert_email}
+                                                onChange={e => handleChange('low_stock_alert_email', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">Comma- or semicolon-separated. Leave blank to use the WordPress admin email.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-5 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+                                        <strong>Tip:</strong> Email contains book cover, ISBN, current stock, and an "Edit Product" button. Throttle resets automatically when stock is replenished above the threshold. Customise via filters: <code className="text-xs bg-white border px-1 rounded">trsss_stock_alert_throttle</code>, <code className="text-xs bg-white border px-1 rounded">trsss_stock_alert_subject</code>, <code className="text-xs bg-white border px-1 rounded">trsss_stock_alert_html</code>.
+                                    </div>
                                 </div>
 
                                 {/* ── Look Inside Pro Settings ── */}

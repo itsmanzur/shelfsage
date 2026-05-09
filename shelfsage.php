@@ -104,6 +104,9 @@ require_once TRSSS_PATH . 'includes/ebook-download-gate.php';
 // Used / second-hand book condition badge (Book Details → Condition).
 require_once TRSSS_PATH . 'includes/book-condition.php';
 
+// Low / out-of-stock email alerts (WooCommerce stock hook integration).
+require_once TRSSS_PATH . 'includes/stock-alerts.php';
+
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
 
