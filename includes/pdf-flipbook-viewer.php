@@ -58,7 +58,14 @@ $json_url       = wp_json_encode( esc_url_raw( $proxy_url ) );
 $pdfjs_url      = esc_url( TRSSS_URL . 'assets/pdfjs/pdf.min.js' );
 $pdf_worker_url = esc_url( TRSSS_URL . 'assets/pdfjs/pdf.worker.js' );
 $pdf_cmaps_url  = esc_url( TRSSS_URL . 'assets/pdfjs/cmaps/' );
-$pageflip_url   = esc_url( TRSSS_URL . 'assets/pageflip/page-flip.browser.js' );
+
+// StPageFlip — prefer the locally bundled copy; fall back to a pinned CDN
+// build so the flipbook still works on installs where the bundle is missing.
+$pageflip_local_path = TRSSS_PATH . 'assets/pageflip/page-flip.browser.js';
+$pageflip_cdn_url    = 'https://cdnjs.cloudflare.com/ajax/libs/StPageFlip/2.0.7/page-flip.browser.js';
+$pageflip_url        = file_exists( $pageflip_local_path )
+	? esc_url( TRSSS_URL . 'assets/pageflip/page-flip.browser.js' )
+	: esc_url( $pageflip_cdn_url );
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
