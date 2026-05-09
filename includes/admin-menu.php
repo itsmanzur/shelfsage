@@ -202,8 +202,8 @@ function trsss_enqueue_admin_scripts()
     $custom_chunk = TRSSS_URL . 'assets/custom/chunks/client-CDJS2rZV.js';
     $custom_admin = TRSSS_URL . 'assets/custom/ss-admin-custom.js';
     if ( file_exists( TRSSS_PATH . 'assets/custom/ss-admin-custom.js' ) ) {
-        wp_enqueue_script( 'trsss-react-chunk', $custom_chunk, array(), TRSSS_VERSION ?? '1.5.0', true );
-        wp_enqueue_script( 'trsss-admin-custom', $custom_admin, array( 'trsss-react-chunk' ), TRSSS_VERSION ?? '1.5.0', true );
+        wp_enqueue_script( 'trsss-react-chunk', $custom_chunk, array(), TRSSS_VERSION ?? '1.5.1', true );
+        wp_enqueue_script( 'trsss-admin-custom', $custom_admin, array( 'trsss-react-chunk' ), TRSSS_VERSION ?? '1.5.1', true );
     }
 
     wp_enqueue_style('trsss-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap', array(), null);
