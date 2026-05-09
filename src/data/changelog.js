@@ -18,6 +18,14 @@ export const changelog = [
       {
         badge: 'NEW',
         category: 'Feature',
+        icon: '🎯',
+        title: 'Age Rating / Content Advisory Badge',
+        summary: 'Colour-coded content advisory pill on book product pages: 🟢 All Ages / 🔵 Children / 🟡 Teen 13+ / 🟠 Young Adult 16+ / 🔴 Adult 18+. Auto-injected on stock WC templates (between title and price), embedded in all six ShelfSage single-product templates, and pushed to JSON-LD as schema.org/CreativeWork.contentRating + typicalAgeRange so Google Shopping and Search Console can render the rating directly.',
+        usage: 'Product edit → Book Details → Age Rating dropdown. Embed anywhere with [shelfsage_age_rating id="123" icon="yes"]. Filters: trsss_age_rating_labels, trsss_age_rating_colors, trsss_age_rating_icons, trsss_auto_inject_age_rating. Legacy free-text values like "13+", "YA", "Adult", "Kids" are auto-mapped to the canonical slugs.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
         icon: '📦',
         title: 'Low / Out-of-Stock Email Alerts',
         summary: 'The Inventory dashboard already shows low-stock counts, but shop owners do not check the dashboard every day. ShelfSage now hooks WooCommerce woocommerce_low_stock and woocommerce_no_stock to send a customized HTML email (book cover, ISBN, current stock, "Edit Product" button) the moment stock drops at or below the configured threshold. Throttled to one alert per book per 12 hours so the inbox never floods; throttle resets the moment stock is replenished above the threshold.',

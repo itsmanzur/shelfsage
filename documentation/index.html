@@ -312,6 +312,7 @@
       <li><a href="#look-inside">Look Inside (PDF / Image)</a></li>
       <li><a href="#preorder">Pre-order Countdown</a></li>
       <li><a href="#book-condition">Book Condition Badge</a></li>
+      <li><a href="#age-rating">Age Rating Badge</a></li>
       <li><a href="#stock-alerts">Stock Alerts (Email)</a></li>
       <li><a href="#ebook-gate">E-book Download Gate</a></li>
       <li><a href="#reading-list">Reading List / Wishlist</a></li>
@@ -552,6 +553,7 @@
           <tr><td>Edition, Pages, Dimension, Weight, File Size</td><td>Text</td><td>Single product templates, schema</td></tr>
           <tr><td>Language, Binding, Age Group, Reading Level</td><td>Text</td><td>Single product templates, schema</td></tr>
           <tr><td>Book Condition <span class="doc-badge is-new">New</span></td><td>Dropdown (New / Used – Like New / Good / Acceptable / Poor)</td><td>Book Condition Badge + JSON-LD <code>itemCondition</code></td></tr>
+          <tr><td>Age Rating <span class="doc-badge is-new">New</span></td><td>Dropdown (All Ages / Children / Teen 13+ / Young Adult 16+ / Adult 18+)</td><td>Age Rating Badge + JSON-LD <code>contentRating</code> + <code>typicalAgeRange</code></td></tr>
           <tr><td>Awards, Co-Author(s) <span class="doc-badge is-new">New</span></td><td>Text (comma-separated)</td><td>Advanced JSON-LD Schema</td></tr>
           <tr><td>Reading Time, Accessibility, Availability</td><td>Text</td><td>Single product templates</td></tr>
           <tr><td>Pre Order Availability</td><td>Yes / No select</td><td>Pre-order Countdown</td></tr>
@@ -678,6 +680,69 @@
       <div class="doc-callout is-tip">
         <strong>Migration tip</strong>
         Bulk-tag existing used-stock products by writing a one-time WP-CLI script that loops <code>wc_get_products</code> and calls <code>update_post_meta( $id, '_rmss_condition', 'good' )</code>.
+      </div>
+    </section>
+
+    <section id="age-rating">
+      <h2>Age Rating / Content Advisory Badge <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>A small colour-coded pill that surfaces who the book is appropriate for. Useful for general-interest stores, school libraries, and parents shopping for children's books. Also pushed into the JSON-LD Book schema as <code>contentRating</code> + <code>typicalAgeRange</code> so Google can render the rating directly on rich results.</p>
+
+      <h4>Setup</h4>
+      <ol>
+        <li>Open the product editor → <strong>Book Details</strong>.</li>
+        <li>Pick a value from <strong>Age Rating / Content Advisory</strong>:
+          <ul>
+            <li><strong>Not specified</strong> — badge hidden (default).</li>
+            <li>🟢 <strong>All Ages</strong> — green pill.</li>
+            <li>🔵 <strong>Children</strong> (under 12) — blue pill, schema age range 5–11.</li>
+            <li>🟡 <strong>Teen 13+</strong> — amber pill, schema age range 13–17.</li>
+            <li>🟠 <strong>Young Adult 16+</strong> — orange pill, schema age range 16–18.</li>
+            <li>🔴 <strong>Adult 18+</strong> — red pill, schema age range 18–.</li>
+          </ul>
+        </li>
+        <li>Save the product. The badge appears automatically:</li>
+      </ol>
+      <ul>
+        <li>Inside all six ShelfSage single-product templates next to the Book Condition badge.</li>
+        <li>On stock WooCommerce templates via <code>woocommerce_single_product_summary</code> at priority 9 (between Book Condition at 8 and rating / price at 10).</li>
+        <li>Anywhere via shortcode: <code>[shelfsage_age_rating id="123" icon="yes"]</code>.</li>
+      </ul>
+
+      <h4>Legacy value migration</h4>
+      <p>If you imported books from another system that stored age ratings as free-text, the renderer auto-maps common variants to the canonical slugs so you don't need to bulk-edit:</p>
+      <table>
+        <thead><tr><th>Stored value</th><th>Resolved badge</th></tr></thead>
+        <tbody>
+          <tr><td><code>kids</code>, <code>child</code>, <code>children</code></td><td>Children</td></tr>
+          <tr><td><code>13+</code>, <code>13</code>, <code>teen</code></td><td>Teen 13+</td></tr>
+          <tr><td><code>ya</code>, <code>young</code>, <code>youngadult</code>, <code>16+</code></td><td>Young Adult 16+</td></tr>
+          <tr><td><code>18+</code>, <code>adult</code>, <code>mature</code></td><td>Adult 18+</td></tr>
+          <tr><td><code>all</code>, <code>allages</code>, <code>general</code></td><td>All Ages</td></tr>
+        </tbody>
+      </table>
+
+      <h4>SEO benefit</h4>
+      <p>Two schema.org properties are added to the Book schema automatically:</p>
+      <ul>
+        <li><code>contentRating</code> — human-readable label (e.g. "Adult 18+"). Google Rich Results renders this verbatim.</li>
+        <li><code>typicalAgeRange</code> — numeric range (e.g. "13-17"). Used by Google Shopping for age-bucket filtering.</li>
+      </ul>
+
+      <h4>Filters</h4>
+      <table>
+        <thead><tr><th>Filter</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_age_rating_labels</code></td><td>Override the visible badge text per slug (translate / rebrand).</td></tr>
+          <tr><td><code>trsss_age_rating_colors</code></td><td>Override bg / fg / border colours per slug.</td></tr>
+          <tr><td><code>trsss_age_rating_icons</code></td><td>Override the leading emoji glyph per slug (use empty string to hide icons globally).</td></tr>
+          <tr><td><code>trsss_auto_inject_age_rating</code></td><td>Disable the auto-injection on stock WC templates per product.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout is-tip">
+        <strong>Hide the icon</strong>
+        Pass <code>icon="no"</code> to the shortcode for a cleaner text-only pill, or use the global filter
+        <code>add_filter('trsss_age_rating_icons', '__return_empty_array')</code>.
       </div>
     </section>
 
@@ -871,6 +936,7 @@
           <tr><td><code>[shelfsage_series_order product_id="123"]</code></td><td>Series reading-order list for the product's series.</td></tr>
           <tr><td><code>[shelfsage_preorder_countdown id="123" title="" class=""]</code></td><td>Pre-order countdown anywhere. <code>id</code> defaults to current product.</td></tr>
           <tr><td><code>[shelfsage_book_condition id="123" class=""]</code></td><td>Book Condition badge (New / Used – Good etc.) for any product.</td></tr>
+          <tr><td><code>[shelfsage_age_rating id="123" icon="yes" class=""]</code></td><td>Age Rating badge (All Ages / Teen 13+ / Adult 18+ etc.) for any product.</td></tr>
         </tbody>
       </table>
       <p>Use <code>do_shortcode( '[shelfsage …]' )</code> to render any shortcode from a PHP template.</p>
@@ -924,6 +990,16 @@
           <tr><td><code>trsss_book_condition_labels</code></td><td>filter</td><td>Override badge text per slug.</td></tr>
           <tr><td><code>trsss_book_condition_colors</code></td><td>filter</td><td>Override bg / fg / border colours.</td></tr>
           <tr><td><code>trsss_auto_inject_book_condition</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Age Rating</h4>
+      <table>
+        <tbody>
+          <tr><td><code>trsss_age_rating_labels</code></td><td>filter</td><td>Override badge text per slug.</td></tr>
+          <tr><td><code>trsss_age_rating_colors</code></td><td>filter</td><td>Override bg / fg / border colours.</td></tr>
+          <tr><td><code>trsss_age_rating_icons</code></td><td>filter</td><td>Override the leading emoji glyph (empty array hides icons globally).</td></tr>
+          <tr><td><code>trsss_auto_inject_age_rating</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
         </tbody>
       </table>
 

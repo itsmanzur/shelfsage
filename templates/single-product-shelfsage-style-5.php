@@ -313,6 +313,9 @@ if (!empty($global_affiliates)) {
                         if ( function_exists( 'trsss_render_book_condition_badge' ) ) {
                             trsss_render_book_condition_badge( $product_id );
                         }
+                        if ( function_exists( 'trsss_render_age_rating_badge' ) ) {
+                            trsss_render_age_rating_badge( $product_id );
+                        }
                         ?>
                         <?php trsss_render_preorder_countdown( $product_id ); ?>
                     </div>

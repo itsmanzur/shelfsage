@@ -198,6 +198,9 @@ endif; ?>
             if ( function_exists( 'trsss_render_book_condition_badge' ) ) {
                 trsss_render_book_condition_badge( $product_id, array( 'class' => 's4-sans' ) );
             }
+            if ( function_exists( 'trsss_render_age_rating_badge' ) ) {
+                trsss_render_age_rating_badge( $product_id, array( 'class' => 's4-sans' ) );
+            }
             ?>
             <?php trsss_render_preorder_countdown( $product_id, array( 'class' => 's4-sans' ) ); ?>
 

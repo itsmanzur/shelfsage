@@ -104,6 +104,9 @@ require_once TRSSS_PATH . 'includes/ebook-download-gate.php';
 // Used / second-hand book condition badge (Book Details → Condition).
 require_once TRSSS_PATH . 'includes/book-condition.php';
 
+// Age rating / content advisory badge (Book Details → Age Rating).
+require_once TRSSS_PATH . 'includes/age-rating.php';
+
 // Low / out-of-stock email alerts (WooCommerce stock hook integration).
 require_once TRSSS_PATH . 'includes/stock-alerts.php';
 

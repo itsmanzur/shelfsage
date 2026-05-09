@@ -52,6 +52,7 @@ function trsss_render_book_details_meta_box( $post ) {
         'binding'        => 'Binding',
         'condition'      => 'Book Condition (used / second-hand books)',
         'age_group'      => 'Age Group',
+        'age_rating'     => 'Age Rating / Content Advisory',
         'reading_level'  => 'Reading Level',
         // ── Advanced SEO Schema fields ──────────────────────────────────
         'awards'         => 'Book Awards (comma-separated for schema)',
@@ -103,6 +104,21 @@ function trsss_render_book_details_meta_box( $post ) {
             }
             echo '</select>';
             echo '<small style="color:#64748b; display:block; margin-top:4px;">Leave as "— Not specified —" for new-only retail stores. The badge appears automatically on used / second-hand books.</small>';
+        } elseif ( $key === 'age_rating' ) {
+            $age_rating_opts = array(
+                ''             => '— Not specified —',
+                'all_ages'     => 'All Ages',
+                'children'     => 'Children (under 12)',
+                'teen'         => 'Teen 13+',
+                'young_adult'  => 'Young Adult 16+',
+                'adult'        => 'Adult 18+',
+            );
+            echo '<select name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" style="width:100%;">';
+            foreach ( $age_rating_opts as $opt_val => $opt_label ) {
+                echo '<option value="' . esc_attr( $opt_val ) . '"' . selected( $value, $opt_val, false ) . '>' . esc_html( $opt_label ) . '</option>';
+            }
+            echo '</select>';
+            echo '<small style="color:#64748b; display:block; margin-top:4px;">Content advisory shown as a colour-coded badge on the product page (green / amber / red). Also pushed to JSON-LD as <code>contentRating</code> for SEO.</small>';
         } else {
             echo '<input type="text" name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="' . ( $key === 'product_badge' ? 'e.g. Best Seller, New' : '' ) . '" />';
         }
@@ -123,7 +139,7 @@ function trsss_save_book_details( $post_id ) {
     $url_fields = array( 'ebook_url', 'audio_url', 'look_inside_url' );
     $fields = array(
         'isbn', 'isbn13', 'asin', 'product_badge', 'doi', 'edition', 'pages', 'dimension', 'weight',
-        'file_size', 'language', 'binding', 'condition', 'age_group', 'reading_level',
+        'file_size', 'language', 'binding', 'condition', 'age_group', 'age_rating', 'reading_level',
         'awards', 'co_author',
         'reading_time', 'accessibility', 'availability', 'pre_order', 'release_date',
         'ebook_url', 'audio_url', 'look_inside_url',
