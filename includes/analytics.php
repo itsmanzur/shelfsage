@@ -11,14 +11,73 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 const TRSSS_ANALYTICS_VIEW_META = '_trsss_view_count';
 const TRSSS_ANALYTICS_SEARCH_OPTION = 'trsss_search_trends';
+const TRSSS_ANALYTICS_VIEW_COOKIE_PREFIX = 'trsss_viewed_';
+
+/**
+ * Detect common search-engine and tooling bots so they do not pollute
+ * the most-viewed analytics with crawler hits.
+ *
+ * @return bool True when the current request looks like a bot.
+ */
+function trsss_analytics_request_is_bot() {
+	$ua = isset( $_SERVER['HTTP_USER_AGENT'] )
+		? strtolower( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) )
+		: '';
+
+	if ( '' === $ua ) {
+		return true;
+	}
+
+	$bots = apply_filters(
+		'trsss_analytics_bot_user_agents',
+		array(
+			'bot',
+			'crawl',
+			'spider',
+			'slurp',
+			'duckduck',
+			'baidu',
+			'yandex',
+			'facebookexternalhit',
+			'embedly',
+			'pingdom',
+			'lighthouse',
+			'gtmetrix',
+			'curl',
+			'wget',
+			'headlesschrome',
+			'applebot',
+		)
+	);
+
+	foreach ( (array) $bots as $needle ) {
+		if ( '' !== $needle && false !== strpos( $ua, $needle ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 /**
  * Track product views on the frontend.
  *
+ * Skips admin/AJAX/REST/CLI/feed contexts, search-engine bots, and any
+ * visitor that already counted within the cookie TTL window so that
+ * `update_post_meta()` is not hammered on every page load.
+ *
  * @return void
  */
 function trsss_analytics_track_product_view() {
-	if ( is_admin() || ! function_exists( 'is_product' ) || ! is_product() ) {
+	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || is_feed() ) {
+		return;
+	}
+
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return;
+	}
+
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 		return;
 	}
 
@@ -27,9 +86,34 @@ function trsss_analytics_track_product_view() {
 		return;
 	}
 
+	if ( trsss_analytics_request_is_bot() ) {
+		return;
+	}
+
+	// Per-visitor dedupe window so refreshes / repeat visits do not
+	// spam DB writes. Default 24h; filterable.
+	$cookie_ttl = (int) apply_filters( 'trsss_analytics_view_cookie_ttl', DAY_IN_SECONDS, $product_id );
+	$cookie_key = TRSSS_ANALYTICS_VIEW_COOKIE_PREFIX . $product_id;
+
+	if ( isset( $_COOKIE[ $cookie_key ] ) ) {
+		return;
+	}
+
 	$count = (int) get_post_meta( $product_id, TRSSS_ANALYTICS_VIEW_META, true );
 	update_post_meta( $product_id, TRSSS_ANALYTICS_VIEW_META, $count + 1 );
 	update_post_meta( $product_id, '_trsss_last_viewed_at', current_time( 'mysql' ) );
+
+	if ( ! headers_sent() ) {
+		setcookie(
+			$cookie_key,
+			'1',
+			time() + $cookie_ttl,
+			defined( 'COOKIEPATH' ) ? COOKIEPATH : '/',
+			defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '',
+			is_ssl(),
+			true
+		);
+	}
 }
 add_action( 'template_redirect', 'trsss_analytics_track_product_view', 20 );
 
