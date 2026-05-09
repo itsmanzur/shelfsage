@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShelfSage 1.5.1 — Documentation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    background: #f8fafc;
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* Layout */
+  .doc-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+  .doc-sidebar {
+    width: 280px;
+    flex: 0 0 280px;
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 28px 22px 40px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .doc-main {
+    flex: 1;
+    padding: 48px 56px 96px;
+    max-width: 940px;
+  }
+
+  /* Sidebar */
+  .doc-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .doc-brand-logo {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 20px;
+    box-shadow: 0 8px 20px rgba(59,130,246,.35);
+  }
+  .doc-brand-text { line-height: 1.2; }
+  .doc-brand-name { color: #fff; font-weight: 700; font-size: 17px; }
+  .doc-brand-version { color: #94a3b8; font-size: 12px; margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+
+  .doc-nav-title {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 18px 0 8px;
+    padding-left: 4px;
+  }
+  .doc-nav-list { list-style: none; padding: 0; margin: 0; }
+  .doc-nav-list li { margin: 0; }
+  .doc-nav-list a {
+    display: block;
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    transition: all .15s ease;
+  }
+  .doc-nav-list a:hover { background: #1e293b; color: #fff; }
+  .doc-nav-list a.is-active { background: #1d4ed8; color: #fff; }
+
+  /* Main content */
+  .doc-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+    color: #fff;
+    padding: 36px 36px 32px;
+    border-radius: 18px;
+    margin-bottom: 36px;
+    box-shadow: 0 24px 48px -16px rgba(30,58,138,.5);
+  }
+  .doc-hero h1 { margin: 0 0 8px; font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
+  .doc-hero p { margin: 0; font-size: 15px; color: #c7d2fe; max-width: 640px; }
+  .doc-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .doc-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(6px);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e0e7ff;
+  }
+
+  section { padding-top: 24px; margin-bottom: 24px; scroll-margin-top: 24px; }
+  section h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0 0 8px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    letter-spacing: -.01em;
+  }
+  section h3 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 28px 0 8px;
+    color: #1e293b;
+  }
+  section h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 18px 0 6px;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  p { margin: 8px 0 14px; color: #334155; }
+  ul, ol { padding-left: 22px; color: #334155; }
+  li { margin-bottom: 4px; }
+  a { color: #1d4ed8; }
+  a:hover { color: #1e40af; }
+  strong { color: #0f172a; }
+
+  /* Cards */
+  .doc-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  }
+  .doc-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .doc-card-grid .doc-card { margin: 0; }
+  .doc-card h3 { margin: 0 0 6px; font-size: 16px; }
+  .doc-card p { margin: 0; font-size: 13.5px; color: #475569; }
+
+  /* Tip / warning callouts */
+  .doc-callout {
+    border-left: 4px solid;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .doc-callout strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
+  .doc-callout.is-tip      { background: #ecfeff; border-color: #06b6d4; color: #155e75; }
+  .doc-callout.is-info     { background: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+  .doc-callout.is-warn     { background: #fef3c7; border-color: #f59e0b; color: #78350f; }
+  .doc-callout.is-danger   { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .doc-callout.is-security { background: #ecfdf5; border-color: #10b981; color: #065f46; }
+
+  /* Code */
+  code {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 16px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 12px 0 18px;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  th { background: #f1f5f9; font-weight: 700; color: #1e293b; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+  td code { font-size: 12.5px; }
+
+  /* Tree */
+  .doc-tree {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .doc-tree .c { color: #94a3b8; }
+  .doc-tree .h { color: #4338ca; font-weight: 700; }
+
+  /* Badges */
+  .doc-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .doc-badge.is-new      { background: #dcfce7; color: #166534; }
+  .doc-badge.is-pro      { background: #fef3c7; color: #92400e; }
+  .doc-badge.is-security { background: #dbeafe; color: #1e40af; }
+
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 32px 0; }
+
+  /* Mobile */
+  @media (max-width: 960px) {
+    .doc-shell { flex-direction: column; }
+    .doc-sidebar {
+      width: 100%; height: auto; position: static;
+      padding: 18px 22px;
+    }
+    .doc-main { padding: 28px 22px 64px; }
+    .doc-hero { padding: 24px 22px; }
+    .doc-hero h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-shell">
+
+  <!-- ───────── SIDEBAR ───────── -->
+  <aside class="doc-sidebar">
+    <div class="doc-brand">
+      <div class="doc-brand-logo">S</div>
+      <div class="doc-brand-text">
+        <div class="doc-brand-name">ShelfSage</div>
+        <div class="doc-brand-version">v 1.5.1 · Docs</div>
+      </div>
+    </div>
+
+    <div class="doc-nav-title">Getting Started</div>
+    <ul class="doc-nav-list">
+      <li><a href="#welcome">Welcome</a></li>
+      <li><a href="#requirements">System Requirements</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#first-run">First-Run Wizard</a></li>
+      <li><a href="#package">Package Structure</a></li>
+    </ul>
+
+    <div class="doc-nav-title">Settings</div>
+    <ul class="doc-nav-list">
+      <li><a href="#general-settings">General</a></li>
+      <li><a href="#appearance">Appearance &amp; Fonts</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#labels">Labels</a></li>
+      <li><a href="#connect">Connect &amp; Data</a></li>
+    </ul>
+
+    <div class="doc-nav-title">Core Features</div>
+    <ul class="doc-nav-list">
+      <li><a href="#taxonomies">Book Taxonomies</a></li>
+      <li><a href="#meta-fields">Meta Fields</a></li>
+      <li><a href="#single-templates">Single Product Templates</a></li>
+      <li><a href="#shortcode-architect">Shortcode Architect</a></li>
+      <li><a href="#vault">Vault</a></li>
+      <li><a href="#look-inside">Look Inside (PDF / Image)</a></li>
+      <li><a href="#preorder">Pre-order Countdown</a></li>
+      <li><a href="#ebook-gate">E-book Download Gate</a></li>
+      <li><a href="#reading-list">Reading List / Wishlist</a></li>
+      <li><a href="#author-profiles">Author Profile Pages</a></li>
+      <li><a href="#series">Series Reading Order</a></li>
+      <li><a href="#audiobook">Audiobook Preview</a></li>
+      <li><a href="#reviews">Book Reviews</a></li>
+      <li><a href="#analytics">Analytics Dashboard</a></li>
+      <li><a href="#seo">SEO &amp; JSON-LD Schema</a></li>
+      <li><a href="#bulk-import">CSV Bulk Import</a></li>
+    </ul>
+
+    <div class="doc-nav-title">Reference</div>
+    <ul class="doc-nav-list">
+      <li><a href="#shortcodes">Shortcodes</a></li>
+      <li><a href="#rest-api">REST API</a></li>
+      <li><a href="#hooks">Filters &amp; Actions</a></li>
+      <li><a href="#external-services">External Services</a></li>
+      <li><a href="#wpcli">WP-CLI &amp; i18n</a></li>
+    </ul>
+
+    <div class="doc-nav-title">Help</div>
+    <ul class="doc-nav-list">
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#changelog">Changelog</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+  </aside>
+
+  <!-- ───────── MAIN CONTENT ───────── -->
+  <main class="doc-main">
+
+    <!-- ───────── HERO ───────── -->
+    <div class="doc-hero">
+      <h1>ShelfSage Documentation</h1>
+      <p>Complete WooCommerce bookstore toolkit — book taxonomies, shortcode builder, Vault, Look Inside, affiliate links, Amazon &amp; Google APIs, purchase-gated e-book downloads, and SEO schema in one package.</p>
+      <div class="doc-hero-meta">
+        <span class="doc-hero-pill">Version 1.5.1</span>
+        <span class="doc-hero-pill">WordPress 5.8+</span>
+        <span class="doc-hero-pill">WooCommerce 7.0+</span>
+        <span class="doc-hero-pill">PHP 7.4+</span>
+        <span class="doc-hero-pill">HPOS Ready</span>
+      </div>
+    </div>
+
+    <!-- ───────── WELCOME ───────── -->
+    <section id="welcome">
+      <h2>Welcome to ShelfSage</h2>
+      <p>Thank you for purchasing <strong>ShelfSage</strong>. This is the complete documentation that ships with the plugin (you are reading <code>shelfsage/documentation/index.html</code>). Bookmark it locally — every section below is self-contained and works offline.</p>
+
+      <div class="doc-card-grid">
+        <div class="doc-card"><h3>What it does</h3><p>Turns any WooCommerce store into a specialised bookstore with author / publisher / series taxonomies, custom single-product templates, shortcode builder, and SEO schema.</p></div>
+        <div class="doc-card"><h3>Who it's for</h3><p>Online bookstores, publishers, libraries, author websites, educational sites, multilingual book shops, and book review blogs.</p></div>
+        <div class="doc-card"><h3>What's inside</h3><p>15+ admin features, 6 single-product designs, 5 vault layouts, 9 frontend components, REST API, Gutenberg blocks, Elementor widget, and a React + Vite build environment.</p></div>
+      </div>
+    </section>
+
+    <!-- ───────── REQUIREMENTS ───────── -->
+    <section id="requirements">
+      <h2>System Requirements</h2>
+      <table>
+        <thead><tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr></thead>
+        <tbody>
+          <tr><td>WordPress</td><td>5.8</td><td>6.5+</td></tr>
+          <tr><td>WooCommerce</td><td>7.0</td><td>8.5+ (HPOS supported)</td></tr>
+          <tr><td>PHP</td><td>7.4</td><td>8.1+</td></tr>
+          <tr><td>MySQL / MariaDB</td><td>5.7 / 10.3</td><td>8.0 / 10.6+</td></tr>
+          <tr><td>Memory limit</td><td>128 MB</td><td>256 MB+</td></tr>
+          <tr><td>Browser (admin)</td><td>Modern Chromium / Firefox / Safari</td><td>Latest</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Required PHP extensions</h4>
+      <p><code>openssl</code> (Amazon credential encryption), <code>mbstring</code> (Bengali / Unicode handling), <code>curl</code> (Google Books / Amazon API calls), <code>json</code>, <code>fileinfo</code>.</p>
+    </section>
+
+    <!-- ───────── INSTALLATION ───────── -->
+    <section id="installation">
+      <h2>Installation</h2>
+
+      <h3>Method 1 — Upload via WordPress admin</h3>
+      <ol>
+        <li>Log in to <strong>WordPress Admin → Plugins → Add New → Upload Plugin</strong>.</li>
+        <li>Choose <code>shelfsage.zip</code> and click <strong>Install Now</strong>.</li>
+        <li>Click <strong>Activate Plugin</strong>.</li>
+        <li>You are automatically redirected to the ShelfSage Welcome wizard.</li>
+      </ol>
+
+      <h3>Method 2 — FTP / SFTP</h3>
+      <ol>
+        <li>Unzip <code>shelfsage.zip</code> on your computer.</li>
+        <li>Upload the <code>shelfsage</code> folder to <code>/wp-content/plugins/</code>.</li>
+        <li>Go to <strong>Plugins → Installed Plugins</strong> and click <strong>Activate</strong>.</li>
+      </ol>
+
+      <div class="doc-callout is-info">
+        <strong>WooCommerce required</strong>
+        ShelfSage extends WooCommerce. If WooCommerce is not active, install and run the WC setup wizard first.
+      </div>
+    </section>
+
+    <!-- ───────── FIRST RUN ───────── -->
+    <section id="first-run">
+      <h2>First-Run Wizard</h2>
+      <p>On first activation ShelfSage opens a 4-step wizard:</p>
+      <ol>
+        <li><strong>Welcome &amp; preferences</strong> — choose enabled taxonomies (Authors, Publishers, Translators, Series, Genres) and your bookstore type.</li>
+        <li><strong>Demo content</strong> — optionally import a sample catalogue with covers, authors, and series so you can preview every layout immediately.</li>
+        <li><strong>Look &amp; feel</strong> — pick a default single-product layout and accent color.</li>
+        <li><strong>Connect</strong> — add Google Books / Amazon credentials (optional, can be skipped and added later in Settings → Connect &amp; Data).</li>
+      </ol>
+
+      <div class="doc-callout is-tip">
+        <strong>Tip</strong>
+        You can re-open the wizard any time from <strong>ShelfSage → SS Dashboard → Welcome</strong>.
+      </div>
+    </section>
+
+    <!-- ───────── PACKAGE STRUCTURE ───────── -->
+    <section id="package">
+      <h2>Package Structure</h2>
+<div class="doc-tree"><span class="h">shelfsage.zip</span>
+└── <span class="h">shelfsage/</span>                       <span class="c">← Plugin folder</span>
+    ├── shelfsage.php                <span class="c">← Plugin loader (Text Domain, HPOS, includes)</span>
+    ├── readme.txt                   <span class="c">← Changelog + External Services disclosure</span>
+    ├── languages/
+    │   └── shelfsage.pot            <span class="c">← Translation template (248 strings)</span>
+    ├── documentation/
+    │   └── index.html               <span class="c">← This file</span>
+    ├── includes/                    <span class="c">← All PHP modules</span>
+    │   ├── functions-shelfsage-settings.php
+    │   ├── meta-boxes.php
+    │   ├── seo-schema.php
+    │   ├── ebook-download-gate.php  <span class="c">← Purchase-gated downloads</span>
+    │   ├── pdf-flipbook-viewer.php
+    │   ├── analytics.php
+    │   ├── reading-lists.php
+    │   ├── author-profiles.php
+    │   ├── series-reading-order.php
+    │   ├── audio-preview.php
+    │   ├── book-reviews.php
+    │   ├── product-quick-wins.php
+    │   ├── class-shelfsage-credential-store.php
+    │   └── api/                     <span class="c">← REST routes</span>
+    ├── assets/                      <span class="c">← Compiled CSS / JS, PDF.js, page-flip</span>
+    └── templates/                   <span class="c">← 6 single-product styles + 5 vault layouts</span>
+</div>
+      <p>Files in <code>src/</code>, <code>node_modules/</code>, <code>scripts/</code>, <code>tools/</code>, and <code>dist/</code> are dev-only and are excluded from the released zip by <code>scripts/release.js</code>.</p>
+    </section>
+
+    <hr>
+
+    <!-- ───────── SETTINGS ───────── -->
+    <section id="general-settings">
+      <h2>Settings → General</h2>
+      <p>Reach via <strong>WordPress Admin → ShelfSage → Settings → General</strong>.</p>
+      <table>
+        <thead><tr><th>Option</th><th>What it controls</th></tr></thead>
+        <tbody>
+          <tr><td><code>enable_custom_template</code></td><td>Replace WooCommerce single-product template with the selected ShelfSage design.</td></tr>
+          <tr><td><code>apply_to_all_products</code></td><td>If off, the custom template is only used for products tagged with at least one ShelfSage taxonomy term.</td></tr>
+          <tr><td><code>single_product_layout</code></td><td>One of <code>style-1</code>…<code>style-5</code> or <code>classic</code>.</td></tr>
+          <tr><td><code>default_book_image</code></td><td>Fallback cover for books without a featured image.</td></tr>
+          <tr><td><code>author_profile_layout</code></td><td>Layout used by author archive pages.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="appearance">
+      <h2>Settings → Appearance &amp; Fonts</h2>
+      <ul>
+        <li><strong>Primary / accent color</strong> — drives buttons, badges, and the countdown widget.</li>
+        <li><strong>Border radius</strong> — global corner radius for cards and buttons.</li>
+        <li><strong>Book Page Font Family</strong> <span class="doc-badge is-new">New</span> — Theme Default (zero web-font requests), curated Bengali / English Google Fonts presets, or a Custom CSS <code>font-family</code> value.</li>
+      </ul>
+      <div class="doc-callout is-tip">
+        <strong>Performance tip</strong>
+        Pick <em>Theme Default</em> if your theme already loads the same font — this avoids duplicate Google Fonts requests.
+      </div>
+    </section>
+
+    <section id="features">
+      <h2>Settings → Features</h2>
+      <ul>
+        <li><strong>Look Inside</strong> — show a preview button on books with <code>_rmss_look_inside_url</code>.</li>
+        <li><strong>PDF Reader Engine</strong> — basic browser viewer, mobile PDF.js, or 3D Flipbook.</li>
+        <li><strong>Affiliate buttons</strong> — show external buy buttons (Amazon, Rokomari, etc.).</li>
+        <li><strong>Schema markup</strong> — emit JSON-LD for Book / Author / Publisher.</li>
+        <li><strong>Advanced Schema</strong> — add co-author, awards, bookFormat, bookEdition, etc.</li>
+        <li><strong>Custom button</strong> — second CTA next to Add to Cart.</li>
+        <li><strong>Hide Add to Cart</strong> — for catalogue-only stores.</li>
+      </ul>
+    </section>
+
+    <section id="labels">
+      <h2>Settings → Labels</h2>
+      <p>Override the default English strings shown on product pages: <em>Add to Cart</em>, <em>Look Inside</em>, <em>View Cart</em>, <em>Related Books</em>, <em>Pre-order</em>, <em>Download e-book</em>, etc.</p>
+      <p>Each label is also exposed via the <code>rmss_get_label()</code> helper and a <code>rmss_label_{key}</code> filter so a child theme can override it programmatically.</p>
+    </section>
+
+    <section id="connect">
+      <h2>Settings → Connect &amp; Data</h2>
+      <ul>
+        <li><strong>Google Books API key</strong> — used by Smart Book Ingester and Smart Fallback. Stored in <code>wp_options.shelfsage_settings</code>, never exposed to the frontend.</li>
+        <li><strong>Amazon PA-API v5 credentials</strong> — Access Key, Secret Key, Associate Tag. <span class="doc-badge is-security">AES-256</span> Secret Keys are encrypted at rest with <code>openssl_encrypt('aes-256-cbc', …)</code>.</li>
+        <li><strong>Smart Fallback</strong> — when Amazon data is incomplete, auto-fetch missing cover / description from Google Books.</li>
+        <li><strong>Test Connection</strong> — single-click Google Books validation with latency reading.</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- ───────── CORE FEATURES ───────── -->
+    <section id="taxonomies">
+      <h2>Book Taxonomies</h2>
+      <p>ShelfSage registers five taxonomies on the <code>product</code> post type:</p>
+      <table>
+        <thead><tr><th>Slug</th><th>Label</th><th>Public archive</th></tr></thead>
+        <tbody>
+          <tr><td><code>rmss_author</code></td><td>Book Author</td><td><code>/book-author/{slug}/</code></td></tr>
+          <tr><td><code>rmss_publisher</code></td><td>Publisher</td><td><code>/publisher/{slug}/</code></td></tr>
+          <tr><td><code>rmss_translator</code></td><td>Translator</td><td><code>/translator/{slug}/</code></td></tr>
+          <tr><td><code>rmss_series</code></td><td>Book Series</td><td><code>/book-series/{slug}/</code></td></tr>
+          <tr><td><code>rmss_genre</code></td><td>Book Genre</td><td><code>/book-genre/{slug}/</code></td></tr>
+        </tbody>
+      </table>
+      <p>Term-level images are supported (Author photo, Publisher logo). Edit a term to add a profile image, biography, and social links.</p>
+    </section>
+
+    <section id="meta-fields">
+      <h2>Meta Fields (Product → Book Details)</h2>
+      <p>Open any product in the editor — the "Book Details" meta box appears below the WooCommerce content area. All fields are saved as <code>_rmss_{field}</code> post meta.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Used by</th></tr></thead>
+        <tbody>
+          <tr><td>ISBN, ISBN-13, ASIN, DOI</td><td>Text</td><td>Schema, Smart Ingester, search</td></tr>
+          <tr><td>Edition, Pages, Dimension, Weight, File Size</td><td>Text</td><td>Single product templates, schema</td></tr>
+          <tr><td>Language, Binding, Age Group, Reading Level</td><td>Text</td><td>Single product templates, schema</td></tr>
+          <tr><td>Awards, Co-Author(s) <span class="doc-badge is-new">New</span></td><td>Text (comma-separated)</td><td>Advanced JSON-LD Schema</td></tr>
+          <tr><td>Reading Time, Accessibility, Availability</td><td>Text</td><td>Single product templates</td></tr>
+          <tr><td>Pre Order Availability</td><td>Yes / No select</td><td>Pre-order Countdown</td></tr>
+          <tr><td>Release Date</td><td>HTML5 date picker <span class="doc-badge is-new">New</span></td><td>Pre-order Countdown</td></tr>
+          <tr><td>E-book / Digital Download URL</td><td>URL</td><td>E-book Download Gate</td></tr>
+          <tr><td>Audiobook / Sample Audio URL</td><td>URL</td><td>Audiobook Preview Player</td></tr>
+          <tr><td>Look Inside URL</td><td>URL + Upload</td><td>Look Inside (PDF / Image)</td></tr>
+          <tr><td>Badge / Ribbon Text</td><td>Text</td><td>Card overlay (e.g. "Best Seller")</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="single-templates">
+      <h2>Single Product Templates</h2>
+      <p>Six designs ship out of the box. Choose under <strong>Settings → General → Single Product Layout</strong>:</p>
+      <ul>
+        <li><code>classic</code> — original ShelfSage design with Digital section, share, and metadata table.</li>
+        <li><code>style-1</code> — Modern Clean (default).</li>
+        <li><code>style-2</code> — Minimalist.</li>
+        <li><code>style-3</code> — 3D Shelf.</li>
+        <li><code>style-4</code> — Negative Space (sans-serif typography).</li>
+        <li><code>style-5</code> — Brutalist.</li>
+      </ul>
+      <p>All templates are mobile-responsive (titles scale via <code>text-[1.75rem] md:text-[2rem]</code> classes) and respect the configured Pre-order Countdown.</p>
+      <h4>Theme overrides</h4>
+      <p>Copy any template into <code>your-theme/shelfsage/</code> to override it. ShelfSage looks for theme overrides via <code>locate_template()</code> before falling back to its own copy.</p>
+    </section>
+
+    <section id="shortcode-architect">
+      <h2>Shortcode Architect</h2>
+      <p>A no-code visual builder at <strong>ShelfSage → Shortcode Architect</strong>. Three tabs:</p>
+      <ol>
+        <li><strong>Fetch Data</strong> — choose data source (WooCommerce, Vault, Google Books, Amazon), filters, sort &amp; order.</li>
+        <li><strong>Layout</strong> — pick mode (grid / list / masonry / slider), columns, gap, image height.</li>
+        <li><strong>Designer</strong> — pick a card design (Classic Card, Modern Clean, Minimalist, 3D Shelf, Slide-Out, Negative Space, Brutalist, 3D Flip), toggle visible elements, set radius and alignment.</li>
+      </ol>
+      <p>The generated shortcode is pinned at the top of the panel. Copy and paste into any page, post, widget, or block.</p>
+      <h4>Saved shortcodes</h4>
+      <p>Click <em>Save</em> to persist a configuration. Reuse via <code>[shelfsage id="3"]</code>. Saved shortcodes are listed in <strong>ShelfSage → Saved Shortcodes</strong>.</p>
+    </section>
+
+    <section id="vault">
+      <h2>Vault — Catalogue Without WooCommerce</h2>
+      <p>Use the Vault when you want to display books that are <em>not</em> for sale (a library catalogue, an upcoming-titles board, an author bibliography). Vault entries don't create WooCommerce products and don't add to cart.</p>
+      <ul>
+        <li><strong>Add to Vault:</strong> ShelfSage → Library → Add to Vault.</li>
+        <li><strong>Display:</strong> <code>[shelfsage_vault]</code> shortcode, or pick "Vault" as the data source in the Shortcode Architect.</li>
+        <li><strong>Layouts:</strong> 5 vault designs in <code>templates/vault-layouts/</code>.</li>
+      </ul>
+    </section>
+
+    <section id="look-inside">
+      <h2>Look Inside (PDF / Image Preview)</h2>
+      <p>Add a <code>Look Inside URL</code> to a product (PDF or image). When a visitor clicks the Look Inside button, ShelfSage opens the file in a modal.</p>
+      <h4>PDF Reader Engine</h4>
+      <p>Settings → Features → PDF Reader Engine controls how PDFs are rendered:</p>
+      <ul>
+        <li><strong>Basic</strong> — browser-native PDF viewer (lightest).</li>
+        <li><strong>Mobile PDF.js</strong> — page-by-page viewer with pinch-zoom; also used as automatic fallback on phones.</li>
+        <li><strong>3D Flipbook</strong> <span class="doc-badge is-new">New</span> — page-flip animation powered by StPageFlip. Bundle is shipped at <code>assets/pageflip/page-flip.browser.js</code>; if missing it auto-falls back to the cdnjs CDN.</li>
+      </ul>
+      <h4>Security</h4>
+      <p>The viewer endpoint (<code>includes/pdf-viewer.php</code>) is nonce-protected and refuses any URL that is not registered as a Look Inside URL on a published product, preventing SSRF abuse.</p>
+    </section>
+
+    <section id="preorder">
+      <h2>Pre-order Countdown <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>Show a 4-unit (Days / Hours / Minutes / Seconds) countdown on books with a future Release Date.</p>
+      <h4>Setup</h4>
+      <ol>
+        <li>Open the product editor → <strong>Book Details</strong>.</li>
+        <li>Set <strong>Pre Order Availability</strong> to <em>Yes</em>.</li>
+        <li>Pick a future <strong>Release Date</strong> in the date picker.</li>
+        <li>Save the product. The countdown appears automatically:</li>
+      </ol>
+      <ul>
+        <li>On every ShelfSage single-product template (all 6 styles).</li>
+        <li>On stock WooCommerce templates via <code>woocommerce_single_product_summary</code> at priority 25 (between excerpt and Add to Cart).</li>
+        <li>Anywhere you drop the shortcode: <code>[shelfsage_preorder_countdown id="123"]</code>.</li>
+      </ul>
+      <p>A static <code>$rendered_for[]</code> guard prevents the countdown from appearing twice on the same page.</p>
+      <h4>Disable the auto-injection</h4>
+<pre><code>add_filter( 'trsss_auto_inject_preorder_countdown', '__return_false' );</code></pre>
+    </section>
+
+    <section id="ebook-gate">
+      <h2>E-book Download Gate <span class="doc-badge is-security">Security</span><span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>Replaces the public <code>_rmss_ebook_url</code> link with a purchase-verified flow. The raw URL is never reflected in HTML any more.</p>
+
+      <h4>How it works</h4>
+      <ol>
+        <li>Customer buys the book and the order reaches status <em>completed</em> or <em>processing</em>.</li>
+        <li>WooCommerce sends the customer email; ShelfSage hooks <code>woocommerce_email_after_order_table</code> and appends a "Your e-book downloads" section with HMAC-SHA256 signed URLs (default 30-day expiry).</li>
+        <li>The customer (logged in or guest) clicks the link. <code>template_redirect</code> validates the HMAC, re-checks the order status and product membership, increments a download counter on the order, then either streams the local upload file (with a <code>realpath()</code> traversal guard) or 302-redirects to external storage (Dropbox, S3, Bunny.net).</li>
+        <li>On the product page, logged-in buyers also see a live "Download e-book" button next to Add to Cart.</li>
+      </ol>
+
+      <h4>URL shape</h4>
+      <pre><code>https://example.com/?shelfsage_ebook_download=1&order=123&product=456&exp=1779999999&token=abcd1234…</code></pre>
+
+      <h4>Filters</h4>
+      <table>
+        <thead><tr><th>Filter</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_ebook_token_ttl</code></td><td><code>30 * DAY_IN_SECONDS</code></td><td>Lifetime of a generated download URL.</td></tr>
+          <tr><td><code>trsss_ebook_paid_statuses</code></td><td><code>['completed','processing']</code></td><td>Which order statuses unlock downloads.</td></tr>
+          <tr><td><code>trsss_ebook_email_ids</code></td><td><code>['customer_completed_order','customer_processing_order']</code></td><td>Which email IDs receive the download section.</td></tr>
+          <tr><td><code>trsss_ebook_locked_label</code></td><td><em>Buy to download e-book</em></td><td>Label shown to guests / non-buyers.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout is-security">
+        <strong>Security model</strong>
+        Tokens are HMAC-SHA256 signed with <code>wp_salt('auth')</code>, expire automatically, and are bound to a specific (order × product) pair. Local files are streamed only after <code>realpath()</code> confirms they live inside <code>wp_get_upload_dir()['basedir']</code>.
+      </div>
+    </section>
+
+    <section id="reading-list">
+      <h2>Reading List / Wishlist</h2>
+      <p>Logged-in customers can save books to a personal "My Library" from any product page.</p>
+      <ul>
+        <li><strong>Add button:</strong> appears on single-product templates.</li>
+        <li><strong>Customer page:</strong> <code>/my-library/</code> endpoint.</li>
+        <li><strong>Embed elsewhere:</strong> <code>[shelfsage_reading_list]</code> shortcode.</li>
+        <li><strong>Performance:</strong> the REST response uses <code>_prime_post_caches()</code> to resolve the N+1 query problem (50 books → 1–2 queries instead of 150+).</li>
+      </ul>
+    </section>
+
+    <section id="author-profiles">
+      <h2>Author Profile Pages</h2>
+      <p>Edit a Book Author term (Products → Book Authors → Edit) to add:</p>
+      <ul>
+        <li>Profile photo</li>
+        <li>Biography (rich text)</li>
+        <li>Social profiles — Facebook, Twitter / X, Instagram, LinkedIn, personal website</li>
+      </ul>
+      <p>The frontend layout is controlled by <strong>Settings → General → Author Profile Layout</strong>.</p>
+    </section>
+
+    <section id="series">
+      <h2>Series Reading Order</h2>
+      <p>Organise books inside a series with explicit reading-order numbers.</p>
+      <ol>
+        <li>Assign a <strong>Book Series</strong> term to the product.</li>
+        <li>Open the <em>Series Reading Order</em> meta box and set the order number.</li>
+        <li>Display via the per-product Series Order tab on the single-product template, or shortcode: <code>[shelfsage_series_order product_id="123"]</code>.</li>
+      </ol>
+    </section>
+
+    <section id="audiobook">
+      <h2>Audiobook Preview Player</h2>
+      <p>Set <strong>Audiobook / Sample Audio URL</strong> on the product. An inline HTML5 audio player appears on book pages, or use the shortcode: <code>[shelfsage_audiobook_preview product_id="123"]</code>.</p>
+    </section>
+
+    <section id="reviews">
+      <h2>Book Review System</h2>
+      <p>Collect guest book reviews and show a "Verified Purchase" badge sourced from WooCommerce orders.</p>
+      <ul>
+        <li>Reviews are submitted from the product page (or via the shortcode <code>[shelfsage_book_reviews product_id="123"]</code>).</li>
+        <li>Customers whose email matches a completed order automatically get the badge.</li>
+      </ul>
+    </section>
+
+    <section id="analytics">
+      <h2>Analytics Dashboard</h2>
+      <p>See most-viewed books and search-term trends at <strong>ShelfSage → SS Dashboard → Insights</strong>.</p>
+      <ul>
+        <li><strong>Most Viewed</strong> — populated by <code>template_redirect</code> increment of <code>_rmss_view_count</code>.</li>
+        <li><strong>Search Trends</strong> — populated by ShelfSage REST <code>/search</code> calls.</li>
+        <li><strong>Performance:</strong> bot detection (Googlebot, Bingbot, DuckDuckBot, Baidu, curl, wget) plus a 24-hour <code>setcookie</code> dedup eliminates redundant <code>update_post_meta</code> writes on every visit.</li>
+      </ul>
+    </section>
+
+    <section id="seo">
+      <h2>SEO &amp; JSON-LD Schema</h2>
+      <p>ShelfSage emits rich structured data for Google. Schema is generated in <code>includes/seo-schema.php</code>.</p>
+
+      <h4>Book schema fields</h4>
+      <p>name, image, description, isbn, sameAs (ASIN), author (single + co-authors), translator, publisher, isPartOf (series), genre, awards, bookFormat, bookEdition, numberOfPages, inLanguage, datePublished.</p>
+
+      <h4>Toggles</h4>
+      <ul>
+        <li><strong>Settings → Features → Schema markup</strong> — master switch.</li>
+        <li><strong>Settings → Features → Advanced Schema</strong> — adds co-authors, awards, bookFormat, etc.</li>
+        <li>Filter <code>trsss_book_schema</code> — programmatically modify any property.</li>
+      </ul>
+    </section>
+
+    <section id="bulk-import">
+      <h2>CSV / Excel Bulk Book Import</h2>
+      <p><strong>Settings → Connect &amp; Data → Bulk Import.</strong></p>
+      <ol>
+        <li>Download the sample CSV template.</li>
+        <li>Fill in <code>title, isbn, author, publisher, price, stock, look_inside_url, ebook_url, …</code></li>
+        <li>Upload. Each row becomes a draft WooCommerce product with the right ShelfSage taxonomies and meta.</li>
+      </ol>
+    </section>
+
+    <hr>
+
+    <!-- ───────── REFERENCE ───────── -->
+    <section id="shortcodes">
+      <h2>Shortcodes Reference</h2>
+      <table>
+        <thead><tr><th>Shortcode</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>[shelfsage]</code></td><td>Main book grid / list / masonry / slider. Accepts: <code>mode, layout, design, limit, query, genre, author, publisher, category, ids, sort_by, sort_order, show_image, show_title, show_price, show_cart, show_author_badge, show_rating, show_summary, col, col_tablet, col_mobile, radius, gap, img_height, alignment</code>.</td></tr>
+          <tr><td><code>[shelfsage id="3"]</code></td><td>Render a saved Architect configuration by ID.</td></tr>
+          <tr><td><code>[shelfsage_vault]</code></td><td>Vault (no WooCommerce) catalogue.</td></tr>
+          <tr><td><code>[shelfsage_reading_list]</code></td><td>Logged-in user's My Library.</td></tr>
+          <tr><td><code>[shelfsage_book_reviews product_id="123"]</code></td><td>Reviews block for any product.</td></tr>
+          <tr><td><code>[shelfsage_audiobook_preview product_id="123"]</code></td><td>Inline audio player.</td></tr>
+          <tr><td><code>[shelfsage_series_order product_id="123"]</code></td><td>Series reading-order list for the product's series.</td></tr>
+          <tr><td><code>[shelfsage_preorder_countdown id="123" title="" class=""]</code></td><td>Pre-order countdown anywhere. <code>id</code> defaults to current product.</td></tr>
+        </tbody>
+      </table>
+      <p>Use <code>do_shortcode( '[shelfsage …]' )</code> to render any shortcode from a PHP template.</p>
+    </section>
+
+    <section id="rest-api">
+      <h2>REST API</h2>
+      <p>Namespace: <code>shelfsage/v1</code>. Base URL: <code>https://yoursite.com/wp-json/shelfsage/v1/</code>.</p>
+
+      <h4>Public endpoints</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/search</code></td><td>Search products by query / genre / author / publisher / category / sort. Used by the BooksShortcode React component.</td></tr>
+          <tr><td>GET</td><td><code>/filters</code></td><td>Returns dropdown options (authors, publishers, genres).</td></tr>
+          <tr><td>GET</td><td><code>/related?product_id=…&amp;limit=…</code></td><td>Related books by author / genre / publisher.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Admin endpoints (require <code>manage_options</code>)</h4>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>GET / POST</td><td><code>/settings</code></td><td>Read or update global settings.</td></tr>
+          <tr><td>POST</td><td><code>/fetch-books</code></td><td>Server-side proxy to Google Books API.</td></tr>
+          <tr><td>POST</td><td><code>/amazon-search</code></td><td>Server-side proxy to Amazon PA-API v5 (signed).</td></tr>
+          <tr><td>POST</td><td><code>/create-product</code></td><td>Create a draft WooCommerce product from Google Books metadata.</td></tr>
+          <tr><td>POST</td><td><code>/import-books</code></td><td>CSV / Excel bulk import.</td></tr>
+          <tr><td>POST</td><td><code>/clear-cache</code></td><td>Clear API transient cache.</td></tr>
+          <tr><td>GET / POST / DELETE</td><td><code>/shortcodes/{id}</code></td><td>Saved shortcode CRUD.</td></tr>
+          <tr><td>POST</td><td><code>/onboarding/demo-content</code></td><td>Import demo books.</td></tr>
+        </tbody>
+      </table>
+      <p>Admin endpoints require an <code>X-WP-Nonce</code> header. The nonce is provided to React via <code>wp_localize_script()</code> as <code>rmssAdminSettings.nonce</code>.</p>
+    </section>
+
+    <section id="hooks">
+      <h2>Filters &amp; Actions Reference</h2>
+
+      <h4>Pre-order</h4>
+      <table>
+        <thead><tr><th>Hook</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_auto_inject_preorder_countdown</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>E-book Download Gate</h4>
+      <table>
+        <tbody>
+          <tr><td><code>trsss_ebook_token_ttl</code></td><td>filter</td><td>Lifetime of signed download URLs.</td></tr>
+          <tr><td><code>trsss_ebook_paid_statuses</code></td><td>filter</td><td>Order statuses that unlock downloads.</td></tr>
+          <tr><td><code>trsss_ebook_email_ids</code></td><td>filter</td><td>Email IDs that get the download section.</td></tr>
+          <tr><td><code>trsss_ebook_locked_label</code></td><td>filter</td><td>Label shown to non-buyers.</td></tr>
+          <tr><td><code>trsss_ebook_download_served</code></td><td>action</td><td>Fires before serving the file (analytics, logging).</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Schema</h4>
+      <table>
+        <tbody>
+          <tr><td><code>trsss_book_schema</code></td><td>filter</td><td>Modify the JSON-LD Book array before output.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Templates &amp; labels</h4>
+      <table>
+        <tbody>
+          <tr><td><code>rmss_label_{key}</code></td><td>filter</td><td>Override any UI label.</td></tr>
+          <tr><td><code>rmss_ebook_link_label</code></td><td>filter</td><td>Override the "Download e-book" button text.</td></tr>
+          <tr><td><code>rmss_preorder_button_text</code></td><td>filter</td><td>Override the Pre-order CTA text.</td></tr>
+          <tr><td><code>trsss_should_fix_display_mojibake</code></td><td>filter</td><td>Force / skip the Bengali display-time fix.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="external-services">
+      <h2>External Services</h2>
+      <p>ShelfSage contacts the following external services. Each service is only used when the corresponding feature is configured. Full disclosure also lives in <code>readme.txt</code>.</p>
+      <table>
+        <thead><tr><th>Service</th><th>Triggered when</th><th>Data sent</th></tr></thead>
+        <tbody>
+          <tr><td>Google Books API</td><td>Smart Ingester / Smart Fallback / Architect Google Books data source.</td><td>Search query + your API key.</td></tr>
+          <tr><td>Amazon PA-API v5</td><td>Architect Amazon data source / Amazon search.</td><td>Search query + signed AWS Access Key, Secret Key, Associate Tag.</td></tr>
+          <tr><td>Google Fonts</td><td>Any admin page; on the frontend only when a Google Font preset is active.</td><td>Visitor IP &amp; UA (sent by browser).</td></tr>
+          <tr><td>Facebook / X / WhatsApp share</td><td>Visitor <em>clicks</em> a share button.</td><td>Public book URL + title only. No tracking pixels are loaded.</td></tr>
+          <tr><td>cdnjs (StPageFlip fallback)</td><td>Look Inside flipbook when local <code>assets/pageflip/page-flip.browser.js</code> is missing.</td><td>Static JS asset request.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="wpcli">
+      <h2>WP-CLI &amp; i18n</h2>
+
+      <h4>Translating ShelfSage</h4>
+      <p>The plugin ships a translation template at <code>languages/shelfsage.pot</code> (248 strings). Use Loco Translate or PoEdit to create a translation:</p>
+<pre><code>wp i18n make-pot shelfsage/ shelfsage/languages/shelfsage.pot \
+  --domain=shelfsage \
+  --exclude=assets,data,node_modules,tools,dist,scripts,.git</code></pre>
+      <p>Drop generated <code>.mo</code> files into <code>shelfsage/languages/shelfsage-{locale}.mo</code>. ShelfSage loads them via <code>load_plugin_textdomain()</code> on <code>plugins_loaded</code>.</p>
+
+      <h4>Mojibake repair</h4>
+      <p>If your store has corrupted Bengali / Arabic product titles or slugs, run a one-shot repair:</p>
+      <p>Visit <code>/wp-admin/?action=trsss_repair_product_slugs&amp;_wpnonce=…</code> while logged in as administrator. Reports repaired vs. skipped count and flushes rewrite rules.</p>
+    </section>
+
+    <hr>
+
+    <!-- ───────── HELP ───────── -->
+    <section id="troubleshooting">
+      <h2>Troubleshooting</h2>
+
+      <h3>The custom single-product template is not loading</h3>
+      <ul>
+        <li>Check <strong>Settings → General → Use ShelfSage Custom Template</strong> is enabled.</li>
+        <li>If <em>Apply to all products</em> is off, the product must have at least one ShelfSage taxonomy term assigned.</li>
+        <li>Some themes hijack <code>template_include</code> at higher priority. ShelfSage runs at priority 9999, but heavy page builders (e.g. Divi shop modules) may still win — disable the builder for product pages or use the override file in your theme: <code>your-theme/shelfsage/single-product-shelfsage.php</code>.</li>
+      </ul>
+
+      <h3>Look Inside flipbook shows a blank page</h3>
+      <ul>
+        <li>Check <code>assets/pageflip/page-flip.browser.js</code> exists in the installed plugin folder. If missing the inline PHP fallback uses cdnjs — confirm the site can reach <code>https://cdnjs.cloudflare.com</code>.</li>
+        <li>Open browser DevTools → Console. A 404 on <code>page-flip.browser.js</code> indicates the asset was excluded from your zip.</li>
+      </ul>
+
+      <h3>E-book download link returns 403</h3>
+      <ul>
+        <li>The token has expired (default 30 days). Resend the order email or have the customer re-trigger from My Account.</li>
+        <li>The order status is not in the unlocked list. Filter <code>trsss_ebook_paid_statuses</code> if your shop uses custom statuses.</li>
+      </ul>
+
+      <h3>Bengali product title shows as mojibake (à¦š…)</h3>
+      <p>ShelfSage already filters <code>the_title</code> and <code>the_content</code> at priority 1 to fix display-time mojibake. To repair the database itself, visit <code>/wp-admin/?action=trsss_repair_product_slugs&amp;_wpnonce=…</code>.</p>
+
+      <h3>Analytics counter not updating</h3>
+      <p>ShelfSage skips counting bots and uses a 24-hour cookie to avoid re-counting the same visitor. Open the page in an incognito window with a different IP/UA to verify.</p>
+
+      <h3>"Plugin is not compatible with HPOS" warning in WooCommerce</h3>
+      <p>Make sure you are on ShelfSage 1.5.1 or later — HPOS compatibility is declared via <code>FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true)</code> in <code>shelfsage.php</code>.</p>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+
+      <h3>Does this work with any WooCommerce theme?</h3>
+      <p>Yes. ShelfSage uses its own styling for book grids and details. Single-product templates can be overridden per theme by copying the file into <code>your-theme/shelfsage/</code>.</p>
+
+      <h3>Can I disable certain taxonomies?</h3>
+      <p>Yes. Choose the enabled taxonomies in the first-run wizard, or via <strong>ShelfSage → Settings → General → Active Taxonomies</strong>.</p>
+
+      <h3>Is WooCommerce required?</h3>
+      <p>Yes for purchase / cart / checkout flows. The Vault module works without WooCommerce for catalogue-only use.</p>
+
+      <h3>Where is my Google Books API key stored?</h3>
+      <p>In the <code>shelfsage_settings</code> WordPress option. It is only used server-side by <code>wp_remote_get</code> and is never exposed to the frontend.</p>
+
+      <h3>Where is my Amazon Secret Key stored?</h3>
+      <p>Encrypted at rest with AES-256-CBC (<code>openssl_encrypt</code>) in <code>includes/class-shelfsage-credential-store.php</code>. The encryption key is derived from <code>wp_salt('auth')</code>, so secrets are bound to your specific WordPress installation.</p>
+
+      <h3>What data does ShelfSage send to Google or Amazon?</h3>
+      <p>Only the data necessary for the requested operation: search queries (ISBN, title, or keyword) and your configured API credentials. No personal user data is sent. See <a href="#external-services">External Services</a>.</p>
+
+      <h3>Does ShelfSage support multisite?</h3>
+      <p>Yes — activate per-site (network activation works but per-site settings are still required because each site has its own product catalogue).</p>
+    </section>
+
+    <section id="changelog">
+      <h2>Changelog Highlights</h2>
+      <p>Full changelog lives in <code>readme.txt</code>. Highlights for the current release:</p>
+
+      <h3>1.5.1</h3>
+      <ul>
+        <li><strong>New:</strong> E-book Download Gate — purchase-verified, signed (HMAC-SHA256, 30-day TTL), with auto-injected order email links and an admin download counter.</li>
+        <li><strong>New:</strong> Pre-order Countdown is now visible on stock WC templates (auto-injection at <code>woocommerce_single_product_summary</code> priority 25) and via <code>[shelfsage_preorder_countdown]</code> shortcode.</li>
+        <li><strong>New:</strong> Book Analytics dashboard, audiobook player, author profiles with social links, book reviews with verified-purchase badge, series reading-order, reading lists, CSV bulk import, PDF flipbook viewer, advanced SEO Book schema, font customization.</li>
+        <li><strong>New:</strong> WooCommerce HPOS (<code>custom_order_tables</code>) compatibility declared.</li>
+        <li><strong>Security:</strong> Amazon PA-API credentials encrypted at rest with AES-256-CBC.</li>
+        <li><strong>Security:</strong> PDF viewer hardened — nonce + DB whitelist (no SSRF).</li>
+        <li><strong>Fix:</strong> Analytics bot detection + 24h cookie dedup eliminates redundant DB writes.</li>
+        <li><strong>Fix:</strong> Reading-list response uses <code>_prime_post_caches()</code> (N+1 → 1 query).</li>
+        <li><strong>Fix:</strong> Look Inside in Shortcode Architect React preview honours the configured PDF Reader Engine.</li>
+        <li><strong>Enhancement:</strong> Mobile-responsive single-product / vault / taxonomy titles.</li>
+        <li><strong>i18n:</strong> Full <code>languages/shelfsage.pot</code> shipped (248 strings).</li>
+      </ul>
+    </section>
+
+    <section id="support">
+      <h2>Support</h2>
+      <p>Thank you for choosing ShelfSage. If you need help:</p>
+      <ul>
+        <li><strong>Documentation:</strong> you're reading it — every section above is offline and self-contained.</li>
+        <li><strong>Plugin Support:</strong> <a href="https://shelfsage.com/support">https://shelfsage.com/support</a></li>
+        <li><strong>Online Docs:</strong> <a href="https://shelfsage.com/docs">https://shelfsage.com/docs</a></li>
+        <li><strong>Issue Reports:</strong> include WP version, WooCommerce version, PHP version, and the exact ShelfSage version (visible in <em>Plugins → Installed Plugins</em>).</li>
+      </ul>
+
+      <div class="doc-callout is-tip">
+        <strong>Before you contact support</strong>
+        Try disabling other plugins one by one (especially page builders, caching plugins, and other WooCommerce extensions) to isolate the conflict. 80% of reported issues come from third-party plugin conflicts.
+      </div>
+
+      <p style="margin-top: 32px; padding-top: 18px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px; text-align: center;">
+        ShelfSage 1.5.1 — Documentation generated 9 May 2026.
+      </p>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
