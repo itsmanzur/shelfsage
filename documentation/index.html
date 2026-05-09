@@ -311,6 +311,7 @@
       <li><a href="#vault">Vault</a></li>
       <li><a href="#look-inside">Look Inside (PDF / Image)</a></li>
       <li><a href="#preorder">Pre-order Countdown</a></li>
+      <li><a href="#book-condition">Book Condition Badge</a></li>
       <li><a href="#ebook-gate">E-book Download Gate</a></li>
       <li><a href="#reading-list">Reading List / Wishlist</a></li>
       <li><a href="#author-profiles">Author Profile Pages</a></li>
@@ -549,6 +550,7 @@
           <tr><td>ISBN, ISBN-13, ASIN, DOI</td><td>Text</td><td>Schema, Smart Ingester, search</td></tr>
           <tr><td>Edition, Pages, Dimension, Weight, File Size</td><td>Text</td><td>Single product templates, schema</td></tr>
           <tr><td>Language, Binding, Age Group, Reading Level</td><td>Text</td><td>Single product templates, schema</td></tr>
+          <tr><td>Book Condition <span class="doc-badge is-new">New</span></td><td>Dropdown (New / Used – Like New / Good / Acceptable / Poor)</td><td>Book Condition Badge + JSON-LD <code>itemCondition</code></td></tr>
           <tr><td>Awards, Co-Author(s) <span class="doc-badge is-new">New</span></td><td>Text (comma-separated)</td><td>Advanced JSON-LD Schema</td></tr>
           <tr><td>Reading Time, Accessibility, Availability</td><td>Text</td><td>Single product templates</td></tr>
           <tr><td>Pre Order Availability</td><td>Yes / No select</td><td>Pre-order Countdown</td></tr>
@@ -632,6 +634,50 @@
       <p>A static <code>$rendered_for[]</code> guard prevents the countdown from appearing twice on the same page.</p>
       <h4>Disable the auto-injection</h4>
 <pre><code>add_filter( 'trsss_auto_inject_preorder_countdown', '__return_false' );</code></pre>
+    </section>
+
+    <section id="book-condition">
+      <h2>Book Condition Badge <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>For second-hand bookstores (a huge market in South Asia and on Marketplace / OLX-style channels). A colour-coded badge near the title surfaces book condition transparently to buyers.</p>
+
+      <h4>Setup</h4>
+      <ol>
+        <li>Open the product editor → <strong>Book Details</strong>.</li>
+        <li>Pick a value from <strong>Book Condition</strong>:
+          <ul>
+            <li><strong>Not specified</strong> — badge hidden (default for new-only retail stores).</li>
+            <li><strong>New</strong> — green badge "New".</li>
+            <li><strong>Used – Like New</strong> — teal badge.</li>
+            <li><strong>Used – Good</strong> — blue badge "Used – Good Condition".</li>
+            <li><strong>Used – Acceptable</strong> — amber badge.</li>
+            <li><strong>Used – Poor</strong> — red badge.</li>
+          </ul>
+        </li>
+        <li>Save the product. The badge appears automatically:</li>
+      </ol>
+      <ul>
+        <li>Inside all six ShelfSage single-product templates (next to the Pre-order Countdown).</li>
+        <li>On stock WooCommerce templates via <code>woocommerce_single_product_summary</code> at priority 8 (between title and price).</li>
+        <li>Anywhere via shortcode: <code>[shelfsage_book_condition id="123"]</code>.</li>
+      </ul>
+
+      <h4>SEO benefit</h4>
+      <p>Book Condition is automatically pushed into the JSON-LD Book schema as <code>itemCondition</code> (<code>schema.org/UsedCondition</code>, <code>NewCondition</code>, or <code>DamagedCondition</code>) — Google Shopping uses this field for product cards.</p>
+
+      <h4>Filters</h4>
+      <table>
+        <thead><tr><th>Filter</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_book_condition_labels</code></td><td>Override the visible badge text per slug (e.g. translate or rebrand).</td></tr>
+          <tr><td><code>trsss_book_condition_colors</code></td><td>Override the bg / fg / border colour for any condition.</td></tr>
+          <tr><td><code>trsss_auto_inject_book_condition</code></td><td>Disable the auto-injection on stock WC templates.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout is-tip">
+        <strong>Migration tip</strong>
+        Bulk-tag existing used-stock products by writing a one-time WP-CLI script that loops <code>wc_get_products</code> and calls <code>update_post_meta( $id, '_rmss_condition', 'good' )</code>.
+      </div>
     </section>
 
     <section id="ebook-gate">
@@ -763,6 +809,7 @@
           <tr><td><code>[shelfsage_audiobook_preview product_id="123"]</code></td><td>Inline audio player.</td></tr>
           <tr><td><code>[shelfsage_series_order product_id="123"]</code></td><td>Series reading-order list for the product's series.</td></tr>
           <tr><td><code>[shelfsage_preorder_countdown id="123" title="" class=""]</code></td><td>Pre-order countdown anywhere. <code>id</code> defaults to current product.</td></tr>
+          <tr><td><code>[shelfsage_book_condition id="123" class=""]</code></td><td>Book Condition badge (New / Used – Good etc.) for any product.</td></tr>
         </tbody>
       </table>
       <p>Use <code>do_shortcode( '[shelfsage …]' )</code> to render any shortcode from a PHP template.</p>
@@ -807,6 +854,15 @@
         <thead><tr><th>Hook</th><th>Type</th><th>Purpose</th></tr></thead>
         <tbody>
           <tr><td><code>trsss_auto_inject_preorder_countdown</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Book Condition</h4>
+      <table>
+        <tbody>
+          <tr><td><code>trsss_book_condition_labels</code></td><td>filter</td><td>Override badge text per slug.</td></tr>
+          <tr><td><code>trsss_book_condition_colors</code></td><td>filter</td><td>Override bg / fg / border colours.</td></tr>
+          <tr><td><code>trsss_auto_inject_book_condition</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
         </tbody>
       </table>
 

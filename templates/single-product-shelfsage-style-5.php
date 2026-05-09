@@ -309,6 +309,11 @@ if (!empty($global_affiliates)) {
                                 <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Out of Stock</span>
                             <?php endif; ?>
                         </div>
+                        <?php
+                        if ( function_exists( 'trsss_render_book_condition_badge' ) ) {
+                            trsss_render_book_condition_badge( $product_id );
+                        }
+                        ?>
                         <?php trsss_render_preorder_countdown( $product_id ); ?>
                     </div>
 

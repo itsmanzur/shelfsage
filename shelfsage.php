@@ -101,6 +101,9 @@ require_once TRSSS_PATH . 'includes/seo-schema.php';
 // Purchase-gated e-book download flow (replaces public _rmss_ebook_url link).
 require_once TRSSS_PATH . 'includes/ebook-download-gate.php';
 
+// Used / second-hand book condition badge (Book Details → Condition).
+require_once TRSSS_PATH . 'includes/book-condition.php';
+
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
 

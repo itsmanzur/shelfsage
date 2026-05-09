@@ -50,6 +50,7 @@ function trsss_render_book_details_meta_box( $post ) {
         'file_size'      => 'File Size (e-book)',
         'language'       => 'Language',
         'binding'        => 'Binding',
+        'condition'      => 'Book Condition (used / second-hand books)',
         'age_group'      => 'Age Group',
         'reading_level'  => 'Reading Level',
         // ── Advanced SEO Schema fields ──────────────────────────────────
@@ -87,6 +88,21 @@ function trsss_render_book_details_meta_box( $post ) {
             echo '<option value=""' . selected( $is_on, false, false ) . '>No</option>';
             echo '<option value="yes"' . selected( $is_on, true, false ) . '>Yes (active pre-order)</option>';
             echo '</select>';
+        } elseif ( $key === 'condition' ) {
+            $condition_opts = array(
+                ''           => '— Not specified —',
+                'new'        => 'New',
+                'like_new'   => 'Used – Like New',
+                'good'       => 'Used – Good',
+                'acceptable' => 'Used – Acceptable',
+                'poor'       => 'Used – Poor',
+            );
+            echo '<select name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" style="width:100%;">';
+            foreach ( $condition_opts as $opt_val => $opt_label ) {
+                echo '<option value="' . esc_attr( $opt_val ) . '"' . selected( $value, $opt_val, false ) . '>' . esc_html( $opt_label ) . '</option>';
+            }
+            echo '</select>';
+            echo '<small style="color:#64748b; display:block; margin-top:4px;">Leave as "— Not specified —" for new-only retail stores. The badge appears automatically on used / second-hand books.</small>';
         } else {
             echo '<input type="text" name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="' . ( $key === 'product_badge' ? 'e.g. Best Seller, New' : '' ) . '" />';
         }
@@ -107,7 +123,7 @@ function trsss_save_book_details( $post_id ) {
     $url_fields = array( 'ebook_url', 'audio_url', 'look_inside_url' );
     $fields = array(
         'isbn', 'isbn13', 'asin', 'product_badge', 'doi', 'edition', 'pages', 'dimension', 'weight',
-        'file_size', 'language', 'binding', 'age_group', 'reading_level',
+        'file_size', 'language', 'binding', 'condition', 'age_group', 'reading_level',
         'awards', 'co_author',
         'reading_time', 'accessibility', 'availability', 'pre_order', 'release_date',
         'ebook_url', 'audio_url', 'look_inside_url',
