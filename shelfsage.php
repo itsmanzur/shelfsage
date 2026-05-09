@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ShelfSage
  * Description: Complete WooCommerce bookstore toolkit — book taxonomies, shortcode builder, Vault, Look Inside, affiliate links, Amazon & Google APIs, and all layouts in one package.
- * Version: 1.5.1
+ * Version: 1.0.0
  * Author: itsmanzur
  * Author URI: https://shelfsage.com
  * Text Domain: shelfsage
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('TRSSS_VERSION', '1.5.1');
+define('TRSSS_VERSION', '1.0.0');
 define('TRSSS_PATH', plugin_dir_path(__FILE__));
 define('TRSSS_URL', plugin_dir_url(__FILE__));
 

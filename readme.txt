@@ -4,7 +4,7 @@ Tags: books, woocommerce, bookstore, authors, publishers, library, shortcode, bo
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -233,72 +233,41 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 
 == Changelog ==
 
-= 1.5.1 =
-* **New:** Book Analytics dashboard — most-viewed books and search-trend insights (ShelfSage → SS Dashboard → Insights).
-* **New:** Audiobook / sample-audio preview player on book product pages and via `[shelfsage_audiobook_preview]` shortcode.
-* **New:** Author profile pages with biography, photo, and social profiles (Facebook, Twitter/X, Instagram, LinkedIn, website).
-* **New:** Book review system with guest submissions and verified-purchase badge sourced from WooCommerce orders.
-* **New:** Series reading-order management (`[shelfsage_series_order]`) — assign and display the canonical sequence of books in a series.
-* **New:** Reading List / My Library — logged-in customers can save books from product pages; `[shelfsage_reading_list]` shortcode and `/my-library/` endpoint.
-* **New:** Bulk book import from CSV/Excel — sample template, validation, and direct WooCommerce product creation.
-* **New:** PDF Flipbook viewer — 3D page-flip "Look Inside" experience powered by StPageFlip with mobile fallback to PDF.js.
-* **New:** Advanced SEO Book schema (JSON-LD) — co-authors, translators, series (`isPartOf`), genre, awards, `bookFormat`, `bookEdition`, `numberOfPages`, `inLanguage`, `datePublished`.
-* **New:** Co-Author(s) and Book Awards meta fields (Product → Book Details) feed JSON-LD; `trsss_book_schema` filter and `enable_advanced_schema` toggle for fine-grained control.
-* **New:** Book-page font family customization — Theme Default (zero web-font requests), curated Bengali/English Google Fonts presets, or Custom CSS font-family.
-* **New:** Featured Book / "Book of the Week" shortcode — `[shelfsage_featured id="123"]`. Polished hero-style card with cover, ribbon, title, author, star rating, price, genre / publisher chips, excerpt, and primary + secondary CTA. Self-contained inline CSS printed once per request, automatic mobile stacking, four themes (auto / light / dark / minimal), accent colour follows Settings → Appearance → Primary Colour. Works for both WooCommerce products and ShelfSage Vault assets. Filters: `trsss_featured_book_data`, `trsss_featured_book_html`, `trsss_featured_book_label`. New file: `includes/featured-book.php`.
-* **New:** Goodreads "Export Library" CSV — direct import. Drop the file as-is and the importer auto-detects Goodreads format (signature columns: Book Id, Exclusive Shelf, Bookshelves, My Rating, Date Added, Date Read, Additional Authors), strips `="ISBN"` Excel-formula wrappers, merges Author + Additional Authors, converts Owned Copies → stock quantity + status, maps Bookshelves → genres, and folds Year Published / Number of Pages / Binding / My Rating / My Review into canonical book fields. Force the format via REST/WP-CLI with `format=goodreads`. Filter: `trsss_normalize_goodreads_row`.
-* **New:** Age Rating / Content Advisory Badge — colour-coded pill on product pages (All Ages / Children / Teen 13+ / Young Adult 16+ / Adult 18+). Dropdown under Product → Book Details → Age Rating. Auto-injected on stock WC templates at priority 9 (between Book Condition and price), embedded in all six ShelfSage single-product templates, and pushed to JSON-LD as `contentRating` + `typicalAgeRange` for SEO. Shortcode: `[shelfsage_age_rating id="123" icon="yes"]`. Legacy free-text values like "13+", "YA", "Adult", "Kids" are auto-mapped to canonical slugs. Filters: `trsss_age_rating_labels`, `trsss_age_rating_colors`, `trsss_age_rating_icons`, `trsss_auto_inject_age_rating`. New file: `includes/age-rating.php`.
-* **New:** Low / Out-of-Stock Email Alerts — hooks `woocommerce_low_stock` and `woocommerce_no_stock` to send a customized HTML email (book cover, ISBN, current stock, "Edit Product" button) when stock drops at or below the configured threshold. Throttled to one alert per book per 12 hours; throttle resets the moment stock is replenished above the threshold. Multi-recipient (comma- or semicolon-separated). Settings → Features → Inventory Alerts. Filters: `trsss_stock_alert_throttle`, `trsss_stock_alert_subject`, `trsss_stock_alert_html`, `trsss_stock_alert_recipients`, `trsss_stock_alert_should_send`. Action: `trsss_stock_alert_sent`. New file: `includes/stock-alerts.php`.
-* **New:** Book Condition Badge — colour-coded "Used – Good Condition" badge for second-hand bookstores. Dropdown under Product → Book Details (New / Used – Like New / Used – Good / Used – Acceptable / Used – Poor). Auto-injected on stock WC templates (priority 8 between title and price) and inside all six ShelfSage single-product templates. Shortcode: `[shelfsage_book_condition id="123"]`. Also pushed into JSON-LD as `itemCondition` (`schema.org/UsedCondition` / `NewCondition` / `DamagedCondition`) for Google Shopping. Filters: `trsss_book_condition_labels`, `trsss_book_condition_colors`, `trsss_auto_inject_book_condition`. New file: `includes/book-condition.php`.
-* **New:** Pre-order Countdown is now visible on stock WooCommerce templates too — auto-injected on the single-product summary at priority 25 (between excerpt and Add to Cart). Use the `trsss_auto_inject_preorder_countdown` filter to disable per product.
-* **New:** `[shelfsage_preorder_countdown id="123"]` shortcode for placing the countdown anywhere (landing pages, blocks, sidebars, theme files via `do_shortcode()`).
-* **Enhancement:** Release Date meta field upgraded to a native HTML5 date picker; Pre Order Availability is now a clean Yes/No select instead of a free-text input.
-* **New:** WooCommerce feature compatibility declared via `FeaturesUtil::declare_compatibility()` for both `custom_order_tables` (HPOS, WC 7.1+) and `cart_checkout_blocks` (Cart / Checkout Blocks, WC 8.3+). The "incompatible plugin" warnings on WooCommerce → Settings → Advanced → Features are gone in both cases.
-* **Security:** E-book Download Gate — `_rmss_ebook_url` is no longer exposed publicly. Customers see a "Download e-book" button only after a paid order (status: completed / processing). Downloads use HMAC-SHA256 signed URLs (30-day expiry by default), and the `template_redirect` handler re-checks order ownership and paid status before streaming local files or redirecting to external storage. Order completion / processing emails get a "Your e-book downloads" section auto-injected, and the admin order screen now shows download counters per product. New file: `includes/ebook-download-gate.php`. Filters: `trsss_ebook_token_ttl`, `trsss_ebook_paid_statuses`, `trsss_ebook_email_ids`, `trsss_ebook_locked_label`.
-* **Security:** Amazon PA-API credentials (Access Key, Secret Key) encrypted at rest with AES-256-CBC via `openssl_encrypt` (`includes/class-shelfsage-credential-store.php`).
-* **Security:** PDF viewer hardened — nonce-protected proxy plus DB whitelist that only serves URLs registered as a product's Look Inside URL (prevents SSRF and unauthorized PDF proxying).
-* **Fix:** Analytics — bot detection (Googlebot, Bingbot, Slurp, DuckDuckBot, Baidu, curl, wget) and 24-hour cookie-based deduplication eliminate redundant `update_post_meta` writes on every page view.
-* **Fix:** Reading list response now uses `_prime_post_caches()` to resolve N+1 query problem (50 books = 1–2 queries instead of 150+).
-* **Fix:** "Look Inside" inside the Shortcode Architect React preview now honors the configured PDF Reader Engine (flipbook / mobile / basic) and uses the nonce-protected viewer.
-* **Fix:** `page-flip.browser.js` shipped with the release zip via `scripts/copy-pageflip-assets.js`; defensive CDN fallback if the local asset is missing.
-* **Enhancement:** Mobile-responsive single product, vault, and taxonomy page titles prevent overflow on small screens.
-* **Enhancement:** Schema output moved from `frontend.php` into dedicated `includes/seo-schema.php`.
-* **Enhancement:** `shelfsage-chunk2.js` no longer ships with the public bundle (admin-only Settings module removed from `main.jsx`).
-* **i18n:** `languages/shelfsage.pot` shipped (248 strings) for translation pipelines.
-* **New:** `uninstall.php` — full data cleanup on plugin delete. Removes 9 plugin options, all `_rmss_*`, `_trsss_view_count`, `_trsss_last_viewed_at`, `_trsss_series_order`, `_trsss_ebook_dl_*`, and `_ss_vault_*` post meta, the `_trsss_reading_list` user meta, the `_trsss_verified_purchase` comment meta, every `ss_vault_assets` and `rmss_shortcode` custom post, all five ShelfSage taxonomy terms, the `idx_shelfsage_isbn` postmeta index, the `trsss_book_api` object-cache group, and all `trsss_*` transients. Multisite-aware (loops every site) and short-circuited by `add_filter( 'trsss_skip_uninstall_cleanup', '__return_true' )` for staged migrations.
-
-= 1.5.0 =
-* **New:** Smart Fallback for Google Books API and Amazon PA-API.
-* **New:** Secure server-side Google Books fetch endpoint (`/fetch-books`).
-* **New:** Growth & Ecosystem layer in Dashboard sidebar.
-* **New:** Mini stats row (Vault, Shortcodes, API usage).
-* **New:** What's New changelog modal in footer.
-* **Enhancement:** Look Inside badge click fix (pointer-events overlay).
-* **Enhancement:** Dashboard greeting personalized by local time.
-* **Enhancement:** Highlights section for capabilities and documentation links.
-* **Security:** Fixed REST API log exposure; nonce verification hardened.
-* **Fix:** Resolved shortcode creation race condition for free users.
-* **Fix:** Theme override compatibility with payment gateways.
-* **Fix:** Replaced deprecated `wp_count_terms()`; `date()` → `gmdate()`.
-* **Optimized:** Enqueue assets only when ShelfSage shortcodes are present.
-
-= 1.0.2 =
-* **New:** Documentation page in admin.
-* **New:** Improved Dashboard UI with quick action cards.
-* **Enhancement:** Inter and Lora Google Fonts.
-
-= 1.0.1 =
-* **New:** Sample Data Import.
-* **New:** Welcome Wizard for initial setup.
-
 = 1.0.0 =
-* Initial release.
-* Core: Taxonomies, Shortcodes, Metadata, React Frontend.
+* Initial public release.
+* Book-specific taxonomies: Authors, Publishers, Translators, Series, Genres.
+* Six single-product layouts: Classic, Style 1–5.
+* Visual Shortcode Architect with live preview and saved shortcodes.
+* ShelfSage Vault — standalone book CPT (works without WooCommerce).
+* Google Books API integration (ISBN/title auto-fill).
+* Amazon PA-API v5 integration with smart fallback.
+* Look Inside PDF modal viewer and PDF Flipbook (3D page-flip).
+* Book meta fields: ISBN, Pages, Edition, Binding, Language, DOI, Awards, Co-Authors.
+* Book Condition badge (New / Used – Like New / Good / Acceptable / Poor).
+* Age Rating badge (All Ages / Children / Teen 13+ / Young Adult 16+ / Adult 18+).
+* Pre-order countdown timer with release date.
+* Featured Book shortcode [shelfsage_featured].
+* Book reviews with verified purchase badge.
+* Author profile pages with bio, photo, and social links.
+* Audiobook preview player.
+* Series reading order management.
+* Reading List / My Library for logged-in users.
+* E-book download gate (HMAC-signed, purchase-verified).
+* Bulk book import: CSV/Excel and Goodreads Export format.
+* Analytics dashboard: view counts and search trends.
+* Low/out-of-stock email alerts with 12-hour throttle.
+* Advanced JSON-LD Book schema (co-author, translator, series, awards, contentRating, itemCondition).
+* Social sharing buttons (Facebook, Twitter/X, WhatsApp, Email).
+* Copy ISBN button.
+* Related books (by author, genre, publisher).
+* RTL and Unicode (Bengali/Arabic) support.
+* Elementor widget and Gutenberg block.
+* WooCommerce HPOS and Cart/Checkout Blocks compatibility.
+* Secure Amazon/Google credentials (AES-256-CBC encryption).
+* Google Fonts integration with Theme Default (zero extra requests) option.
+* Full uninstall cleanup.
 
 == Upgrade Notice ==
 
-= 1.5.1 =
-* Major release: Analytics dashboard, audiobook player, author profiles, reviews, series order, reading lists, CSV import, PDF flipbook, advanced SEO schema, font customization, WC HPOS compatibility, AES-256 credential encryption, and PDF viewer hardening. No breaking changes.
-
-= 1.5.0 =
-* New: Secure fetch-books endpoint, Growth & Ecosystem layer, dashboard enhancements, Look Inside fix, and performance optimizations.
+= 1.0.0 =
+Initial public release. No upgrade required.

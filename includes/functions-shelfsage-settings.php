@@ -140,7 +140,7 @@ function trsss_asset_version( $relative_path ) {
 		return (string) filemtime( $file );
 	}
 
-	return defined( 'TRSSS_VERSION' ) ? (string) TRSSS_VERSION : '1.5.1';
+	return defined( 'TRSSS_VERSION' ) ? (string) TRSSS_VERSION : '1.0.0';
 }
 
 /**

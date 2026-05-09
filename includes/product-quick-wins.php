@@ -96,7 +96,7 @@ function trsss_enqueue_product_quick_wins_script() {
 		return;
 	}
 
-	wp_register_script( 'rmss-product-quick-wins', false, array(), defined( 'TRSSS_VERSION' ) ? TRSSS_VERSION : '1.5.1', true );
+	wp_register_script( 'rmss-product-quick-wins', false, array(), defined( 'TRSSS_VERSION' ) ? TRSSS_VERSION : '1.0.0', true );
 	wp_enqueue_script( 'rmss-product-quick-wins' );
 
 	$js = <<<JS

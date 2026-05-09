@@ -203,7 +203,7 @@ const DocsApp = () => {
                         />
                     </div>
                     <div className="text-sm text-gray-500">
-                        ShelfSage v1.0.2
+                        ShelfSage v1.0.0
                     </div>
                 </div>
 

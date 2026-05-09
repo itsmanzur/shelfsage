@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShelfSage 1.5.1 — Documentation</title>
+<title>ShelfSage 1.0.0 — Documentation</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -280,7 +280,7 @@
       <div class="doc-brand-logo">S</div>
       <div class="doc-brand-text">
         <div class="doc-brand-name">ShelfSage</div>
-        <div class="doc-brand-version">v 1.5.1 · Docs</div>
+        <div class="doc-brand-version">v 1.0.0 · Docs</div>
       </div>
     </div>
 
@@ -352,7 +352,7 @@
       <h1>ShelfSage Documentation</h1>
       <p>Complete WooCommerce bookstore toolkit — book taxonomies, shortcode builder, Vault, Look Inside, affiliate links, Amazon &amp; Google APIs, purchase-gated e-book downloads, and SEO schema in one package.</p>
       <div class="doc-hero-meta">
-        <span class="doc-hero-pill">Version 1.5.1</span>
+        <span class="doc-hero-pill">Version 1.0.0</span>
         <span class="doc-hero-pill">WordPress 5.8+</span>
         <span class="doc-hero-pill">WooCommerce 7.0+</span>
         <span class="doc-hero-pill">PHP 7.4+</span>
@@ -622,7 +622,7 @@
     </section>
 
     <section id="featured-book">
-      <h2>Featured Book / "Book of the Week" Shortcode <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>Featured Book / "Book of the Week" Shortcode <span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>A drop-anywhere hero card for the homepage, About page, footer, sidebar — anywhere a single book deserves the spotlight. Self-contained: works for both WooCommerce products and ShelfSage Vault assets, no React, no extra HTTP requests, inline CSS printed once per request, automatic mobile stacking.</p>
 
       <h4>Embed</h4>
@@ -679,7 +679,7 @@
     </section>
 
     <section id="preorder">
-      <h2>Pre-order Countdown <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>Pre-order Countdown <span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>Show a 4-unit (Days / Hours / Minutes / Seconds) countdown on books with a future Release Date.</p>
       <h4>Setup</h4>
       <ol>
@@ -699,7 +699,7 @@
     </section>
 
     <section id="book-condition">
-      <h2>Book Condition Badge <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>Book Condition Badge <span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>For second-hand bookstores (a huge market in South Asia and on Marketplace / OLX-style channels). A colour-coded badge near the title surfaces book condition transparently to buyers.</p>
 
       <h4>Setup</h4>
@@ -743,7 +743,7 @@
     </section>
 
     <section id="age-rating">
-      <h2>Age Rating / Content Advisory Badge <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>Age Rating / Content Advisory Badge <span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>A small colour-coded pill that surfaces who the book is appropriate for. Useful for general-interest stores, school libraries, and parents shopping for children's books. Also pushed into the JSON-LD Book schema as <code>contentRating</code> + <code>typicalAgeRange</code> so Google can render the rating directly on rich results.</p>
 
       <h4>Setup</h4>
@@ -806,7 +806,7 @@
     </section>
 
     <section id="stock-alerts">
-      <h2>Stock Alerts (Email) <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>Stock Alerts (Email) <span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>The Inventory dashboard shows low-stock counts at a glance, but most shop owners do not log in every day. This module sends a customised HTML email the moment a book drops at or below the threshold (low stock) or runs out completely (no stock).</p>
 
       <h4>Setup</h4>
@@ -866,7 +866,7 @@
     </section>
 
     <section id="ebook-gate">
-      <h2>E-book Download Gate <span class="doc-badge is-security">Security</span><span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <h2>E-book Download Gate <span class="doc-badge is-security">Security</span><span class="doc-badge is-new">New in 1.0.0</span></h2>
       <p>Replaces the public <code>_rmss_ebook_url</code> link with a purchase-verified flow. The raw URL is never reflected in HTML any more.</p>
 
       <h4>How it works</h4>
@@ -977,7 +977,7 @@
         <li>Upload. Each row becomes a draft WooCommerce product with the right ShelfSage taxonomies and meta.</li>
       </ol>
 
-      <h3>Goodreads Library Export — direct import <span class="doc-badge is-new">New in 1.5.1</span></h3>
+      <h3>Goodreads Library Export — direct import <span class="doc-badge is-new">New in 1.0.0</span></h3>
       <p>Goodreads is the world's largest reading-list service. ShelfSage detects the Goodreads "Export Library" CSV automatically — no manual column mapping required.</p>
 
       <h4>How to get the file from Goodreads</h4>
@@ -1218,7 +1218,7 @@
       <p>ShelfSage skips counting bots and uses a 24-hour cookie to avoid re-counting the same visitor. Open the page in an incognito window with a different IP/UA to verify.</p>
 
       <h3>"Plugin is not compatible with HPOS" or "Cart/Checkout Blocks" warning in WooCommerce</h3>
-      <p>Make sure you are on ShelfSage 1.5.1 or later — both compatibility flags are declared in <code>shelfsage.php</code> via <code>FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true)</code> (HPOS) and <code>FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true)</code> (Cart / Checkout Blocks). Open WooCommerce → Settings → Advanced → Features and confirm both rows show a green tick.</p>
+      <p>Make sure you are on ShelfSage 1.0.0 or later — both compatibility flags are declared in <code>shelfsage.php</code> via <code>FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true)</code> (HPOS) and <code>FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true)</code> (Cart / Checkout Blocks). Open WooCommerce → Settings → Advanced → Features and confirm both rows show a green tick.</p>
     </section>
 
     <section id="faq">
@@ -1250,7 +1250,7 @@
       <h2>Changelog Highlights</h2>
       <p>Full changelog lives in <code>readme.txt</code>. Highlights for the current release:</p>
 
-      <h3>1.5.1</h3>
+      <h3>1.0.0</h3>
       <ul>
         <li><strong>New:</strong> E-book Download Gate — purchase-verified, signed (HMAC-SHA256, 30-day TTL), with auto-injected order email links and an admin download counter.</li>
         <li><strong>New:</strong> Pre-order Countdown is now visible on stock WC templates (auto-injection at <code>woocommerce_single_product_summary</code> priority 25) and via <code>[shelfsage_preorder_countdown]</code> shortcode.</li>
@@ -1282,7 +1282,7 @@
       </div>
 
       <p style="margin-top: 32px; padding-top: 18px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px; text-align: center;">
-        ShelfSage 1.5.1 — Documentation generated 9 May 2026.
+        ShelfSage 1.0.0 — Documentation generated 9 May 2026.
       </p>
     </section>
 

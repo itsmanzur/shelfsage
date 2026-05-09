@@ -8,11 +8,11 @@
  *   4. category: 'Feature' | 'Performance' | 'Security' | 'UX' | 'Developer'
  */
 
-export const CURRENT_VERSION = '1.5.1';
+export const CURRENT_VERSION = '1.0.0';
 
 export const changelog = [
   {
-    version: '1.5.1',
+    version: '1.0.0',
     date: '2026-05-09',
     features: [
       {
@@ -220,112 +220,6 @@ export const changelog = [
         title: 'PDF Viewer Hardened',
         summary: 'pdf-viewer.php now requires a WordPress nonce and verifies the URL is a registered Look Inside URL.',
         usage: 'Automatic. Prevents SSRF abuse and unauthorized PDF proxying.',
-      },
-    ],
-  },
-  {
-    version: '1.2.0',
-    date: '2025-12-01',
-    features: [      {
-        badge: 'NEW',
-        category: 'UX',
-        icon: '🏗️',
-        title: '3-Tab Shortcode Architect',
-        summary: 'Redesigned left sidebar with Fetch Data, Layout, and Designer tabs for a cleaner workflow.',
-        usage: 'ShelfSage → Shortcode Architect → use the three tabs on the left panel.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '🔃',
-        title: 'Sort & Order Controls',
-        summary: 'Sort books by Date, Title, Price, Rating, or Random — in Ascending or Descending order.',
-        usage: 'Shortcode Architect → Fetch Data → Sort & Order section at the bottom.',
-      },
-      {
-        badge: 'IMPROVED',
-        category: 'UX',
-        icon: '🏠',
-        title: 'Home Dashboard Redesign',
-        summary: 'New home page with Quick Launch cards, Pro Power section, stats row, and ecosystem tools.',
-        usage: 'ShelfSage → Dashboard → Home tab.',
-      },
-      {
-        badge: 'FIX',
-        category: 'UX',
-        icon: '📌',
-        title: 'Shortcode Block Pinned to Top',
-        summary: 'The generated shortcode code block is now pinned directly below the shortcode name input.',
-        usage: 'Shortcode Architect → top of the left panel.',
-      },
-      {
-        badge: 'FIX',
-        category: 'UX',
-        icon: '🌅',
-        title: 'Smart Greeting Logic',
-        summary: 'Greeting now shows Good Night, Morning, Afternoon, or Evening based on local browser time.',
-        usage: 'Automatic — shown on the Dashboard home.',
-      },
-    ],
-  },
-  {
-    version: '1.5.0',
-    date: '2026-04-01',
-    features: [      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '🎨',
-        title: 'Shortcode Architect v2.4',
-        summary: 'Visual no-code builder with WooCommerce, Vault, Google Books, and Amazon data sources.',
-        usage: 'ShelfSage → Shortcode Architect → design your layout → copy shortcode → paste anywhere.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '🏛️',
-        title: 'Vault — Catalog Without WooCommerce',
-        summary: 'Display books without WooCommerce products. Perfect for libraries and catalogs.',
-        usage: 'Library → Add to Vault → use [shelfsage_vault] shortcode or Architect with Vault source.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '📚',
-        title: 'Smart Book Ingester',
-        summary: 'Auto-fill book details (title, author, cover, description) from ISBN via Google Books.',
-        usage: 'WooCommerce → Add Product → Smart Book Ingester tab → enter ISBN → auto-fill.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '🛍️',
-        title: 'Amazon PA-API v5 Integration',
-        summary: 'Fetch live prices and book data from Amazon using AWS Signature v4.',
-        usage: 'Settings → Connect & Data → Amazon PA-API → enter credentials → use Amazon source in Architect.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '👁️',
-        title: 'Look Inside (PDF/Image Preview)',
-        summary: 'Show a book preview PDF or image in a modal when readers click "Look Inside".',
-        usage: 'Product edit → Look Inside URL field → paste PDF or image URL → enable in Settings.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Feature',
-        icon: '🏷️',
-        title: 'Book Taxonomies',
-        summary: 'Author, Publisher, Genre, Translator, Series taxonomies with archive pages and filter widgets.',
-        usage: 'Taxonomies auto-register on activation. Assign from the product edit screen or via import.',
-      },
-      {
-        badge: 'NEW',
-        category: 'Developer',
-        icon: '⚛️',
-        title: 'React + Vite Build Environment',
-        summary: 'Full React 18 source with Vite build. All admin UI components editable in src/.',
-        usage: 'npm install → npm run build (auto BOM-strip). Source: src/components/. Config: vite.config.js',
       },
     ],
   },

@@ -42,7 +42,7 @@ function trsss_register_app_assets() {
     if (wp_script_is('trsss-app-js', 'registered')) {
         return;
     }
-    $ver = defined( 'TRSSS_VERSION' ) ? TRSSS_VERSION : '1.5.1';
+    $ver = defined( 'TRSSS_VERSION' ) ? TRSSS_VERSION : '1.0.0';
     wp_register_script('trsss-app-js', TRSSS_URL . 'assets/shelfsage-app.js', array('wp-element'), $ver, true);
     wp_register_style('trsss-app-css', TRSSS_URL . 'assets/index.css', array(), $ver);
 }
