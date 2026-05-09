@@ -95,6 +95,28 @@ function trsss_format_reading_list_product( $product_id, $entry ) {
 }
 
 function trsss_reading_list_response( array $list ) {
+	$ids = array_values( array_filter( array_map( 'absint', array_keys( $list ) ) ) );
+
+	if ( ! empty( $ids ) ) {
+		// Hydrate posts + their assigned terms + post meta in one query per
+		// table instead of N queries per row inside the loop below.
+		_prime_post_caches( $ids, true, true );
+
+		// Featured images live in a separate posts row (the attachment) plus
+		// `_wp_attachment_metadata`. Prime those too so the per-row
+		// `get_the_post_thumbnail_url()` calls hit the object cache only.
+		$thumb_ids = array();
+		foreach ( $ids as $product_id ) {
+			$thumb_id = (int) get_post_thumbnail_id( $product_id );
+			if ( $thumb_id ) {
+				$thumb_ids[] = $thumb_id;
+			}
+		}
+		if ( ! empty( $thumb_ids ) ) {
+			_prime_post_caches( array_unique( $thumb_ids ), false, true );
+		}
+	}
+
 	$items = array();
 	foreach ( $list as $product_id => $entry ) {
 		$item = trsss_format_reading_list_product( (int) $product_id, $entry );
@@ -107,7 +129,7 @@ function trsss_reading_list_response( array $list ) {
 		array(
 			'success' => true,
 			'items'   => $items,
-			'ids'     => array_map( 'intval', array_keys( $list ) ),
+			'ids'     => $ids,
 		)
 	);
 }
