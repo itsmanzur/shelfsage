@@ -7,3 +7,6 @@ includes/api-legacy-monolith.pre-section2.php
 includes/api/_build-*.js
 includes/api/_rebuild-*.js
 shelfsage-audit-report.md
+
+# Local dev tools (wp-cli.phar etc.) — never commit, never ship
+tools/

@@ -1,0 +1,1125 @@
+# Copyright (C) 2026 itsmanzur
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: ShelfSage 1.5.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shelfsage\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-09T09:52:50+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: shelfsage\n"
+
+#. Plugin Name of the plugin
+#: shelfsage.php
+#: includes/admin-menu.php:19
+#: includes/admin-menu.php:20
+msgid "ShelfSage"
+msgstr ""
+
+#. Description of the plugin
+#: shelfsage.php
+msgid "Complete WooCommerce bookstore toolkit — book taxonomies, shortcode builder, Vault, Look Inside, affiliate links, Amazon & Google APIs, and all layouts in one package."
+msgstr ""
+
+#. Author of the plugin
+#: shelfsage.php
+msgid "itsmanzur"
+msgstr ""
+
+#. Author URI of the plugin
+#: shelfsage.php
+msgid "https://shelfsage.com"
+msgstr ""
+
+#: includes/admin-menu.php:31
+#: includes/admin-menu.php:32
+msgid "Shortcode Architect"
+msgstr ""
+
+#: includes/admin-menu.php:41
+#: includes/admin-menu.php:42
+msgid "Shortcode Hub"
+msgstr ""
+
+#: includes/admin-menu.php:51
+#: includes/admin-menu.php:52
+msgid "Library"
+msgstr ""
+
+#: includes/admin-menu.php:61
+#: includes/admin-menu.php:62
+msgid "Settings"
+msgstr ""
+
+#: includes/admin-menu.php:71
+#: includes/admin-menu.php:72
+msgid "Welcome"
+msgstr ""
+
+#: includes/admin-menu.php:81
+msgid "SS Dashboard"
+msgstr ""
+
+#: includes/admin-menu.php:313
+#: includes/frontend.php:57
+#: templates/single-product-shelfsage.php:438
+msgid "Author"
+msgstr ""
+
+#: includes/admin-menu.php:314
+#: includes/frontend.php:58
+msgid "Publisher"
+msgstr ""
+
+#: includes/admin-menu.php:315
+#: includes/frontend.php:59
+msgid "Translator"
+msgstr ""
+
+#: includes/admin-menu.php:316
+#: includes/frontend.php:60
+msgid "Series"
+msgstr ""
+
+#: includes/admin-menu.php:317
+#: includes/frontend.php:61
+msgid "Add to Cart"
+msgstr ""
+
+#: includes/admin-menu.php:318
+#: includes/frontend.php:62
+msgid "View Cart"
+msgstr ""
+
+#: includes/admin-menu.php:319
+#: includes/frontend.php:63
+#: templates/taxonomy-rmss_author.php:53
+msgid "Look Inside"
+msgstr ""
+
+#: includes/admin-menu.php:320
+#: includes/admin-menu.php:321
+#: includes/frontend.php:64
+#: includes/frontend.php:65
+#: templates/single-ss_vault_assets.php:35
+msgid "View Details"
+msgstr ""
+
+#: includes/admin-ux-panels.php:24
+msgid "OK"
+msgstr ""
+
+#: includes/admin-ux-panels.php:24
+msgid "Attention"
+msgstr ""
+
+#. translators: 1 ShelfSage REST base URL (markup)
+#: includes/admin-ux-panels.php:75
+#, php-format
+msgid "ShelfSage REST base: %s"
+msgstr ""
+
+#: includes/admin-ux-panels.php:81
+#, php-format
+msgid "Google Books key: %1$s · Amazon PA (access + secret + Associate tag): %2$s"
+msgstr ""
+
+#: includes/admin-ux-panels.php:85
+#: includes/admin-ux-panels.php:86
+msgid "configured"
+msgstr ""
+
+#: includes/admin-ux-panels.php:85
+msgid "missing"
+msgstr ""
+
+#: includes/admin-ux-panels.php:86
+msgid "incomplete or missing"
+msgstr ""
+
+#: includes/admin-ux-panels.php:91
+msgid "ShelfSage · Site health snapshot"
+msgstr ""
+
+#: includes/admin-ux-panels.php:93
+msgid "WooCommerce active"
+msgstr ""
+
+#: includes/admin-ux-panels.php:94
+msgid "Database transients writable"
+msgstr ""
+
+#: includes/admin-ux-panels.php:95
+msgid "API integrations"
+msgstr ""
+
+#: includes/admin-ux-panels.php:124
+msgid "Run bulk slug and title repair for all WooCommerce products? This cannot be automatically undone."
+msgstr ""
+
+#: includes/admin-ux-panels.php:132
+msgid "Maintenance tools"
+msgstr ""
+
+#: includes/admin-ux-panels.php:134
+msgid "These actions update WooCommerce product posts in bulk. Only continue if you intend to mutate live data."
+msgstr ""
+
+#: includes/admin-ux-panels.php:136
+msgid "Repair book slugs & titles"
+msgstr ""
+
+#: includes/admin-ux-panels.php:137
+msgid "Fix mojibake titles and rebuild Unicode-safe slugs for published/draft products."
+msgstr ""
+
+#: includes/admin-ux-panels.php:145
+msgid "Run product slug & title repair…"
+msgstr ""
+
+#: includes/api/import-books.php:195
+#: includes/api/import-books.php:267
+msgid "title is required."
+msgstr ""
+
+#: includes/api/import-books.php:305
+msgid "WooCommerce product could not be saved."
+msgstr ""
+
+#: includes/api/import-books.php:351
+msgid "No import rows were provided."
+msgstr ""
+
+#. translators: %d: row number.
+#: includes/api/import-books.php:379
+#, php-format
+msgid "Row %d skipped: title is required."
+msgstr ""
+
+#. translators: 1: row number, 2: error message.
+#: includes/api/import-books.php:391
+#, php-format
+msgid "Row %1$d failed: %2$s"
+msgstr ""
+
+#: includes/api/reading-lists.php:139
+msgid "Please log in to view your reading list."
+msgstr ""
+
+#: includes/api/reading-lists.php:146
+msgid "Please log in to save your reading list."
+msgstr ""
+
+#: includes/api/reading-lists.php:154
+msgid "A valid product is required."
+msgstr ""
+
+#: includes/api/reading-lists.php:175
+msgid "Please log in to update your reading list."
+msgstr ""
+
+#: includes/api/rest-cors-rate.php:69
+msgid "Too many requests. Please wait a moment and try again."
+msgstr ""
+
+#: includes/api/search-filters-related-products-tax.php:318
+#: includes/api/search-filters-related-products-tax.php:565
+msgid "Free"
+msgstr ""
+
+#: includes/api/test-api-connection.php:32
+msgid "Unknown API. Use \"google_books\" or \"amazon\"."
+msgstr ""
+
+#: includes/api/test-api-connection.php:47
+msgid "Google Books API key is not configured."
+msgstr ""
+
+#: includes/api/test-api-connection.php:72
+msgid "Invalid API key."
+msgstr ""
+
+#: includes/api/test-api-connection.php:78
+msgid "API key rejected (403 Forbidden)."
+msgstr ""
+
+#: includes/api/test-api-connection.php:84
+#, php-format
+msgid "Unexpected HTTP %d from Google Books."
+msgstr ""
+
+#: includes/api/test-api-connection.php:95
+#, php-format
+msgid "Connection successful — %d result(s) returned."
+msgstr ""
+
+#: includes/api/test-api-connection.php:96
+msgid "Connected (no results for test ISBN — key is valid)."
+msgstr ""
+
+#: includes/api/test-api-connection.php:114
+msgid "Amazon PA-API credentials are not configured."
+msgstr ""
+
+#: includes/api/test-api-connection.php:120
+msgid "Amazon Associate Tag is missing."
+msgstr ""
+
+#: includes/api/test-api-connection.php:200
+#, php-format
+msgid "Connection successful — %d item(s) returned."
+msgstr ""
+
+#: includes/api/test-api-connection.php:206
+#, php-format
+msgid "HTTP %d from Amazon PA-API."
+msgstr ""
+
+#: includes/api/test-api-connection.php:210
+msgid "Invalid Associate Tag."
+msgstr ""
+
+#: includes/api/test-api-connection.php:211
+msgid "Invalid AWS signature — check your Access Key and Secret Key."
+msgstr ""
+
+#: includes/api/test-api-connection.php:212
+msgid "Request expired — check your server clock."
+msgstr ""
+
+#: includes/api/test-api-connection.php:213
+msgid "Unrecognized client — Access Key ID may be wrong."
+msgstr ""
+
+#: includes/api/test-api-connection.php:214
+msgid "Access denied — account may not be approved for PA-API yet."
+msgstr ""
+
+#: includes/api/test-api-connection.php:215
+msgid "Rate limited by Amazon. Wait a moment and try again."
+msgstr ""
+
+#: includes/audio-preview.php:41
+msgid "Audiobook Preview"
+msgstr ""
+
+#: includes/audio-preview.php:56
+msgid "Open audio preview"
+msgstr ""
+
+#: includes/audio-preview.php:58
+msgid "Open audio in new tab"
+msgstr ""
+
+#: includes/author-profiles.php:19
+msgid "Website"
+msgstr ""
+
+#: includes/author-profiles.php:20
+msgid "Facebook"
+msgstr ""
+
+#: includes/author-profiles.php:21
+msgid "X / Twitter"
+msgstr ""
+
+#: includes/author-profiles.php:22
+msgid "Instagram"
+msgstr ""
+
+#: includes/author-profiles.php:23
+msgid "LinkedIn"
+msgstr ""
+
+#: includes/author-profiles.php:24
+msgid "YouTube"
+msgstr ""
+
+#: includes/author-profiles.php:37
+#: includes/author-profiles.php:59
+msgid "Author Social Links"
+msgstr ""
+
+#: includes/author-profiles.php:38
+msgid "Optional links for the author profile page."
+msgstr ""
+
+#: includes/author-profiles.php:62
+msgid "Optional links shown on the author profile page."
+msgstr ""
+
+#: includes/author-profiles.php:168
+#: includes/frontend.php:220
+#: templates/taxonomy-rmss_generic.php:49
+#, php-format
+msgid "%s Book"
+msgid_plural "%s Books"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/blocks.php:88
+msgid "View Library &rarr;"
+msgstr ""
+
+#: includes/blocks.php:103
+#: includes/taxonomies.php:24
+msgid "Book Author"
+msgstr ""
+
+#: includes/blocks.php:109
+#: includes/taxonomies.php:30
+msgid "Book Publisher"
+msgstr ""
+
+#: includes/blocks.php:115
+#: includes/taxonomies.php:36
+msgid "Book Translator"
+msgstr ""
+
+#: includes/blocks.php:121
+#: includes/frontend.php:173
+#: includes/taxonomies.php:42
+#: includes/taxonomies.php:43
+msgid "Book Series"
+msgstr ""
+
+#: includes/blocks.php:127
+#: includes/taxonomies.php:48
+msgid "Book Genre"
+msgstr ""
+
+#: includes/book-reviews.php:53
+msgid "Write a Book Review"
+msgstr ""
+
+#: includes/book-reviews.php:54
+msgid "Guest reviews are welcome. Verified purchase badges appear automatically for customers with matching orders."
+msgstr ""
+
+#: includes/book-reviews.php:134
+msgid "Verified purchase review"
+msgstr ""
+
+#: includes/book-reviews.php:134
+msgid "Verified Purchase"
+msgstr ""
+
+#: includes/class-elementor-widget.php:16
+#: src/blocks/books/edit.js:52
+#: src/blocks/books/edit.js:95
+msgid "ShelfSage Books"
+msgstr ""
+
+#: includes/class-elementor-widget.php:48
+msgid "— Select Design —"
+msgstr ""
+
+#: includes/class-elementor-widget.php:54
+#: src/blocks/books/edit.js:62
+msgid "ShelfSage Settings"
+msgstr ""
+
+#: includes/class-elementor-widget.php:59
+#: src/blocks/books/edit.js:64
+msgid "Select Design"
+msgstr ""
+
+#: includes/class-elementor-widget.php:63
+msgid "Choose a saved shortcode design from ShelfSage → Shortcode Architect."
+msgstr ""
+
+#: includes/class-elementor-widget.php:75
+msgid "Please select a ShelfSage design."
+msgstr ""
+
+#: includes/class-google-books-api.php:57
+msgid "Please provide a Title or ISBN."
+msgstr ""
+
+#: includes/class-google-books-api.php:62
+msgid "Google Books API Key is required. Add it in Settings → Connect & Data."
+msgstr ""
+
+#: includes/class-google-books-api.php:73
+msgid "Failed to connect to Google Books API."
+msgstr ""
+
+#: includes/class-google-books-api.php:78
+msgid "Google Books API returned an unauthorized error. Check your API key and quota."
+msgstr ""
+
+#: includes/class-google-books-api.php:85
+msgid "No books found for this query."
+msgstr ""
+
+#: includes/class-google-books-enhanced.php:36
+msgid "Google Books API Settings"
+msgstr ""
+
+#: includes/class-google-books-enhanced.php:43
+msgid "Google Books API Key"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:100
+#: includes/class-shelfsage-extended-features.php:116
+#: includes/taxonomies.php:456
+#: includes/taxonomies.php:478
+msgid "Profile Image / Logo"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:104
+#: includes/class-shelfsage-extended-features.php:126
+#: includes/taxonomies.php:460
+#: includes/taxonomies.php:489
+msgid "Add Image"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:105
+#: includes/class-shelfsage-extended-features.php:127
+#: includes/taxonomies.php:461
+#: includes/taxonomies.php:490
+msgid "Remove Image"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:147
+msgid "ShelfSage Affiliates"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:158
+msgid "Affiliate Links"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:159
+msgid "Add external buy links (e.g. Amazon, eBay) to show below the cart button."
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:165
+#, php-format
+msgid "Button %d Text"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:168
+msgid "Text for the button"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:174
+#, php-format
+msgid "Button %d URL"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:177
+msgid "External link URL"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:228
+msgid "ShelfSage Advanced Meta"
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:237
+msgid "Extra SEO Data & Rich Snippets enabled."
+msgstr ""
+
+#: includes/class-shelfsage-extended-features.php:238
+msgid "Advanced metadata features are active for this product."
+msgstr ""
+
+#: includes/frontend.php:164
+msgid "All Authors"
+msgstr ""
+
+#: includes/frontend.php:169
+msgid "All Publishers"
+msgstr ""
+
+#: includes/frontend.php:177
+#: includes/taxonomies.php:49
+msgid "Book Genres"
+msgstr ""
+
+#: includes/frontend.php:187
+msgid "No items found."
+msgstr ""
+
+#: includes/frontend.php:1184
+#: includes/frontend.php:1195
+#: includes/meta-boxes.php:12
+msgid "Book Details"
+msgstr ""
+
+#: includes/frontend.php:1199
+msgid "ISBN"
+msgstr ""
+
+#: includes/frontend.php:1200
+msgid "ISBN-13"
+msgstr ""
+
+#: includes/frontend.php:1201
+msgid "ASIN"
+msgstr ""
+
+#: includes/frontend.php:1202
+msgid "Pages"
+msgstr ""
+
+#: includes/frontend.php:1203
+msgid "Language"
+msgstr ""
+
+#: includes/frontend.php:1204
+msgid "Binding"
+msgstr ""
+
+#: includes/frontend.php:1205
+msgid "Edition"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:121
+msgid "WooCommerce is required for the WooCommerce data source. Please activate WooCommerce or choose another ShelfSage source."
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:206
+msgid "Pre-order countdown"
+msgstr ""
+
+#. translators: %s: formatted release date.
+#: includes/functions-shelfsage-settings.php:214
+#: templates/single-product-shelfsage.php:288
+#, php-format
+msgid "Releases on %s"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:218
+msgid "Days"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:219
+msgid "Hours"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:220
+msgid "Minutes"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:221
+msgid "Seconds"
+msgstr ""
+
+#: includes/functions-shelfsage-settings.php:222
+msgid "Available now"
+msgstr ""
+
+#: includes/product-quick-wins.php:56
+#: includes/product-quick-wins.php:68
+#: includes/product-quick-wins.php:71
+msgid "Copy ISBN"
+msgstr ""
+
+#: includes/product-quick-wins.php:57
+msgid "Share"
+msgstr ""
+
+#: includes/product-quick-wins.php:62
+msgid "Check out this book:"
+msgstr ""
+
+#: includes/product-quick-wins.php:68
+msgid "Copied!"
+msgstr ""
+
+#: includes/product-quick-wins.php:77
+msgid "Share on Facebook"
+msgstr ""
+
+#: includes/product-quick-wins.php:79
+msgid "Share on X"
+msgstr ""
+
+#: includes/product-quick-wins.php:81
+msgid "Share on WhatsApp"
+msgstr ""
+
+#: includes/product-quick-wins.php:83
+msgid "Share by email"
+msgstr ""
+
+#: includes/series-reading-order.php:22
+msgid "Series Reading Order"
+msgstr ""
+
+#: includes/series-reading-order.php:44
+msgid "Set where this book belongs inside its series. Decimals are allowed for novellas or side stories."
+msgstr ""
+
+#: includes/series-reading-order.php:45
+msgid "Reading order"
+msgstr ""
+
+#: includes/series-reading-order.php:49
+msgid "Series:"
+msgstr ""
+
+#: includes/series-reading-order.php:51
+msgid "Assign a Book Series term to use the reading order list."
+msgstr ""
+
+#: includes/series-reading-order.php:110
+#: includes/series-reading-order.php:116
+#: includes/series-reading-order.php:308
+msgid "Series Order"
+msgstr ""
+
+#: includes/series-reading-order.php:248
+msgid "Reading Order"
+msgstr ""
+
+#: includes/series-reading-order.php:261
+msgid "Current Book"
+msgstr ""
+
+#: includes/taxonomies.php:25
+msgid "Book Authors"
+msgstr ""
+
+#: includes/taxonomies.php:31
+msgid "Book Publishers"
+msgstr ""
+
+#: includes/taxonomies.php:37
+msgid "Book Translators"
+msgstr ""
+
+#: includes/taxonomies.php:54
+msgid "Collection"
+msgstr ""
+
+#: includes/taxonomies.php:55
+msgid "Collections"
+msgstr ""
+
+#: includes/taxonomies.php:71
+#, php-format
+msgid "Search %s"
+msgstr ""
+
+#: includes/taxonomies.php:72
+#, php-format
+msgid "All %s"
+msgstr ""
+
+#: includes/taxonomies.php:73
+#, php-format
+msgid "Parent %s"
+msgstr ""
+
+#: includes/taxonomies.php:74
+#, php-format
+msgid "Parent %s:"
+msgstr ""
+
+#: includes/taxonomies.php:75
+#, php-format
+msgid "Edit %s"
+msgstr ""
+
+#: includes/taxonomies.php:76
+#, php-format
+msgid "Update %s"
+msgstr ""
+
+#: includes/taxonomies.php:77
+#, php-format
+msgid "Add New %s"
+msgstr ""
+
+#: includes/taxonomies.php:78
+#, php-format
+msgid "New %s Name"
+msgstr ""
+
+#: includes/taxonomies.php:330
+msgid "Invalid or missing security token for taxonomy slug repair."
+msgstr ""
+
+#: includes/vault.php:17
+msgctxt "Post Type General Name"
+msgid "Vault Assets"
+msgstr ""
+
+#: includes/vault.php:18
+msgctxt "Post Type Singular Name"
+msgid "Vault Asset"
+msgstr ""
+
+#: includes/vault.php:19
+msgid "Vault Assets"
+msgstr ""
+
+#: includes/vault.php:20
+msgid "All Assets"
+msgstr ""
+
+#: includes/vault.php:21
+msgid "Add New Asset"
+msgstr ""
+
+#: includes/vault.php:22
+msgid "Edit Asset"
+msgstr ""
+
+#: includes/vault.php:23
+msgid "Cover Image"
+msgstr ""
+
+#: includes/vault.php:172
+msgid "Vault Asset Details"
+msgstr ""
+
+#: shelfsage.php:581
+msgid "Invalid or missing security token for product slug repair."
+msgstr ""
+
+#: templates/single-product-shelfsage-style-1.php:22
+#: templates/single-product-shelfsage-style-2.php:22
+#: templates/single-product-shelfsage-style-3.php:22
+#: templates/single-product-shelfsage-style-4.php:20
+#: templates/single-product-shelfsage-style-5.php:20
+#: templates/single-product-shelfsage.php:22
+msgid "Product not found."
+msgstr ""
+
+#: templates/single-product-shelfsage-style-1.php:474
+#: templates/single-product-shelfsage-style-2.php:466
+#: templates/single-product-shelfsage-style-3.php:465
+#: templates/single-product-shelfsage.php:494
+msgid "Customer Reviews"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-1.php:477
+#: templates/single-product-shelfsage-style-2.php:469
+#: templates/single-product-shelfsage-style-3.php:468
+#: templates/single-product-shelfsage.php:246
+#: templates/single-product-shelfsage.php:497
+msgid "review"
+msgid_plural "reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/single-product-shelfsage-style-1.php:501
+#: templates/single-product-shelfsage-style-2.php:493
+#: templates/single-product-shelfsage-style-3.php:492
+#: templates/single-product-shelfsage.php:519
+msgid "You May Also Like"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:376
+#: templates/single-product-shelfsage.php:312
+msgid "Out of Stock"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:418
+#: templates/single-product-shelfsage.php:413
+msgid "About the Book"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:420
+msgid "About the Author"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:422
+#, php-format
+msgid "Customer Reviews (%d)"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:423
+msgid "Shipping & Delivery"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:432
+msgid "Synopsis"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:436
+msgid "Product Details"
+msgstr ""
+
+#: templates/single-product-shelfsage-style-5.php:477
+msgid "Reviews are closed for this book."
+msgstr ""
+
+#: templates/single-product-shelfsage.php:285
+msgid "Pre-order"
+msgstr ""
+
+#: templates/single-product-shelfsage.php:299
+msgid "Digital"
+msgstr ""
+
+#: templates/single-product-shelfsage.php:304
+msgid "E-book / Download"
+msgstr ""
+
+#: templates/taxonomy-rmss_author.php:33
+msgid "No Image"
+msgstr ""
+
+#: templates/taxonomy-rmss_author.php:71
+msgid "&larr; Previous"
+msgstr ""
+
+#: templates/taxonomy-rmss_author.php:72
+msgid "Next &rarr;"
+msgstr ""
+
+#: templates/taxonomy-rmss_author.php:78
+msgid "No books found for this author."
+msgstr ""
+
+#: src/blocks/author/edit.js:21
+msgid "Loading Authors..."
+msgstr ""
+
+#: src/blocks/author/edit.js:29
+msgid "Select an Author"
+msgstr ""
+
+#: src/blocks/author/edit.js:38
+msgid "Author Settings"
+msgstr ""
+
+#: src/blocks/author/edit.js:40
+msgid "Select Author"
+msgstr ""
+
+#: src/blocks/author/edit.js:52
+msgid "ShelfSage Author"
+msgstr ""
+
+#: src/blocks/author/edit.js:52
+msgid "Select an author from the sidebar settings."
+msgstr ""
+
+#: src/blocks/author/edit.js:78
+msgid "Author Not Found"
+msgstr ""
+
+#: src/blocks/books/edit.js:38
+msgid "Select a ShelfSage Design"
+msgstr ""
+
+#: src/blocks/books/edit.js:41
+msgid "Shortcode"
+msgstr ""
+
+#: src/blocks/books/edit.js:65
+msgid "Choose a saved shortcode design from Shortcode Architect. Create designs at ShelfSage → Shortcode Architect."
+msgstr ""
+
+#: src/blocks/books/edit.js:82
+msgid "Refresh Designs"
+msgstr ""
+
+#: src/blocks/books/edit.js:85
+msgid "Click refresh or focus window if you recently updated your design in Shortcode Architect."
+msgstr ""
+
+#: src/blocks/books/edit.js:96
+msgid "Select a saved ShelfSage design from the block settings, or create one in ShelfSage → Shortcode Architect."
+msgstr ""
+
+#: src/blocks/genre/edit.js:21
+msgid "Loading genres..."
+msgstr ""
+
+#: src/blocks/genre/edit.js:29
+msgid "Select an genre"
+msgstr ""
+
+#: src/blocks/genre/edit.js:38
+msgid "genre Settings"
+msgstr ""
+
+#: src/blocks/genre/edit.js:40
+msgid "Select genre"
+msgstr ""
+
+#: src/blocks/genre/edit.js:52
+msgid "ShelfSage genre"
+msgstr ""
+
+#: src/blocks/genre/edit.js:52
+msgid "Select an genre from the sidebar settings."
+msgstr ""
+
+#: src/blocks/genre/edit.js:78
+msgid "genre Not Found"
+msgstr ""
+
+#: src/blocks/publisher/edit.js:21
+msgid "Loading publishers..."
+msgstr ""
+
+#: src/blocks/publisher/edit.js:29
+msgid "Select an publisher"
+msgstr ""
+
+#: src/blocks/publisher/edit.js:38
+msgid "publisher Settings"
+msgstr ""
+
+#: src/blocks/publisher/edit.js:40
+msgid "Select publisher"
+msgstr ""
+
+#: src/blocks/publisher/edit.js:52
+msgid "ShelfSage publisher"
+msgstr ""
+
+#: src/blocks/publisher/edit.js:52
+msgid "Select an publisher from the sidebar settings."
+msgstr ""
+
+#: src/blocks/publisher/edit.js:78
+msgid "publisher Not Found"
+msgstr ""
+
+#: src/blocks/series/edit.js:21
+msgid "Loading seriess..."
+msgstr ""
+
+#: src/blocks/series/edit.js:29
+msgid "Select an series"
+msgstr ""
+
+#: src/blocks/series/edit.js:38
+msgid "series Settings"
+msgstr ""
+
+#: src/blocks/series/edit.js:40
+msgid "Select series"
+msgstr ""
+
+#: src/blocks/series/edit.js:52
+msgid "ShelfSage series"
+msgstr ""
+
+#: src/blocks/series/edit.js:52
+msgid "Select an series from the sidebar settings."
+msgstr ""
+
+#: src/blocks/series/edit.js:78
+msgid "series Not Found"
+msgstr ""
+
+#: src/blocks/translator/edit.js:21
+msgid "Loading translators..."
+msgstr ""
+
+#: src/blocks/translator/edit.js:29
+msgid "Select an translator"
+msgstr ""
+
+#: src/blocks/translator/edit.js:38
+msgid "translator Settings"
+msgstr ""
+
+#: src/blocks/translator/edit.js:40
+msgid "Select translator"
+msgstr ""
+
+#: src/blocks/translator/edit.js:52
+msgid "ShelfSage translator"
+msgstr ""
+
+#: src/blocks/translator/edit.js:52
+msgid "Select an translator from the sidebar settings."
+msgstr ""
+
+#: src/blocks/translator/edit.js:78
+msgid "translator Not Found"
+msgstr ""
+
+#: src/blocks/author/block.json
+msgctxt "block title"
+msgid "ShelfSage Author"
+msgstr ""
+
+#: src/blocks/author/block.json
+msgctxt "block description"
+msgid "Display a beautiful author profile card."
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block title"
+msgid "ShelfSage Books"
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block description"
+msgid "Display a book grid or shelf using a saved ShelfSage shortcode design."
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block keyword"
+msgid "shelfsage"
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block keyword"
+msgid "books"
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block keyword"
+msgid "book grid"
+msgstr ""
+
+#: src/blocks/books/block.json
+msgctxt "block keyword"
+msgid "woocommerce"
+msgstr ""
+
+#: src/blocks/genre/block.json
+msgctxt "block title"
+msgid "ShelfSage genre"
+msgstr ""
+
+#: src/blocks/genre/block.json
+msgctxt "block description"
+msgid "Display a beautiful genre profile card."
+msgstr ""
+
+#: src/blocks/publisher/block.json
+msgctxt "block title"
+msgid "ShelfSage publisher"
+msgstr ""
+
+#: src/blocks/publisher/block.json
+msgctxt "block description"
+msgid "Display a beautiful publisher profile card."
+msgstr ""
+
+#: src/blocks/series/block.json
+msgctxt "block title"
+msgid "ShelfSage series"
+msgstr ""
+
+#: src/blocks/series/block.json
+msgctxt "block description"
+msgid "Display a beautiful series profile card."
+msgstr ""
+
+#: src/blocks/translator/block.json
+msgctxt "block title"
+msgid "ShelfSage translator"
+msgstr ""
+
+#: src/blocks/translator/block.json
+msgctxt "block description"
+msgid "Display a beautiful translator profile card."
+msgstr ""
