@@ -310,6 +310,7 @@
       <li><a href="#shortcode-architect">Shortcode Architect</a></li>
       <li><a href="#vault">Vault</a></li>
       <li><a href="#look-inside">Look Inside (PDF / Image)</a></li>
+      <li><a href="#featured-book">Featured Book Shortcode</a></li>
       <li><a href="#preorder">Pre-order Countdown</a></li>
       <li><a href="#book-condition">Book Condition Badge</a></li>
       <li><a href="#age-rating">Age Rating Badge</a></li>
@@ -618,6 +619,63 @@
       </ul>
       <h4>Security</h4>
       <p>The viewer endpoint (<code>includes/pdf-viewer.php</code>) is nonce-protected and refuses any URL that is not registered as a Look Inside URL on a published product, preventing SSRF abuse.</p>
+    </section>
+
+    <section id="featured-book">
+      <h2>Featured Book / "Book of the Week" Shortcode <span class="doc-badge is-new">New in 1.5.1</span></h2>
+      <p>A drop-anywhere hero card for the homepage, About page, footer, sidebar — anywhere a single book deserves the spotlight. Self-contained: works for both WooCommerce products and ShelfSage Vault assets, no React, no extra HTTP requests, inline CSS printed once per request, automatic mobile stacking.</p>
+
+      <h4>Embed</h4>
+      <pre><code>[shelfsage_featured id="123"]
+[shelfsage_featured id="123" label="Book of the Week" align="right"]
+[shelfsage_featured id="123" theme="dark" cta_text="Grab Your Copy"]
+[shelfsage_featured id="123" show_chips="no" show_price="no" excerpt_words="60"]</code></pre>
+
+      <h4>Attributes</h4>
+      <table>
+        <thead><tr><th>Attribute</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>—</td><td>Product / Vault asset ID. Falls back to the current queried object on a single page so <code>[shelfsage_featured]</code> works inside an Architect block on the product page itself.</td></tr>
+          <tr><td><code>label</code></td><td><code>Featured Book</code></td><td>Ribbon text. Translatable via the <code>trsss_featured_book_label</code> filter.</td></tr>
+          <tr><td><code>align</code></td><td><code>left</code></td><td><code>left</code> | <code>right</code> — which side the cover sits on.</td></tr>
+          <tr><td><code>theme</code></td><td><code>auto</code></td><td><code>auto</code> | <code>light</code> | <code>dark</code> | <code>minimal</code>. Auto inherits Settings → Appearance → Primary / Accent Colour.</td></tr>
+          <tr><td><code>show_chips</code></td><td><code>yes</code></td><td>Genre + publisher pill chips above the title.</td></tr>
+          <tr><td><code>show_rating</code></td><td><code>yes</code></td><td>Star rating + review count (only renders when rating &gt; 0).</td></tr>
+          <tr><td><code>show_price</code></td><td><code>yes</code></td><td>Strike-through sale price supported via WooCommerce's native <code>price_html</code>.</td></tr>
+          <tr><td><code>show_excerpt</code></td><td><code>yes</code></td><td>Short description; falls back to the long description if needed.</td></tr>
+          <tr><td><code>excerpt_words</code></td><td><code>32</code></td><td>Word count for the trimmed excerpt.</td></tr>
+          <tr><td><code>cta_text</code></td><td>auto</td><td>Default <em>Buy Now</em> for products, <em>View Book</em> for Vault.</td></tr>
+          <tr><td><code>cta_url</code></td><td>permalink</td><td>Override the primary button URL (e.g. external affiliate link).</td></tr>
+          <tr><td><code>secondary_text</code></td><td><code>More details</code></td><td>Secondary outline button label.</td></tr>
+          <tr><td><code>class</code></td><td><code>—</code></td><td>Extra CSS class on the wrapper.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>What the card includes</h4>
+      <ul>
+        <li>Cover image (large size) with a "★ Featured Book" ribbon. Falls back to a coloured placeholder with the book initial when no featured image is set.</li>
+        <li>Genre + publisher chips (max 3 genres, publisher with dashed outline).</li>
+        <li>Title (clickable) and "by &lt;Author&gt;" line built from the <code>rmss_author</code> taxonomy (or Vault meta).</li>
+        <li>Star rating row using WooCommerce's average rating + review count when available.</li>
+        <li>Trimmed excerpt with ellipsis.</li>
+        <li>Price (HTML-aware) + ISBN line.</li>
+        <li>Primary "Buy Now" button (gradient, follows primary colour) + secondary "More details" button.</li>
+      </ul>
+
+      <h4>Filters</h4>
+      <table>
+        <thead><tr><th>Filter</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>trsss_featured_book_data</code></td><td>Modify the data payload (title, author, cover_url, price_html, rating, excerpt) before rendering.</td></tr>
+          <tr><td><code>trsss_featured_book_html</code></td><td>Replace the rendered HTML entirely.</td></tr>
+          <tr><td><code>trsss_featured_book_label</code></td><td>Translate or rebrand the ribbon label per product.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout is-tip">
+        <strong>Homepage recipe</strong>
+        Drop the shortcode at the top of the homepage, change <code>label</code> weekly, and the rest of the card refreshes automatically (price, stock, rating). Combine with the Pre-order Countdown for an upcoming release: stack <code>[shelfsage_featured]</code> above <code>[shelfsage_preorder_countdown]</code> for a complete "what's coming next" hero.
+      </div>
     </section>
 
     <section id="preorder">
@@ -990,6 +1048,7 @@
           <tr><td><code>[shelfsage_book_reviews product_id="123"]</code></td><td>Reviews block for any product.</td></tr>
           <tr><td><code>[shelfsage_audiobook_preview product_id="123"]</code></td><td>Inline audio player.</td></tr>
           <tr><td><code>[shelfsage_series_order product_id="123"]</code></td><td>Series reading-order list for the product's series.</td></tr>
+          <tr><td><code>[shelfsage_featured id="123" label="" align="left" theme="auto"]</code></td><td>Hero "Featured Book" / Book of the Week card. Many optional attrs (see Featured Book section).</td></tr>
           <tr><td><code>[shelfsage_preorder_countdown id="123" title="" class=""]</code></td><td>Pre-order countdown anywhere. <code>id</code> defaults to current product.</td></tr>
           <tr><td><code>[shelfsage_book_condition id="123" class=""]</code></td><td>Book Condition badge (New / Used – Good etc.) for any product.</td></tr>
           <tr><td><code>[shelfsage_age_rating id="123" icon="yes" class=""]</code></td><td>Age Rating badge (All Ages / Teen 13+ / Adult 18+ etc.) for any product.</td></tr>
@@ -1037,6 +1096,15 @@
         <thead><tr><th>Hook</th><th>Type</th><th>Purpose</th></tr></thead>
         <tbody>
           <tr><td><code>trsss_auto_inject_preorder_countdown</code></td><td>filter</td><td>Disable auto-injection on stock WC templates.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Featured Book</h4>
+      <table>
+        <tbody>
+          <tr><td><code>trsss_featured_book_data</code></td><td>filter</td><td>Modify data payload (title / author / cover_url / price_html / rating / excerpt) before render.</td></tr>
+          <tr><td><code>trsss_featured_book_html</code></td><td>filter</td><td>Replace the rendered HTML entirely.</td></tr>
+          <tr><td><code>trsss_featured_book_label</code></td><td>filter</td><td>Translate or rebrand the ribbon label per product.</td></tr>
         </tbody>
       </table>
 

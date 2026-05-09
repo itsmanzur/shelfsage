@@ -18,6 +18,14 @@ export const changelog = [
       {
         badge: 'NEW',
         category: 'Feature',
+        icon: '⭐',
+        title: 'Featured Book / "Book of the Week" Shortcode',
+        summary: 'Drop-anywhere hero card to highlight one title — exactly what shoppers look for on a homepage. Polished two-column layout (cover + ribbon on one side, title + author + rating + price + chips + CTA on the other), inline CSS printed once per request, automatic mobile stacking, dark / minimal / auto themes that follow the Settings primary colour, and full filter coverage. Works for both WooCommerce products and ShelfSage Vault assets out of the box.',
+        usage: 'Embed: [shelfsage_featured id="123"]. Optional attrs: label="Book of the Week", align="left|right", theme="auto|light|dark|minimal", show_chips, show_rating, show_price, show_excerpt, excerpt_words, cta_text, cta_url, secondary_text, class. Filters: trsss_featured_book_data, trsss_featured_book_html, trsss_featured_book_label.',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
         icon: '📚',
         title: 'Goodreads Library Export — Direct Import',
         summary: 'Drop your Goodreads "Export Library" CSV straight into ShelfSage and the importer recognises it automatically (no manual column mapping). It strips Goodreads\' Excel-formula ISBN wrappers (=\"0743…\"), merges Author + Additional Authors, converts Owned Copies into stock quantity + status, turns Bookshelves into genres, and folds Year Published / My Rating / My Review into the canonical book fields. Goodreads is the world\'s largest reading-list service, so this turns "I have a Goodreads list of 500 books" into a one-click bulk import.',

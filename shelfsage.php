@@ -124,6 +124,9 @@ require_once TRSSS_PATH . 'includes/age-rating.php';
 // Low / out-of-stock email alerts (WooCommerce stock hook integration).
 require_once TRSSS_PATH . 'includes/stock-alerts.php';
 
+// Featured Book / Book of the Week hero shortcode.
+require_once TRSSS_PATH . 'includes/featured-book.php';
+
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
 
