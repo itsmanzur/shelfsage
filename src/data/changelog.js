@@ -59,9 +59,9 @@ export const changelog = [
         badge: 'NEW',
         category: 'Developer',
         icon: '🛒',
-        title: 'WooCommerce HPOS Compatibility Declared',
-        summary: 'ShelfSage now declares custom_order_tables compatibility via FeaturesUtil::declare_compatibility(). The "incompatible plugin" warning on WooCommerce → Settings → Advanced → Features is gone in WC 7.1+ stores running High-Performance Order Storage.',
-        usage: 'Automatic. No setting required. Order access continues to use wc_get_order() so HPOS storage just works.',
+        title: 'WooCommerce HPOS + Cart/Checkout Blocks Compatibility',
+        summary: 'ShelfSage now declares both custom_order_tables (HPOS) and cart_checkout_blocks compatibility via FeaturesUtil::declare_compatibility(). The "incompatible plugin" warnings on WooCommerce → Settings → Advanced → Features are gone for WC 7.1+ (HPOS) and WC 8.3+ (Cart/Checkout Blocks) stores. Stores using the new block-based Cart and Checkout pages get a clean compatibility tick instead of an amber warning.',
+        usage: 'Automatic. No setting required. Order access continues to use wc_get_order() so HPOS storage just works; ShelfSage does not register classic-shortcode integrations on the Cart / Checkout templates so the Blocks experience is unaffected.',
       },
       {
         badge: 'NEW',

@@ -356,6 +356,7 @@
         <span class="doc-hero-pill">WooCommerce 7.0+</span>
         <span class="doc-hero-pill">PHP 7.4+</span>
         <span class="doc-hero-pill">HPOS Ready</span>
+        <span class="doc-hero-pill">Cart/Checkout Blocks</span>
       </div>
     </div>
 
@@ -437,7 +438,7 @@
       <h2>Package Structure</h2>
 <div class="doc-tree"><span class="h">shelfsage.zip</span>
 └── <span class="h">shelfsage/</span>                       <span class="c">← Plugin folder</span>
-    ├── shelfsage.php                <span class="c">← Plugin loader (Text Domain, HPOS, includes)</span>
+    ├── shelfsage.php                <span class="c">← Plugin loader (Text Domain, HPOS + Blocks, includes)</span>
     ├── readme.txt                   <span class="c">← Changelog + External Services disclosure</span>
     ├── languages/
     │   └── shelfsage.pot            <span class="c">← Translation template (248 strings)</span>
@@ -1093,8 +1094,8 @@
       <h3>Analytics counter not updating</h3>
       <p>ShelfSage skips counting bots and uses a 24-hour cookie to avoid re-counting the same visitor. Open the page in an incognito window with a different IP/UA to verify.</p>
 
-      <h3>"Plugin is not compatible with HPOS" warning in WooCommerce</h3>
-      <p>Make sure you are on ShelfSage 1.5.1 or later — HPOS compatibility is declared via <code>FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true)</code> in <code>shelfsage.php</code>.</p>
+      <h3>"Plugin is not compatible with HPOS" or "Cart/Checkout Blocks" warning in WooCommerce</h3>
+      <p>Make sure you are on ShelfSage 1.5.1 or later — both compatibility flags are declared in <code>shelfsage.php</code> via <code>FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true)</code> (HPOS) and <code>FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true)</code> (Cart / Checkout Blocks). Open WooCommerce → Settings → Advanced → Features and confirm both rows show a green tick.</p>
     </section>
 
     <section id="faq">
@@ -1131,7 +1132,7 @@
         <li><strong>New:</strong> E-book Download Gate — purchase-verified, signed (HMAC-SHA256, 30-day TTL), with auto-injected order email links and an admin download counter.</li>
         <li><strong>New:</strong> Pre-order Countdown is now visible on stock WC templates (auto-injection at <code>woocommerce_single_product_summary</code> priority 25) and via <code>[shelfsage_preorder_countdown]</code> shortcode.</li>
         <li><strong>New:</strong> Book Analytics dashboard, audiobook player, author profiles with social links, book reviews with verified-purchase badge, series reading-order, reading lists, CSV bulk import, PDF flipbook viewer, advanced SEO Book schema, font customization.</li>
-        <li><strong>New:</strong> WooCommerce HPOS (<code>custom_order_tables</code>) compatibility declared.</li>
+        <li><strong>New:</strong> WooCommerce HPOS (<code>custom_order_tables</code>) + Cart / Checkout Blocks (<code>cart_checkout_blocks</code>) compatibility declared.</li>
         <li><strong>Security:</strong> Amazon PA-API credentials encrypted at rest with AES-256-CBC.</li>
         <li><strong>Security:</strong> PDF viewer hardened — nonce + DB whitelist (no SSRF).</li>
         <li><strong>Fix:</strong> Analytics bot detection + 24h cookie dedup eliminates redundant DB writes.</li>

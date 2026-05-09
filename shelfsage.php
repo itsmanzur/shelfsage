@@ -40,23 +40,37 @@ function trsss_load_textdomain() {
 add_action( 'plugins_loaded', 'trsss_load_textdomain' );
 
 /**
- * Declare WooCommerce HPOS (custom_order_tables) compatibility.
+ * Declare WooCommerce feature compatibility.
  *
- * ShelfSage does not query wp_posts for orders directly — all order access
- * goes through wc_get_order() / WooCommerce CRUD which is HPOS-aware.
- * Without this declaration, modern WooCommerce (7.1+) shows an
- * "incompatible plugin" warning on the HPOS settings screen.
+ * - custom_order_tables (HPOS): ShelfSage does not query wp_posts for orders
+ *   directly — all order access goes through wc_get_order() / WooCommerce
+ *   CRUD which is HPOS-aware.
+ * - cart_checkout_blocks: ShelfSage does not register any classic-shortcode
+ *   integrations on the WooCommerce Cart / Checkout templates. The new Cart
+ *   and Checkout Blocks therefore work out of the box.
+ *
+ * Without these declarations, modern WooCommerce (7.1+ HPOS / 8.3+ Blocks)
+ * shows "incompatible plugin" warnings on the Features settings screen.
  *
  * @see https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book
+ * @see https://github.com/woocommerce/woocommerce-blocks/blob/trunk/docs/third-party-developers/extensibility/checkout-block/compatibility.md
  */
 add_action( 'before_woocommerce_init', function () {
-    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
-            'custom_order_tables',
-            __FILE__,
-            true
-        );
+    if ( ! class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        return;
     }
+
+    \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+        'custom_order_tables',
+        __FILE__,
+        true
+    );
+
+    \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+        'cart_checkout_blocks',
+        __FILE__,
+        true
+    );
 } );
 
 /**
