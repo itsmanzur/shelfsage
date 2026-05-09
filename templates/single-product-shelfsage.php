@@ -298,13 +298,15 @@ endif; ?>
                                         <div class="mt-4 pt-4 border-t border-gray-100">
                                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"><?php esc_html_e('Digital', 'shelfsage'); ?></p>
                                             <div class="flex flex-wrap gap-2">
-                                                <?php if (!empty($ebook_url)): ?>
-                                                <a href="<?php echo esc_url($ebook_url); ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                                                    <?php echo esc_html(apply_filters('rmss_ebook_link_label', __('E-book / Download', 'shelfsage'))); ?>
-                                                </a>
                                                 <?php
-        endif; ?>
+                                                // Purchase-gated: only logged-in customers with a paid order
+                                                // for this product see a working download link. Guests / non-buyers
+                                                // get a "Buy to download" prompt instead. Raw _rmss_ebook_url is
+                                                // never exposed in markup any more.
+                                                if ( function_exists( 'trsss_render_ebook_download_button' ) ) {
+                                                    trsss_render_ebook_download_button( $product_id );
+                                                }
+                                                ?>
                                             </div>
                                         </div>
                                     <?php endif; ?>
