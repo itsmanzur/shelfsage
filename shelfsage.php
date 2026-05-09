@@ -40,6 +40,26 @@ function trsss_load_textdomain() {
 add_action( 'plugins_loaded', 'trsss_load_textdomain' );
 
 /**
+ * Declare WooCommerce HPOS (custom_order_tables) compatibility.
+ *
+ * ShelfSage does not query wp_posts for orders directly — all order access
+ * goes through wc_get_order() / WooCommerce CRUD which is HPOS-aware.
+ * Without this declaration, modern WooCommerce (7.1+) shows an
+ * "incompatible plugin" warning on the HPOS settings screen.
+ *
+ * @see https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book
+ */
+add_action( 'before_woocommerce_init', function () {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'custom_order_tables',
+            __FILE__,
+            true
+        );
+    }
+} );
+
+/**
  * Whether all premium-style features are available (single marketplace build).
  *
  * @return bool

@@ -107,23 +107,38 @@ Body: { "query": "isbn:9780141036144", "max_results": 1 }
 
 == External Services ==
 
-ShelfSage connects to external services to provide book metadata and search functionality.
+This plugin connects to the following external services. Each service is only contacted when the corresponding feature is used or configured. No personal visitor data is transmitted beyond what is described below.
 
-**Google Books API**
+= Google Books API =
+* **Used for:** ISBN/title lookup, cover image and description auto-fill, smart fallback when Amazon data is incomplete.
+* **When:** An admin clicks "Fetch from Google Books" in the product editor, runs an ISBN/keyword import, or visits a Shortcode Architect preview using the Google Books data source.
+* **Data sent:** Search query (ISBN, title, or keyword) and your configured Google Books API key, sent server-side from your WordPress installation via `wp_remote_get` to `https://www.googleapis.com/books/v1/`.
+* **Privacy policy:** https://policies.google.com/privacy
+* **Terms of service:** https://developers.google.com/terms
 
-When you configure a Google Books API key in Settings → Connect & Data, the plugin sends search queries (ISBN or title) and your API key to the Google Books API via a server-side proxy (`/shelfsage/v1/fetch-books`). This retrieves book metadata (title, author, cover image, description, page count). Your API key is stored in the WordPress database and is never exposed to the frontend. Data is fetched server-side using `wp_remote_get`.
+= Amazon Product Advertising API (PA-API v5) =
+* **Used for:** Book search by keyword/ASIN, cover and pricing data, and affiliate (Associate Tag) injection.
+* **When:** An admin uses the "Amazon Search" feature in the Shortcode Architect or product editor, or a saved shortcode uses the Amazon data source.
+* **Data sent:** Search query and your AWS Access Key, Secret Key, Associate Tag, and host/region (signed PA-API v5 request) sent server-side from your WordPress installation to `https://webservices.amazon.com/paapi5/`.
+* **Privacy policy:** https://www.amazon.com/gp/help/customer/display.html?nodeId=468496
+* **Terms of service:** https://webservices.amazon.com/paapi5/documentation/
 
-[Google Books API](https://developers.google.com/books/docs/v1/using), [Terms](https://developers.google.com/terms), [Privacy Policy](https://policies.google.com/privacy)
+= Google Fonts =
+* **Used for:** Admin UI typography (Inter and Lora) and optional book-display fonts on the public single-product layout.
+* **When:** Any ShelfSage admin page is loaded, and on single product pages when an alternate book font is selected in Settings → Appearance.
+* **Data sent:** Visitor IP address, browser User-Agent, and the requested font URL are sent by the visitor's browser to `https://fonts.googleapis.com/` and `https://fonts.gstatic.com/`.
+* **Privacy policy:** https://policies.google.com/privacy
+* **Terms of service:** https://developers.google.com/fonts/faq
 
-**Amazon Product Advertising API (PA-API) v5**
+= Facebook, X (Twitter), WhatsApp Share Links =
+* **Used for:** Social share buttons on single product (book) pages.
+* **When:** A visitor *clicks* a share button. The plugin only renders the share URLs; no request is made until the visitor opts in by clicking.
+* **Data sent:** Only the public book URL and book title are passed in the share URL to `https://www.facebook.com/sharer/`, `https://twitter.com/intent/tweet`, or `https://wa.me/`. No tracking pixels or scripts are loaded from these services.
+* **Privacy policy (Facebook):** https://www.facebook.com/policy.php
+* **Privacy policy (X/Twitter):** https://x.com/en/privacy
+* **Privacy policy (WhatsApp):** https://www.whatsapp.com/legal/privacy-policy
 
-If you configure Amazon PA-API credentials (Access Key, Secret Key, Associate Tag) in Settings, the plugin sends search requests to Amazon via a server-side proxy (`/shelfsage/v1/amazon-search`). This fetches product data (title, price, image, buy link) for display on your site. Credentials are stored in WordPress options and used only server-side. The plugin may also use Google Books as a fallback when Amazon data is incomplete (e.g., missing cover image).
-
-[Amazon PA-API](https://webservices.amazon.com/paapi5/documentation/), [Terms](https://affiliate-program.amazon.com/help/operating/agreement), [Privacy](https://www.amazon.com/gp/help/customer/display.html?nodeId=468496)
-
-**WordPress REST API**
-
-The plugin uses the WordPress REST API for admin settings, shortcode CRUD, and frontend search. No third-party REST services are called for core functionality beyond Google Books and Amazon (when configured).
+**Where credentials are stored:** All API keys are stored server-side in the WordPress `wp_options` table (`shelfsage_settings`). They are used only in server-to-server requests via `wp_remote_get` / `wp_remote_post` and are never exposed to the frontend or to non-admin users.
 
 == General Settings ==
 
