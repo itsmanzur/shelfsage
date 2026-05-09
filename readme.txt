@@ -234,11 +234,28 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 == Changelog ==
 
 = 1.5.1 =
-* **New:** Advanced SEO Book schema with co-author, translator, series, genre, awards, bookFormat, bookEdition, numberOfPages, inLanguage, and datePublished.
-* **New:** Co-Author(s) and Book Awards meta fields (Product → Book Details) feed JSON-LD.
-* **New:** `trsss_book_schema` filter and `enable_advanced_schema` toggle for fine-grained control.
-* **Enhancement:** Mobile-responsive single product, vault, and taxonomy page titles to prevent overflow on small screens.
-* **Enhancement:** Schema output moved from `frontend.php` into dedicated `includes/seo-schema.php` for clarity and extensibility.
+* **New:** Book Analytics dashboard — most-viewed books and search-trend insights (ShelfSage → SS Dashboard → Insights).
+* **New:** Audiobook / sample-audio preview player on book product pages and via `[shelfsage_audiobook_preview]` shortcode.
+* **New:** Author profile pages with biography, photo, and social profiles (Facebook, Twitter/X, Instagram, LinkedIn, website).
+* **New:** Book review system with guest submissions and verified-purchase badge sourced from WooCommerce orders.
+* **New:** Series reading-order management (`[shelfsage_series_order]`) — assign and display the canonical sequence of books in a series.
+* **New:** Reading List / My Library — logged-in customers can save books from product pages; `[shelfsage_reading_list]` shortcode and `/my-library/` endpoint.
+* **New:** Bulk book import from CSV/Excel — sample template, validation, and direct WooCommerce product creation.
+* **New:** PDF Flipbook viewer — 3D page-flip "Look Inside" experience powered by StPageFlip with mobile fallback to PDF.js.
+* **New:** Advanced SEO Book schema (JSON-LD) — co-authors, translators, series (`isPartOf`), genre, awards, `bookFormat`, `bookEdition`, `numberOfPages`, `inLanguage`, `datePublished`.
+* **New:** Co-Author(s) and Book Awards meta fields (Product → Book Details) feed JSON-LD; `trsss_book_schema` filter and `enable_advanced_schema` toggle for fine-grained control.
+* **New:** Book-page font family customization — Theme Default (zero web-font requests), curated Bengali/English Google Fonts presets, or Custom CSS font-family.
+* **New:** WooCommerce HPOS (`custom_order_tables`) compatibility declared.
+* **Security:** Amazon PA-API credentials (Access Key, Secret Key) encrypted at rest with AES-256-CBC via `openssl_encrypt` (`includes/class-shelfsage-credential-store.php`).
+* **Security:** PDF viewer hardened — nonce-protected proxy plus DB whitelist that only serves URLs registered as a product's Look Inside URL (prevents SSRF and unauthorized PDF proxying).
+* **Fix:** Analytics — bot detection (Googlebot, Bingbot, Slurp, DuckDuckBot, Baidu, curl, wget) and 24-hour cookie-based deduplication eliminate redundant `update_post_meta` writes on every page view.
+* **Fix:** Reading list response now uses `_prime_post_caches()` to resolve N+1 query problem (50 books = 1–2 queries instead of 150+).
+* **Fix:** "Look Inside" inside the Shortcode Architect React preview now honors the configured PDF Reader Engine (flipbook / mobile / basic) and uses the nonce-protected viewer.
+* **Fix:** `page-flip.browser.js` shipped with the release zip via `scripts/copy-pageflip-assets.js`; defensive CDN fallback if the local asset is missing.
+* **Enhancement:** Mobile-responsive single product, vault, and taxonomy page titles prevent overflow on small screens.
+* **Enhancement:** Schema output moved from `frontend.php` into dedicated `includes/seo-schema.php`.
+* **Enhancement:** `shelfsage-chunk2.js` no longer ships with the public bundle (admin-only Settings module removed from `main.jsx`).
+* **i18n:** `languages/shelfsage.pot` shipped (248 strings) for translation pipelines.
 
 = 1.5.0 =
 * **New:** Smart Fallback for Google Books API and Amazon PA-API.
@@ -271,7 +288,7 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 == Upgrade Notice ==
 
 = 1.5.1 =
-* New: Advanced SEO Book schema (co-author, translator, series, awards, bookFormat) and mobile-responsive single product titles. No breaking changes.
+* Major release: Analytics dashboard, audiobook player, author profiles, reviews, series order, reading lists, CSV import, PDF flipbook, advanced SEO schema, font customization, WC HPOS compatibility, AES-256 credential encryption, and PDF viewer hardening. No breaking changes.
 
 = 1.5.0 =
 * New: Secure fetch-books endpoint, Growth & Ecosystem layer, dashboard enhancements, Look Inside fix, and performance optimizations.
