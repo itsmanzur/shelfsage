@@ -4,9 +4,10 @@
  *
  * Security layers:
  *  1. WordPress is bootstrapped (loads wp-load.php if needed).
- *  2. WP nonce verified (`trsss_pdf_view`).
- *  3. URL must exist as `_rmss_look_inside_url` postmeta in the DB.
- *  4. URL must begin with http/https.
+ *  2. ShelfSage Pro license must be active (Freemius gate).
+ *  3. WP nonce verified (`trsss_pdf_view`).
+ *  4. URL must exist as `_rmss_look_inside_url` postmeta in the DB.
+ *  5. URL must begin with http/https.
  */
 
 // ── 1. Bootstrap WordPress if not already loaded ──────────────────────────────
@@ -18,6 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	} else {
 		exit( 'WordPress not found.' );
 	}
+}
+
+// ── 1.5. Pro license gate — Flipbook is a Pro-only PDF reader engine ──────────
+if ( ! function_exists( 'trsss_is_pro' ) || ! trsss_is_pro() ) {
+	http_response_code( 403 );
+	exit( 'ShelfSage Pro license required for the Flipbook PDF viewer.' );
 }
 
 // ── 2. Nonce verification ─────────────────────────────────────────────────────

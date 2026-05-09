@@ -27,6 +27,8 @@ define('TRSSS_URL', plugin_dir_url(__FILE__));
 
 require_once TRSSS_PATH . 'includes/functions-shelfsage-settings.php';
 require_once TRSSS_PATH . 'includes/class-shelfsage-credential-store.php';
+// Freemius SDK bootstrap — must run before trsss_is_pro() is called for the first time.
+require_once TRSSS_PATH . 'includes/class-shelfsage-freemius.php';
 require_once TRSSS_PATH . 'includes/db-migrations.php';
 // Skip heavy ALTER TABLE during normal requests — run manually when needed.
 add_filter( 'trsss_skip_postmeta_isbn_index', '__return_true' );
@@ -74,13 +76,21 @@ add_action( 'before_woocommerce_init', function () {
 } );
 
 /**
- * Whether all premium-style features are available (single marketplace build).
+ * Whether the current site is licensed for ShelfSage Pro features.
+ *
+ * Delegates to the Freemius SDK (includes/class-shelfsage-freemius.php).
+ * Returns false when Freemius is not yet wired up so every Pro file
+ * stays gated by default — flip becomes true the moment a valid
+ * license is activated through the Freemius account UI.
  *
  * @return bool
  */
 function trsss_is_pro() {
-    /** @var bool $enabled Filter default — single-bundle build enables all capabilities. */
-    return (bool) apply_filters( 'trsss_is_pro', true );
+    if ( ! function_exists( 'shelfsage_fs' ) ) {
+        return false;
+    }
+    $is_pro = (bool) shelfsage_fs()->can_use_premium_code__premium_only();
+    return (bool) apply_filters( 'trsss_is_pro', $is_pro );
 }
 
 /**
@@ -94,41 +104,56 @@ function trsss_is_pro_active() {
     return (bool) apply_filters( 'trsss_is_pro_active', true );
 }
 
+// =============================================================================
+// FREE TIER — always loaded
+// =============================================================================
+// Pro upgrade helpers (badge + URL) — must load before any Pro-gated UI runs.
+require_once TRSSS_PATH . 'includes/pro-notices.php';
+
 // Include taxonomy registration
 require_once TRSSS_PATH . 'includes/taxonomies.php';
 
 // Include meta boxes
 require_once TRSSS_PATH . 'includes/meta-boxes.php';
 
-// Include custom API endpoints
+// Include custom API endpoints (some sub-routes inside api.php are Pro-gated).
 require_once TRSSS_PATH . 'includes/api.php';
 
 // Include frontend assets
 require_once TRSSS_PATH . 'includes/frontend.php';
-require_once TRSSS_PATH . 'includes/book-reviews.php';
-require_once TRSSS_PATH . 'includes/analytics.php';
-require_once TRSSS_PATH . 'includes/series-reading-order.php';
-require_once TRSSS_PATH . 'includes/author-profiles.php';
-require_once TRSSS_PATH . 'includes/audio-preview.php';
+
+// Advanced JSON-LD Book schema (always available — SEO is a free benefit).
 require_once TRSSS_PATH . 'includes/seo-schema.php';
-
-// Purchase-gated e-book download flow (replaces public _rmss_ebook_url link).
-require_once TRSSS_PATH . 'includes/ebook-download-gate.php';
-
-// Used / second-hand book condition badge (Book Details → Condition).
-require_once TRSSS_PATH . 'includes/book-condition.php';
-
-// Age rating / content advisory badge (Book Details → Age Rating).
-require_once TRSSS_PATH . 'includes/age-rating.php';
-
-// Low / out-of-stock email alerts (WooCommerce stock hook integration).
-require_once TRSSS_PATH . 'includes/stock-alerts.php';
-
-// Featured Book / Book of the Week hero shortcode.
-require_once TRSSS_PATH . 'includes/featured-book.php';
 
 // Section 4 quick wins — copy ISBN + social share on single product
 require_once TRSSS_PATH . 'includes/product-quick-wins.php';
+
+// =============================================================================
+// PRO TIER — only loaded when a valid Freemius license is active
+// =============================================================================
+if ( trsss_is_pro() ) {
+    // Reviews, analytics, series order, author profiles, audio preview.
+    require_once TRSSS_PATH . 'includes/book-reviews.php';
+    require_once TRSSS_PATH . 'includes/analytics.php';
+    require_once TRSSS_PATH . 'includes/series-reading-order.php';
+    require_once TRSSS_PATH . 'includes/author-profiles.php';
+    require_once TRSSS_PATH . 'includes/audio-preview.php';
+
+    // Purchase-gated e-book download flow (replaces public _rmss_ebook_url link).
+    require_once TRSSS_PATH . 'includes/ebook-download-gate.php';
+
+    // Used / second-hand book condition badge (Book Details → Condition).
+    require_once TRSSS_PATH . 'includes/book-condition.php';
+
+    // Age rating / content advisory badge (Book Details → Age Rating).
+    require_once TRSSS_PATH . 'includes/age-rating.php';
+
+    // Low / out-of-stock email alerts (WooCommerce stock hook integration).
+    require_once TRSSS_PATH . 'includes/stock-alerts.php';
+
+    // Featured Book / Book of the Week hero shortcode.
+    require_once TRSSS_PATH . 'includes/featured-book.php';
+}
 
 // Include admin menu
 require_once TRSSS_PATH . 'includes/admin-menu.php';

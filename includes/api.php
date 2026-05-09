@@ -22,6 +22,12 @@ require_once __DIR__ . '/api/ajax-search-invalidate.php';
 require_once __DIR__ . '/api/ajax-admin-fallbacks.php';
 require_once __DIR__ . '/api/ajax-architect-proxy.php';
 require_once __DIR__ . '/api/pdf-proxy.php';
-require_once __DIR__ . '/api/import-books.php';
-require_once __DIR__ . '/api/reading-lists.php';
+
+// Pro REST routes — gated by Freemius license. Free users get a 403 from
+// the Pro-only callbacks because the routes themselves are not registered.
+if ( function_exists( 'trsss_is_pro' ) && trsss_is_pro() ) {
+	require_once __DIR__ . '/api/import-books.php';
+	require_once __DIR__ . '/api/reading-lists.php';
+}
+
 require_once __DIR__ . '/api/register-rest-routes.php';

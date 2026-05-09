@@ -43,6 +43,14 @@ function trsss_clear_api_cache() {
  * Body: { query: string, search_type: 'asin'|'keywords' }
  */
 function trsss_amazon_search( WP_REST_Request $request ) {
+    if ( function_exists( 'trsss_is_pro' ) && ! trsss_is_pro() ) {
+        return new WP_Error(
+            'pro_required',
+            __( 'Amazon PA-API integration requires ShelfSage Pro.', 'shelfsage' ),
+            array( 'status' => 403 )
+        );
+    }
+
     $saved    = trsss_get_shelfsage_settings_array();
     $key      = isset( $saved['amazon_access_key'] ) ? trsss_decrypt_setting_secret( $saved['amazon_access_key'] ) : '';
     $secret   = isset( $saved['amazon_secret_key'] ) ? trsss_decrypt_setting_secret( $saved['amazon_secret_key'] ) : '';
