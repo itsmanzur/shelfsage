@@ -4,7 +4,6 @@ import App from './App';
 import RelatedBooks from './components/RelatedBooks';
 import ShelfTalker from './components/ShelfTalker';
 import FilterApp from './components/FilterApp';
-import SettingsApp from './components/SettingsApp';
 import BooksShortcode from './components/BooksShortcode';
 import ReadingListPage from './components/ReadingListPage';
 import ReadingListButton from './components/ReadingListButton';
@@ -145,12 +144,6 @@ document.querySelectorAll('.ss-reading-list-single').forEach((container) => {
     );
 });
 
-// 5. Settings App (Admin)
-const settingsRoot = document.getElementById('rmss-settings-root');
-if (settingsRoot) {
-    ReactDOM.createRoot(settingsRoot).render(
-        <React.StrictMode>
-            <SettingsApp />
-        </React.StrictMode>
-    );
-}
+// 5. Settings App lives in admin.jsx only — see src/admin.jsx for the
+//    `#rmss-settings-root` mount. Importing SettingsApp here would pull
+//    the entire admin Settings UI (~300 KB) into every public page.
