@@ -59,8 +59,8 @@ function trsss_render_book_details_meta_box( $post ) {
         'reading_time'   => 'Book Reading Time',
         'accessibility'  => 'Accessibility Features',
         'availability'   => 'Book Availability',
-        'pre_order'      => 'Pre Order Availability',
-        'release_date'   => 'Release Date (YYYY-MM-DD, for pre-order countdown)',
+        'pre_order'      => 'Pre Order Availability (Yes / No)',
+        'release_date'   => 'Release Date (powers the pre-order countdown)',
         'ebook_url'      => 'E-book / Digital Download URL',
         'audio_url'      => 'Audiobook or Sample Audio URL',
         'look_inside_url' => 'Look Inside URL (PDF/Image Link)',
@@ -77,6 +77,16 @@ function trsss_render_book_details_meta_box( $post ) {
             echo '<input type="text" name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="https://..." />';
             echo '<button type="button" class="button rmss-upload-btn" data-target="rmss_' . esc_attr( $key ) . '">Upload</button>';
             echo '</div>';
+        } elseif ( $key === 'release_date' ) {
+            $date_value = preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $value ) ? $value : '';
+            echo '<input type="date" name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" style="width:100%;" />';
+            echo '<small style="color:#64748b; display:block; margin-top:4px;">Set Pre Order Availability to <strong>Yes</strong> to activate the countdown.</small>';
+        } elseif ( $key === 'pre_order' ) {
+            $is_on = ! in_array( strtolower( trim( (string) $value ) ), array( '', '0', 'no', 'false', 'off' ), true );
+            echo '<select name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" style="width:100%;">';
+            echo '<option value=""' . selected( $is_on, false, false ) . '>No</option>';
+            echo '<option value="yes"' . selected( $is_on, true, false ) . '>Yes (active pre-order)</option>';
+            echo '</select>';
         } else {
             echo '<input type="text" name="rmss_' . esc_attr( $key ) . '" id="rmss_' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="' . ( $key === 'product_badge' ? 'e.g. Best Seller, New' : '' ) . '" />';
         }

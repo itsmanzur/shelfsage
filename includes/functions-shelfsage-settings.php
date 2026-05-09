@@ -199,6 +199,15 @@ function trsss_render_preorder_countdown( $product_id, $args = array() ) {
 		return;
 	}
 
+	// Guard against duplicate output when both the ShelfSage template AND the
+	// woocommerce_single_product_summary auto-injection (or a shortcode) try to
+	// render the same product's countdown on the same request.
+	static $rendered_for = array();
+	if ( isset( $rendered_for[ $product_id ] ) ) {
+		return;
+	}
+	$rendered_for[ $product_id ] = true;
+
 	$args = wp_parse_args(
 		$args,
 		array(
@@ -299,3 +308,85 @@ function trsss_render_preorder_countdown( $product_id, $args = array() ) {
 	<script>window.trsssPreorderCountdownInit&&window.trsssPreorderCountdownInit(document.getElementById(<?php echo wp_json_encode( $countdown_id ); ?>));</script>
 	<?php
 }
+
+/**
+ * Shortcode: [shelfsage_preorder_countdown id="123" title="..." class="..."]
+ *
+ * Renders the pre-order countdown for a given product anywhere a shortcode
+ * can be used (page content, block templates, sidebars, custom theme files
+ * via do_shortcode()). When `id` is omitted, the current loop product is used.
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string Countdown HTML, or empty string when no active pre-order applies.
+ */
+function trsss_preorder_countdown_shortcode( $atts ) {
+	$atts = shortcode_atts(
+		array(
+			'id'    => 0,
+			'title' => '',
+			'class' => '',
+		),
+		$atts,
+		'shelfsage_preorder_countdown'
+	);
+
+	$product_id = absint( $atts['id'] );
+	if ( ! $product_id ) {
+		$product_id = (int) get_the_ID();
+	}
+
+	if ( ! $product_id ) {
+		return '';
+	}
+
+	$args = array();
+	if ( '' !== $atts['title'] ) {
+		$args['title'] = (string) $atts['title'];
+	}
+	if ( '' !== $atts['class'] ) {
+		$args['class'] = sanitize_html_class( $atts['class'] );
+	}
+
+	ob_start();
+	trsss_render_preorder_countdown( $product_id, $args );
+	return (string) ob_get_clean();
+}
+add_shortcode( 'shelfsage_preorder_countdown', 'trsss_preorder_countdown_shortcode' );
+
+/**
+ * Auto-inject the pre-order countdown on stock WooCommerce single product
+ * templates (i.e. when a theme or site has ShelfSage's custom template
+ * disabled, or for non-book products that still use _rmss_pre_order meta).
+ *
+ * Position: priority 25 — between excerpt (20) and add_to_cart (30), giving
+ * the countdown maximum visibility right above the buy button.
+ *
+ * The static guard inside trsss_render_preorder_countdown() prevents this
+ * hook from producing a duplicate countdown when a ShelfSage custom
+ * template has already rendered one earlier in the request.
+ *
+ * Disable per-product: add_filter( 'trsss_auto_inject_preorder_countdown', '__return_false' );
+ *
+ * @return void
+ */
+function trsss_auto_inject_preorder_countdown_summary() {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+
+	$product_id = (int) get_the_ID();
+	if ( ! $product_id ) {
+		return;
+	}
+
+	if ( ! trsss_get_preorder_release_timestamp( $product_id ) ) {
+		return;
+	}
+
+	if ( ! apply_filters( 'trsss_auto_inject_preorder_countdown', true, $product_id ) ) {
+		return;
+	}
+
+	trsss_render_preorder_countdown( $product_id );
+}
+add_action( 'woocommerce_single_product_summary', 'trsss_auto_inject_preorder_countdown_summary', 25 );

@@ -245,6 +245,9 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 * **New:** Advanced SEO Book schema (JSON-LD) — co-authors, translators, series (`isPartOf`), genre, awards, `bookFormat`, `bookEdition`, `numberOfPages`, `inLanguage`, `datePublished`.
 * **New:** Co-Author(s) and Book Awards meta fields (Product → Book Details) feed JSON-LD; `trsss_book_schema` filter and `enable_advanced_schema` toggle for fine-grained control.
 * **New:** Book-page font family customization — Theme Default (zero web-font requests), curated Bengali/English Google Fonts presets, or Custom CSS font-family.
+* **New:** Pre-order Countdown is now visible on stock WooCommerce templates too — auto-injected on the single-product summary at priority 25 (between excerpt and Add to Cart). Use the `trsss_auto_inject_preorder_countdown` filter to disable per product.
+* **New:** `[shelfsage_preorder_countdown id="123"]` shortcode for placing the countdown anywhere (landing pages, blocks, sidebars, theme files via `do_shortcode()`).
+* **Enhancement:** Release Date meta field upgraded to a native HTML5 date picker; Pre Order Availability is now a clean Yes/No select instead of a free-text input.
 * **New:** WooCommerce HPOS (`custom_order_tables`) compatibility declared.
 * **Security:** Amazon PA-API credentials (Access Key, Secret Key) encrypted at rest with AES-256-CBC via `openssl_encrypt` (`includes/class-shelfsage-credential-store.php`).
 * **Security:** PDF viewer hardened — nonce-protected proxy plus DB whitelist that only serves URLs registered as a product's Look Inside URL (prevents SSRF and unauthorized PDF proxying).
