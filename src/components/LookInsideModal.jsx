@@ -12,6 +12,48 @@ import React, { useState, useEffect, useRef } from 'react';
  *  - thumbnail   {string}   Book cover image URL (used by style-3)
  *  - authors     {string}   Author names (used by style-3)
  */
+
+/**
+ * Mirror of the routing logic in `includes/look-inside-modal.php` so the
+ * shortcode architect, vault preview, and any other React-mounted Look
+ * Inside trigger honors the configured PDF Reader Engine instead of
+ * loading the raw PDF into a bare iframe.
+ *
+ * Falls back gracefully when the localized settings are missing (basic
+ * engine + native iframe).
+ */
+const isMobileDevice = () => {
+    if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
+    const ua = navigator.userAgent || '';
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) return true;
+    if (navigator.maxTouchPoints > 1) return true;
+    if (window.innerWidth <= 768) return true;
+    return false;
+};
+
+const isImageUrl = (u) => /\.(jpe?g|gif|png|webp|avif)(\?|$)/i.test(u || '');
+
+const getViewerUrl = (rawUrl) => {
+    if (!rawUrl || isImageUrl(rawUrl)) return rawUrl;
+
+    const settings =
+        (typeof window !== 'undefined' && (window.rmssSettings || window.rmssAdminSettings)) || {};
+    const engine = settings.pdf_reader_engine || 'basic';
+    const pluginUrl = settings.pluginUrl || '';
+    const nonce = settings.pdf_view_nonce || '';
+
+    if (!pluginUrl) return rawUrl;
+    if (engine !== 'flipbook' && !isMobileDevice()) return rawUrl;
+
+    const viewer = engine === 'flipbook' ? 'pdf-flipbook-viewer.php' : 'pdf-viewer.php';
+    const base = pluginUrl.endsWith('/') ? pluginUrl : pluginUrl + '/';
+    return (
+        `${base}includes/${viewer}` +
+        `?file=${encodeURIComponent(rawUrl)}` +
+        `&nonce=${encodeURIComponent(nonce)}`
+    );
+};
+
 const LookInsideModal = ({
     isOpen = false,
     onClose,
@@ -26,7 +68,8 @@ const LookInsideModal = ({
     const frameRef = useRef(null);
     const imgRef = useRef(null);
 
-    const isImage = url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+    const isImage = isImageUrl(url);
+    const viewerUrl = getViewerUrl(url);
 
     // Animate in/out
     useEffect(() => {
@@ -108,7 +151,7 @@ const LookInsideModal = ({
     ) : (
         <iframe
             ref={frameRef}
-            src={url}
+            src={viewerUrl}
             title={title}
             allowFullScreen
             onLoad={() => setLoaded(true)}

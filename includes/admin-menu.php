@@ -353,6 +353,9 @@ function trsss_enqueue_admin_scripts()
         'licenseNotRequired' => true,
         'enable_look_inside' => !empty($settings['enable_look_inside']),
         'pdf_reader_style' => isset($settings['pdf_reader_style']) ? $settings['pdf_reader_style'] : 'style-1',
+        'pdf_reader_engine' => isset($settings['pdf_reader_engine']) ? $settings['pdf_reader_engine'] : 'basic',
+        'pluginUrl' => esc_url_raw( TRSSS_URL ),
+        'pdf_view_nonce' => wp_create_nonce( 'trsss_pdf_view' ),
         'look_inside_btn_position' => isset($settings['look_inside_btn_position']) ? $settings['look_inside_btn_position'] : 'bottom-left',
         'default_book_image' => isset($settings['default_book_image']) ? esc_url_raw($settings['default_book_image']) : '',
         // API key presence flags
