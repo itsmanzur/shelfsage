@@ -18,6 +18,14 @@ export const changelog = [
       {
         badge: 'NEW',
         category: 'Feature',
+        icon: '📚',
+        title: 'Goodreads Library Export — Direct Import',
+        summary: 'Drop your Goodreads "Export Library" CSV straight into ShelfSage and the importer recognises it automatically (no manual column mapping). It strips Goodreads\' Excel-formula ISBN wrappers (=\"0743…\"), merges Author + Additional Authors, converts Owned Copies into stock quantity + status, turns Bookshelves into genres, and folds Year Published / My Rating / My Review into the canonical book fields. Goodreads is the world\'s largest reading-list service, so this turns "I have a Goodreads list of 500 books" into a one-click bulk import.',
+        usage: 'ShelfSage → SS Dashboard → Library → Bulk Import → drop your goodreads_library_export.csv. The detector fires when at least 2 of: Book Id, Exclusive Shelf, Bookshelves, My Rating, Date Added, Date Read, Additional Authors are present. Force the format from REST / WP-CLI by passing format=goodreads in the POST body. Filter: trsss_normalize_goodreads_row to add or override mapped fields (e.g. push Date Read into a custom postmeta key).',
+      },
+      {
+        badge: 'NEW',
+        category: 'Feature',
         icon: '🎯',
         title: 'Age Rating / Content Advisory Badge',
         summary: 'Colour-coded content advisory pill on book product pages: 🟢 All Ages / 🔵 Children / 🟡 Teen 13+ / 🟠 Young Adult 16+ / 🔴 Adult 18+. Auto-injected on stock WC templates (between title and price), embedded in all six ShelfSage single-product templates, and pushed to JSON-LD as schema.org/CreativeWork.contentRating + typicalAgeRange so Google Shopping and Search Console can render the rating directly.',

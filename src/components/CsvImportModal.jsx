@@ -3,24 +3,43 @@ import React, { useMemo, useState, useCallback } from 'react';
 const COMMON_FIELDS = [
     { key: 'title', label: 'Book Title', required: true, aliases: ['title', 'name', 'booktitle', 'productname'] },
     { key: 'subtitle', label: 'Subtitle', required: false, aliases: ['subtitle'] },
-    { key: 'author', label: 'Author', required: false, aliases: ['author', 'authors'] },
+    { key: 'author', label: 'Author', required: false, aliases: ['author', 'authors', 'authorlf'] },
     { key: 'publisher', label: 'Publisher', required: false, aliases: ['publisher', 'publishing'] },
     { key: 'isbn', label: 'ISBN / ISBN-10', required: false, aliases: ['isbn', 'isbn10'] },
     { key: 'isbn13', label: 'ISBN-13', required: false, aliases: ['isbn13', 'ean'] },
     { key: 'edition', label: 'Edition', required: false, aliases: ['edition'] },
-    { key: 'pub_date', label: 'Publication Date', required: false, aliases: ['pubdate', 'publicationdate', 'year'] },
-    { key: 'pages', label: 'Pages', required: false, aliases: ['pages', 'pagecount'] },
+    { key: 'pub_date', label: 'Publication Date', required: false, aliases: ['pubdate', 'publicationdate', 'year', 'yearpublished', 'originalpublicationyear'] },
+    { key: 'pages', label: 'Pages', required: false, aliases: ['pages', 'pagecount', 'numberofpages'] },
+    { key: 'binding', label: 'Binding', required: false, aliases: ['binding', 'format'] },
     { key: 'category', label: 'Category', required: false, aliases: ['category', 'categories', 'productcategory'] },
-    { key: 'genre', label: 'Genre', required: false, aliases: ['genre', 'genres'] },
+    { key: 'genre', label: 'Genre', required: false, aliases: ['genre', 'genres', 'bookshelves'] },
     { key: 'price', label: 'Regular Price', required: false, aliases: ['price', 'regularprice'] },
     { key: 'sale_price', label: 'Sale Price', required: false, aliases: ['saleprice', 'discountprice'] },
-    { key: 'rating', label: 'Rating', required: false, aliases: ['rating'] },
+    { key: 'rating', label: 'Rating', required: false, aliases: ['rating', 'myrating'] },
     { key: 'ribbon', label: 'Ribbon / Badge', required: false, aliases: ['ribbon', 'badge'] },
     { key: 'look_inside_url', label: 'Look Inside URL', required: false, aliases: ['lookinside', 'sampleurl', 'pdf'] },
-    { key: 'description', label: 'Description', required: false, aliases: ['description', 'summary', 'content'] },
+    { key: 'description', label: 'Description', required: false, aliases: ['description', 'summary', 'content', 'myreview'] },
     { key: 'short_description', label: 'Short Description', required: false, aliases: ['shortdescription', 'excerpt'] },
     { key: 'cover_url', label: 'Cover Image URL', required: false, aliases: ['cover', 'imageurl', 'coverurl', 'thumbnail'] },
 ];
+
+const isGoodreadsHeaders = (headers) => {
+    if (!Array.isArray(headers)) return false;
+    const lc = headers.map(h => String(h || '').toLowerCase().trim());
+    const signature = ['book id', 'exclusive shelf', 'bookshelves', 'my rating', 'date added', 'date read', 'additional authors'];
+    let matches = 0;
+    for (const s of signature) {
+        if (lc.includes(s)) matches++;
+        if (matches >= 2) return true;
+    }
+    return false;
+};
+
+const stripExcelFormulaIsbn = (value) => {
+    const str = String(value == null ? '' : value).trim();
+    const m = str.match(/^="([^"]*)"$/);
+    return m ? m[1].trim() : str;
+};
 
 const TARGET_EXTRA_FIELDS = {
     vault: [
@@ -61,6 +80,7 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
     const [step, setStep] = useState(1);
     const [file, setFile] = useState(null);
     const [parsedData, setParsedData] = useState({ headers: [], rows: [] });
+    const [goodreadsDetected, setGoodreadsDetected] = useState(false);
     const [mapping, setMapping] = useState(makeInitialMapping(activeFields));
     const [progress, setProgress] = useState(0);
     const [status, setStatus] = useState('idle');
@@ -72,6 +92,7 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
         setStep(1);
         setFile(null);
         setParsedData({ headers: [], rows: [] });
+        setGoodreadsDetected(false);
         setMapping(makeInitialMapping([...COMMON_FIELDS, ...TARGET_EXTRA_FIELDS[target]]));
         setProgress(0);
         setStatus('idle');
@@ -127,6 +148,7 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
                 const headers = Object.keys(jsonRows[0] || {});
                 const rows = jsonRows.slice(0, 2000);
                 setParsedData({ headers, rows });
+                setGoodreadsDetected(isGoodreadsHeaders(headers));
                 setMapping(prev => ({ ...prev, ...autoMapHeaders(headers, activeFields) }));
                 setStep(2);
             } catch (err) {
@@ -141,14 +163,27 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
         reader.readAsArrayBuffer(f);
     };
 
-    const buildRowsForImport = () => parsedData.rows.map(row => {
-        const obj = {};
-        activeFields.forEach(({ key }) => {
-            const col = mapping[key];
-            obj[key] = col && row[col] != null ? String(row[col]).trim() : '';
+    const buildRowsForImport = () => {
+        // Goodreads CSV has too many specialised columns ("Additional Authors",
+        // "Owned Copies", "Bookshelves", "My Review", …) for the canonical
+        // mapping UI to express. When detected, hand the raw rows to the
+        // server-side normaliser instead so nothing is lost in translation.
+        if (goodreadsDetected) {
+            return parsedData.rows;
+        }
+        return parsedData.rows.map(row => {
+            const obj = {};
+            activeFields.forEach(({ key }) => {
+                const col = mapping[key];
+                let value = col && row[col] != null ? String(row[col]).trim() : '';
+                if ((key === 'isbn' || key === 'isbn13') && value) {
+                    value = stripExcelFormulaIsbn(value);
+                }
+                obj[key] = value;
+            });
+            return obj;
         });
-        return obj;
-    });
+    };
 
     const runImport = async () => {
         const rows = buildRowsForImport();
@@ -156,7 +191,7 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
             setError('No rows to import.');
             return;
         }
-        if (!mapping.title) {
+        if (!goodreadsDetected && !mapping.title) {
             setError('Book Title column mapping is required.');
             return;
         }
@@ -182,7 +217,7 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
                         'Content-Type': 'application/json',
                         'X-WP-Nonce': nonce
                     },
-                    body: JSON.stringify({ target, rows: batches[i] })
+                    body: JSON.stringify({ target, rows: batches[i], format: goodreadsDetected ? 'goodreads' : 'auto' })
                 });
                 const data = await res.json();
                 if (!res.ok) {
@@ -309,6 +344,15 @@ const CsvImportModal = ({ isOpen, onClose, onImportComplete, apiUrl, nonce }) =>
                                 <p className="text-sm text-gray-600">Map file columns to <strong>{target === 'woocommerce' ? 'WooCommerce product' : 'Vault'}</strong> fields. Book Title is required.</p>
                                 <span className="text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full">{parsedData.rows.length} rows</span>
                             </div>
+                            {goodreadsDetected && (
+                                <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3">
+                                    <span className="text-2xl leading-none">📚</span>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-bold text-emerald-900 mb-0.5">Goodreads Library Export detected</p>
+                                        <p className="text-xs text-emerald-800">Column mapping below is optional — ShelfSage will read the original Goodreads columns server-side and merge <em>Author + Additional Authors</em>, unwrap <code className="bg-white px-1 rounded">="ISBN"</code> formula values, convert <em>Owned Copies</em> to stock quantity, and turn <em>Bookshelves</em> into genres automatically.</p>
+                                    </div>
+                                </div>
+                            )}
                             <div className="rounded-2xl border border-purple-100 overflow-hidden">
                                 <table className="w-full text-sm">
                                     <thead>

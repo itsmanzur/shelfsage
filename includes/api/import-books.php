@@ -10,14 +10,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Strip Goodreads' Excel-formula ISBN wrapper.
+ *
+ * Goodreads exports wrap ISBNs in a literal Excel formula string so that
+ * spreadsheet apps don't strip the leading zero, e.g.
+ *   ="0743273567"   ->   0743273567
+ *   ="9780743273565"->   9780743273565
+ *
+ * Used both by the dedicated Goodreads normalizer and as a defensive
+ * cleanup inside the standard sanitizer, so even partially-mapped imports
+ * don't end up with a literal `="..."` string in postmeta.
+ *
+ * @param string $value Raw cell value.
+ * @return string
+ */
+function trsss_import_clean_isbn_value( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+	if ( preg_match( '/^="([^"]*)"$/', $value, $m ) ) {
+		return trim( $m[1] );
+	}
+	return $value;
+}
+
+/**
  * Sanitize an import row.
  *
  * @param array $row Raw row.
  * @return array
  */
 function trsss_sanitize_import_book_row( array $row ) {
-	$url_fields = array( 'link', 'look_inside_url', 'cover_url' );
-	$clean      = array();
+	$url_fields  = array( 'link', 'look_inside_url', 'cover_url' );
+	$isbn_fields = array( 'isbn', 'isbn13' );
+	$clean       = array();
 
 	foreach ( $row as $key => $value ) {
 		$key = sanitize_key( $key );
@@ -29,10 +56,169 @@ function trsss_sanitize_import_book_row( array $row ) {
 			$clean[ $key ] = wp_kses_post( (string) $value );
 			continue;
 		}
+		if ( in_array( $key, $isbn_fields, true ) ) {
+			$clean[ $key ] = sanitize_text_field( trsss_import_clean_isbn_value( $value ) );
+			continue;
+		}
 		$clean[ $key ] = sanitize_text_field( (string) $value );
 	}
 
 	return $clean;
+}
+
+/**
+ * Detect a Goodreads "Library Export" CSV row by its signature columns.
+ *
+ * Goodreads exports include several distinctive headers no other importer
+ * sets: "Book Id", "Exclusive Shelf", "My Rating", "Bookshelves",
+ * "Date Added", and the formula-wrapped ISBN columns. Matching any two
+ * of those is sufficient to confidently switch to the Goodreads mapper
+ * without false positives.
+ *
+ * @param array $row Raw row keyed by original CSV header text.
+ * @return bool
+ */
+function trsss_import_is_goodreads_row( array $row ) {
+	$keys = array();
+	foreach ( array_keys( $row ) as $k ) {
+		$keys[] = strtolower( trim( (string) $k ) );
+	}
+
+	$signature = array(
+		'book id',
+		'exclusive shelf',
+		'bookshelves',
+		'my rating',
+		'date added',
+		'date read',
+		'additional authors',
+	);
+
+	$matches = 0;
+	foreach ( $signature as $needle ) {
+		if ( in_array( $needle, $keys, true ) ) {
+			$matches++;
+			if ( $matches >= 2 ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Map a Goodreads "Library Export" CSV row to ShelfSage canonical keys.
+ *
+ * Mapping (Goodreads -> ShelfSage):
+ *   Title                      -> title
+ *   Author + Additional Authors -> author       (joined with ", ")
+ *   ISBN  (="0743..." stripped) -> isbn
+ *   ISBN13 (="9780..." stripped)-> isbn13
+ *   Publisher                  -> publisher
+ *   Binding                    -> binding
+ *   Number of Pages            -> pages
+ *   Year Published / Original   -> pub_date     (4-digit year)
+ *   My Rating                  -> rating
+ *   Bookshelves                -> genre        (comma-separated terms)
+ *   My Review / Private Notes  -> description
+ *   Owned Copies               -> stock_quantity + stock_status
+ *
+ * Goodreads-only fields (Book Id, Exclusive Shelf, Date Added, Date Read,
+ * Average Rating, Read Count, Spoiler, Bookshelves with positions) are
+ * dropped silently.
+ *
+ * Filter `trsss_normalize_goodreads_row` lets integrators add or override
+ * fields (e.g. push "Date Read" into a custom postmeta key).
+ *
+ * @param array $row Raw row keyed by original Goodreads CSV header text.
+ * @return array Canonical-keyed row ready for trsss_sanitize_import_book_row().
+ */
+function trsss_normalize_goodreads_row( array $row ) {
+	$lc = array();
+	foreach ( $row as $k => $v ) {
+		$lc[ strtolower( trim( (string) $k ) ) ] = is_scalar( $v ) ? (string) $v : '';
+	}
+
+	$pick = function ( $keys ) use ( $lc ) {
+		foreach ( (array) $keys as $key ) {
+			if ( array_key_exists( $key, $lc ) && '' !== trim( $lc[ $key ] ) ) {
+				return trim( $lc[ $key ] );
+			}
+		}
+		return '';
+	};
+
+	$title             = $pick( 'title' );
+	$author            = $pick( 'author' );
+	$additional_author = $pick( 'additional authors' );
+	if ( '' !== $additional_author ) {
+		$author = '' !== $author ? $author . ', ' . $additional_author : $additional_author;
+	}
+
+	$isbn   = trsss_import_clean_isbn_value( $pick( 'isbn' ) );
+	$isbn13 = trsss_import_clean_isbn_value( $pick( 'isbn13' ) );
+
+	$publisher = $pick( 'publisher' );
+	$binding   = $pick( 'binding' );
+	$pages     = $pick( array( 'number of pages', 'pages' ) );
+	$year      = $pick( array( 'year published', 'original publication year' ) );
+	$rating    = $pick( 'my rating' );
+	$shelves   = $pick( 'bookshelves' );
+	$review    = $pick( array( 'my review', 'private notes' ) );
+	$owned_raw = $pick( 'owned copies' );
+
+	$normalized = array();
+	if ( '' !== $title ) {
+		$normalized['title'] = $title;
+	}
+	if ( '' !== $author ) {
+		$normalized['author'] = $author;
+	}
+	if ( '' !== $isbn ) {
+		$normalized['isbn'] = $isbn;
+	}
+	if ( '' !== $isbn13 ) {
+		$normalized['isbn13'] = $isbn13;
+	}
+	if ( '' !== $publisher ) {
+		$normalized['publisher'] = $publisher;
+	}
+	if ( '' !== $binding ) {
+		$normalized['binding'] = $binding;
+	}
+	if ( '' !== $pages && is_numeric( $pages ) ) {
+		$normalized['pages'] = (string) (int) $pages;
+	}
+	if ( '' !== $year && preg_match( '/\b(\d{4})\b/', $year, $m ) ) {
+		$normalized['pub_date'] = $m[1];
+	}
+	if ( '' !== $rating && is_numeric( $rating ) ) {
+		$normalized['rating'] = (string) max( 0, min( 5, (float) $rating ) );
+	}
+	if ( '' !== $shelves ) {
+		$normalized['genre'] = $shelves;
+	}
+	if ( '' !== $review ) {
+		$normalized['description'] = $review;
+	}
+
+	if ( '' !== $owned_raw && is_numeric( $owned_raw ) ) {
+		$owned = (int) $owned_raw;
+		if ( $owned > 0 ) {
+			$normalized['stock_quantity'] = (string) $owned;
+			$normalized['stock_status']   = 'instock';
+		} else {
+			$normalized['stock_status'] = 'outofstock';
+		}
+	}
+
+	/**
+	 * Filter the normalised Goodreads row.
+	 *
+	 * @param array $normalized Canonical-keyed row.
+	 * @param array $row        Original Goodreads row (case-preserved keys).
+	 */
+	return (array) apply_filters( 'trsss_normalize_goodreads_row', $normalized, $row );
 }
 
 function trsss_import_clean_price( $value ) {
@@ -226,6 +412,7 @@ function trsss_import_book_to_vault( array $row ) {
 		'isbn'            => 'isbn',
 		'isbn13'          => 'isbn13',
 		'pages'           => 'pages',
+		'binding'         => 'binding',
 		'price'           => 'price',
 		'sale_price'      => 'sale_price',
 		'link'            => 'link',
@@ -309,6 +496,7 @@ function trsss_import_book_to_woocommerce( array $row ) {
 		'isbn'            => '_rmss_isbn',
 		'isbn13'          => '_rmss_isbn13',
 		'pages'           => '_rmss_pages',
+		'binding'         => '_rmss_binding',
 		'edition'         => '_rmss_edition',
 		'pub_date'        => '_rmss_pub_date',
 		'ribbon'          => '_rmss_product_badge',
@@ -347,6 +535,11 @@ function trsss_import_books_rest( WP_REST_Request $request ) {
 	$target = isset( $params['target'] ) ? sanitize_key( $params['target'] ) : 'vault';
 	$target = in_array( $target, array( 'vault', 'woocommerce' ), true ) ? $target : 'vault';
 
+	$format = isset( $params['format'] ) ? sanitize_key( $params['format'] ) : 'auto';
+	if ( ! in_array( $format, array( 'auto', 'standard', 'goodreads' ), true ) ) {
+		$format = 'auto';
+	}
+
 	if ( empty( $rows ) ) {
 		return new WP_Error( 'missing_rows', __( 'No import rows were provided.', 'shelfsage' ), array( 'status' => 422 ) );
 	}
@@ -357,15 +550,27 @@ function trsss_import_books_rest( WP_REST_Request $request ) {
 	$max_rows = (int) apply_filters( 'trsss_import_books_max_rows_per_request', 100 );
 	$rows     = array_slice( $rows, 0, max( 1, $max_rows ) );
 
-	$imported = 0;
-	$updated  = 0;
-	$skipped  = 0;
-	$errors   = array();
+	$imported          = 0;
+	$updated           = 0;
+	$skipped           = 0;
+	$errors            = array();
+	$goodreads_applied = 0;
 
 	foreach ( $rows as $index => $raw_row ) {
 		if ( ! is_array( $raw_row ) ) {
 			$skipped++;
 			continue;
+		}
+
+		// Goodreads "Library Export" remap. Honoured when explicitly requested
+		// via format=goodreads, or auto-detected from signature columns when
+		// format is left at the default 'auto'.
+		$is_goodreads = ( 'goodreads' === $format )
+			|| ( 'auto' === $format && trsss_import_is_goodreads_row( $raw_row ) );
+
+		if ( $is_goodreads ) {
+			$raw_row = trsss_normalize_goodreads_row( $raw_row );
+			$goodreads_applied++;
 		}
 
 		$row   = trsss_sanitize_import_book_row( $raw_row );
@@ -404,13 +609,15 @@ function trsss_import_books_rest( WP_REST_Request $request ) {
 
 	return rest_ensure_response(
 		array(
-			'success'  => true,
-			'target'   => $target,
-			'imported' => $imported + $updated,
-			'created'  => $imported,
-			'updated'  => $updated,
-			'skipped'  => $skipped,
-			'errors'   => array_slice( $errors, 0, 20 ),
+			'success'           => true,
+			'target'            => $target,
+			'format'            => $format,
+			'goodreads_applied' => $goodreads_applied,
+			'imported'          => $imported + $updated,
+			'created'           => $imported,
+			'updated'           => $updated,
+			'skipped'           => $skipped,
+			'errors'            => array_slice( $errors, 0, 20 ),
 		)
 	);
 }

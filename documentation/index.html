@@ -918,6 +918,61 @@
         <li>Fill in <code>title, isbn, author, publisher, price, stock, look_inside_url, ebook_url, …</code></li>
         <li>Upload. Each row becomes a draft WooCommerce product with the right ShelfSage taxonomies and meta.</li>
       </ol>
+
+      <h3>Goodreads Library Export — direct import <span class="doc-badge is-new">New in 1.5.1</span></h3>
+      <p>Goodreads is the world's largest reading-list service. ShelfSage detects the Goodreads "Export Library" CSV automatically — no manual column mapping required.</p>
+
+      <h4>How to get the file from Goodreads</h4>
+      <ol>
+        <li>Sign in at <a href="https://www.goodreads.com/" target="_blank" rel="noopener">goodreads.com</a>.</li>
+        <li>Open <a href="https://www.goodreads.com/review/import" target="_blank" rel="noopener">My Books → Tools → Import and export</a>.</li>
+        <li>Click <strong>Export Library</strong>. Goodreads emails you (or links you to) <code>goodreads_library_export.csv</code>.</li>
+      </ol>
+
+      <h4>Then in ShelfSage</h4>
+      <ol>
+        <li>Open ShelfSage → SS Dashboard → Library → <strong>Bulk Import</strong>.</li>
+        <li>Drop <code>goodreads_library_export.csv</code> into the dropzone.</li>
+        <li>An emerald "📚 Goodreads Library Export detected" banner appears on step 2 — confirm and click Import.</li>
+      </ol>
+
+      <h4>What the importer does automatically</h4>
+      <table>
+        <thead><tr><th>Goodreads column</th><th>Mapped to</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>Title</code></td><td>title</td><td>Required.</td></tr>
+          <tr><td><code>Author</code> + <code>Additional Authors</code></td><td>author</td><td>Joined with ", " — co-authors preserved.</td></tr>
+          <tr><td><code>ISBN</code> / <code>ISBN13</code></td><td>isbn / isbn13</td><td>Excel-formula wrapper <code>="0743…"</code> automatically stripped.</td></tr>
+          <tr><td><code>Publisher</code></td><td>publisher (taxonomy)</td><td>Created if missing.</td></tr>
+          <tr><td><code>Binding</code></td><td>binding</td><td>Stored as <code>_rmss_binding</code>.</td></tr>
+          <tr><td><code>Number of Pages</code></td><td>pages</td><td>Numeric only.</td></tr>
+          <tr><td><code>Year Published</code> / <code>Original Publication Year</code></td><td>pub_date</td><td>4-digit year extracted.</td></tr>
+          <tr><td><code>My Rating</code></td><td>rating</td><td>Clamped to 0–5.</td></tr>
+          <tr><td><code>Bookshelves</code></td><td>genre (taxonomy)</td><td>Comma-separated → multiple terms.</td></tr>
+          <tr><td><code>My Review</code> / <code>Private Notes</code></td><td>description</td><td>Used as <code>post_content</code>.</td></tr>
+          <tr><td><code>Owned Copies</code></td><td>stock_quantity + stock_status</td><td>0 → outofstock; &gt;0 → instock with quantity.</td></tr>
+        </tbody>
+      </table>
+      <p>Goodreads-only columns (<code>Book Id</code>, <code>Exclusive Shelf</code>, <code>Date Added</code>, <code>Date Read</code>, <code>Average Rating</code>, <code>Read Count</code>, <code>Spoiler</code>) are dropped silently.</p>
+
+      <h4>Force the format from REST / WP-CLI</h4>
+      <p>If you're calling <code>POST /wp-json/shelfsage/v1/import-books</code> from a script, pass <code>format=goodreads</code> in the JSON body to bypass auto-detection:</p>
+      <pre><code>POST /wp-json/shelfsage/v1/import-books
+{
+  "target": "woocommerce",
+  "format": "goodreads",
+  "rows": [ { "Title": "…", "Author": "…", "ISBN": "=\"0743273567\"", … } ]
+}</code></pre>
+
+      <h4>Filter</h4>
+      <p>Add or override mapped fields with <code>trsss_normalize_goodreads_row</code>:</p>
+      <pre><code>add_filter( 'trsss_normalize_goodreads_row', function ( $normalized, $row ) {
+    // Push Goodreads "Date Read" into a custom postmeta key.
+    if ( ! empty( $row['Date Read'] ) ) {
+        $normalized['date_read'] = sanitize_text_field( $row['Date Read'] );
+    }
+    return $normalized;
+}, 10, 2 );</code></pre>
     </section>
 
     <hr>
