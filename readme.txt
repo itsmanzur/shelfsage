@@ -260,6 +260,7 @@ Only the data necessary for the requested operation: search queries (ISBN, title
 * **Enhancement:** Schema output moved from `frontend.php` into dedicated `includes/seo-schema.php`.
 * **Enhancement:** `shelfsage-chunk2.js` no longer ships with the public bundle (admin-only Settings module removed from `main.jsx`).
 * **i18n:** `languages/shelfsage.pot` shipped (248 strings) for translation pipelines.
+* **New:** `uninstall.php` — full data cleanup on plugin delete. Removes 9 plugin options, all `_rmss_*`, `_trsss_view_count`, `_trsss_last_viewed_at`, `_trsss_series_order`, `_trsss_ebook_dl_*`, and `_ss_vault_*` post meta, the `_trsss_reading_list` user meta, the `_trsss_verified_purchase` comment meta, every `ss_vault_assets` and `rmss_shortcode` custom post, all five ShelfSage taxonomy terms, the `idx_shelfsage_isbn` postmeta index, the `trsss_book_api` object-cache group, and all `trsss_*` transients. Multisite-aware (loops every site) and short-circuited by `add_filter( 'trsss_skip_uninstall_cleanup', '__return_true' )` for staged migrations.
 
 = 1.5.0 =
 * **New:** Smart Fallback for Google Books API and Amazon PA-API.
